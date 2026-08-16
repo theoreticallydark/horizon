@@ -1,0 +1,30 @@
+# Session Activity Log
+
+- **2026-08-15 06:07 PM** - Initialized Flutter boilerplate project and verified existing files in `lib/`.
+- **2026-08-15 06:13 PM** - Updated `lib/main.dart` with a centered "Hello World!" starter layout.
+- **2026-08-15 06:24 PM** - Configured Figma MCP server token in `C:\Users\khark\.gemini\config\mcp_config.json`.
+- **2026-08-15 06:27 PM** - Fixed MCP package name to `figma-developer-mcp` and verified CLI integration.
+- **2026-08-15 06:30 PM** - Built `ButtonGraphicImage` widget from Figma node `28:875` (v1.0.0).
+- **2026-08-15 06:32 PM** - Built `ButtonGraphicText` widget from Figma node `28:876` (v1.0.0).
+- **2026-08-15 06:36 PM** - Restructured `lib/alter/components/` and created `lib/alter/alter.dart` barrel export file.
+- **2026-08-15 06:44 PM** - Confirmed Dart naming conventions (`snake_case` filenames, `PascalCase` widget classes).
+- **2026-08-15 06:48 PM** - Built `ButtonText` component set (supporting `ButtonType` and `ButtonSize` variants) from Figma node `130:8382` (v1.0.0).
+- **2026-08-15 06:50 PM** - Added Normal and Large size variant demos to `lib/main.dart`.
+- **2026-08-15 06:53 PM** - Configured `minWidth: 64` constraint for `ButtonText`.
+- **2026-08-15 06:55 PM** - Added `google_fonts` package for Geist typography support.
+- **2026-08-15 06:56 PM** - Cleaned up `lib/main.dart` UI to white background with buttons only.
+- **2026-08-15 06:57 PM** - Updated all `ButtonText` labels to 'Add'.
+- **2026-08-16 11:01 AM** - Added version reference constant (`static const String version = '1.0.0';`) to all Alter components.
+- **2026-08-16 11:04 AM** - Refactored components to Pattern B (standalone `Theme.of(context)` typography with Geist fallback).
+- **2026-08-16 11:08 AM** - Created `lib/alter/README.md` documentation covering setup, Geist font options, and component usage.
+- **2026-08-16 11:24 AM** - Removed `google_fonts` package dependency and registered local font assets (`Geist` and `InstrumentSerif`) in `pubspec.yaml`.
+- **2026-08-17 12:09 AM** - Extracted 234 color swatches from `Value.tokens.json` into `AlterColors`.
+- **2026-08-17 12:16 AM** - Extracted 25 semantic color tokens from `Tokens 17 Aug.json` into `AlterSemanticTokens`.
+- **2026-08-17 12:17 AM** - Reorganized tokens into `lib/alter/styles/` (`swatches.dart`, `tokens.dart`, `typography.dart`).
+- **2026-08-17 12:21 AM** - Extracted 19 typography style tokens from Tailwind CSS definitions into `AlterTypography` (`typography.dart`).
+- **2026-08-17 12:25 AM** - Refactored `ButtonText` (v1.0.1) to use `AlterSemanticTokens` and `AlterTypography.bodyLgBold`.
+- **2026-08-17 12:27 AM** - Refactored `ButtonGraphicImage` (v1.0.1) to use `AlterSemanticTokens`.
+- **2026-08-17 12:28 AM** - Refactored `ButtonGraphicText` (v1.0.1) to use `AlterColors` and `AlterSemanticTokens`.
+- **2026-08-17 12:35 AM** - Built `ButtonIcon` component (v1.0.0) from Figma node `130:8371`.
+- **2026-08-17 12:38 AM** - Built `ApplicationHeader` composite component (v1.0.0) from Figma node `119:5716`.
+- **2026-08-17 12:46 AM** - Created subfolder `lib/alter/components/bottom_navigation/` and built `.BottomNavigationItem` (v1.0.0, node `1:392`), `BottomNavigationBar` (v1.0.0, node `117:4152`), `.BottomNavigationButton` (v1.0.0, node `60:1950`), and `BottomNavigationBarAction` (v1.0.0, node `60:2061`).
