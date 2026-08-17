@@ -27,4 +27,9 @@
 - **2026-08-17 12:28 AM** - Refactored `ButtonGraphicText` (v1.0.1) to use `AlterColors` and `AlterSemanticTokens`.
 - **2026-08-17 12:35 AM** - Built `ButtonIcon` component (v1.0.0) from Figma node `130:8371`.
 - **2026-08-17 12:38 AM** - Built `ApplicationHeader` composite component (v1.0.0) from Figma node `119:5716`.
-- **2026-08-17 12:46 AM** - Created subfolder `lib/alter/components/bottom_navigation/` and built `.BottomNavigationItem` (v1.0.0, node `1:392`), `BottomNavigationBar` (v1.0.0, node `117:4152`), `.BottomNavigationButton` (v1.0.0, node `60:1950`), and `BottomNavigationBarAction` (v1.0.0, node `60:2061`).
+- **2026-08-17 01:03 AM** - Refactored `.BottomNavigationItem` (v1.0.1) to match Figma node `1:392`.
+- **2026-08-17 01:05 AM** - Refactored `BottomNavigationBar` (v1.0.1) to match Figma node `117:4152`.
+- **2026-08-17 01:17 AM** - Refactored `.BottomNavigationButton` (v1.0.1) to match Figma node `60:1950`.
+- **2026-08-17 12:10 PM** - Refactored `BottomNavigationBarAction` (v1.0.2) based on Figma node `60:2061`.
+- **2026-08-17 12:45 PM** - Reorganized button components into dedicated subfolder `lib/alter/components/buttons/`.
+- **2026-08-17 12:47 PM** - Moved pages from `lib/horizon/pages/` to `lib/pages/` (`track_page.dart`, `stats_page.dart`, `routine_page.dart`), leaving `lib/horizon/` empty for future feature expansion. Updated imports across `lib/main.dart` and `lib/pages/`.

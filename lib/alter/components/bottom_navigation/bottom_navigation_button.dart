@@ -5,7 +5,7 @@ enum BottomNavigationButtonType { primary, secondary }
 
 class BottomNavigationButton extends StatelessWidget {
   /// Component version for reference.
-  static const String version = '1.0.0';
+  static const String version = '1.0.1';
 
   final IconData icon;
   final BottomNavigationButtonType type;
@@ -23,7 +23,16 @@ class BottomNavigationButton extends StatelessWidget {
       case BottomNavigationButtonType.primary:
         return AlterSemanticTokens.baseBlack;
       case BottomNavigationButtonType.secondary:
-        return AlterSemanticTokens.ui1;
+        return AlterSemanticTokens.baseGray;
+    }
+  }
+
+  Color get _borderColor {
+    switch (type) {
+      case BottomNavigationButtonType.primary:
+        return AlterSemanticTokens.stroke1000;
+      case BottomNavigationButtonType.secondary:
+        return AlterSemanticTokens.stroke100;
     }
   }
 
@@ -40,19 +49,24 @@ class BottomNavigationButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(24),
+      borderRadius: BorderRadius.circular(30),
       child: Container(
-        width: 48,
-        height: 48,
+        width: 72,
+        height: 72,
+        padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: _backgroundColor,
-          shape: BoxShape.circle,
+          borderRadius: BorderRadius.circular(30),
+          border: Border.all(
+            color: _borderColor,
+            width: 1,
+          ),
         ),
         child: Center(
           child: Icon(
             icon,
             color: _iconColor,
-            size: 24,
+            size: 28,
           ),
         ),
       ),

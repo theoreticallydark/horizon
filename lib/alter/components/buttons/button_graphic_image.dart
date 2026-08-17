@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../styles/tokens.dart';
+import '../../styles/tokens.dart';
 
 class ButtonGraphicImage extends StatelessWidget {
   /// Component version for reference.

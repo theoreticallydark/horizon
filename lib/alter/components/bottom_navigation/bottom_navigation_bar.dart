@@ -14,7 +14,7 @@ class BottomNavigationItemData {
 
 class AlterBottomNavigationBar extends StatelessWidget {
   /// Component version for reference.
-  static const String version = '1.0.0';
+  static const String version = '1.0.1';
 
   final int selectedIndex;
   final List<BottomNavigationItemData> items;
@@ -34,18 +34,14 @@ class AlterBottomNavigationBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: const BoxDecoration(
-        color: AlterSemanticTokens.baseWhite,
-        border: Border(
-          top: BorderSide(
-            color: AlterSemanticTokens.stroke100,
-            width: 1,
-          ),
-        ),
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: AlterSemanticTokens.baseGray,
+        borderRadius: BorderRadius.circular(30),
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: List.generate(items.length, (index) {
           final item = items[index];
           return BottomNavigationItem(

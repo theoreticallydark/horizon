@@ -1,10 +1,11 @@
 export 'components/application_header.dart';
 export 'components/bottom_navigation/bottom_navigation_bar.dart';
 export 'components/bottom_navigation/bottom_navigation_bar_action.dart';
-export 'components/button_graphic_image.dart';
-export 'components/button_graphic_text.dart';
-export 'components/button_icon.dart';
-export 'components/button_text.dart';
+export 'components/bottom_navigation/bottom_navigation_button.dart';
+export 'components/buttons/button_graphic_image.dart';
+export 'components/buttons/button_graphic_text.dart';
+export 'components/buttons/button_icon.dart';
+export 'components/buttons/button_text.dart';
 export 'styles/swatches.dart';
 export 'styles/tokens.dart';
 export 'styles/typography.dart';

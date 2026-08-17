@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import '../styles/tokens.dart';
 import '../styles/typography.dart';
-import 'button_graphic_image.dart';
-import 'button_graphic_text.dart';
-import 'button_icon.dart';
+import 'buttons/button_graphic_image.dart';
+import 'buttons/button_graphic_text.dart';
+import 'buttons/button_icon.dart';
 
 class ApplicationHeader extends StatelessWidget {
   /// Component version for reference.

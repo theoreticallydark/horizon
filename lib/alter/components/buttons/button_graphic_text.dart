@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../styles/swatches.dart';
-import '../styles/tokens.dart';
+import '../../styles/swatches.dart';
+import '../../styles/tokens.dart';
 
 class ButtonGraphicText extends StatelessWidget {
   /// Component version for reference.

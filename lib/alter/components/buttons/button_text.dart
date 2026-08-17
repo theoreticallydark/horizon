@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../styles/tokens.dart';
-import '../styles/typography.dart';
+import '../../styles/tokens.dart';
+import '../../styles/typography.dart';
 
 enum ButtonType { gray, white, primary }
 

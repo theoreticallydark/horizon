@@ -4,7 +4,7 @@ import '../../styles/typography.dart';
 
 class BottomNavigationItem extends StatelessWidget {
   /// Component version for reference.
-  static const String version = '1.0.0';
+  static const String version = '1.0.1';
 
   final String label;
   final IconData icon;
@@ -21,19 +21,28 @@ class BottomNavigationItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = isSelected
+    final textColor = isSelected
         ? AlterSemanticTokens.textPrimary
         : AlterSemanticTokens.textSecondary;
 
-    final textStyle = isSelected
-        ? AlterTypography.captionBold.copyWith(color: color)
-        : AlterTypography.caption.copyWith(color: color);
+    final iconColor = isSelected
+        ? AlterSemanticTokens.textPrimary
+        : AlterSemanticTokens.ui6;
+
+    final backgroundColor = isSelected
+        ? AlterSemanticTokens.ui1
+        : Colors.transparent;
 
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Padding(
+      borderRadius: BorderRadius.circular(24),
+      child: Container(
+        constraints: const BoxConstraints(minWidth: 64),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          borderRadius: BorderRadius.circular(24),
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
@@ -42,13 +51,14 @@ class BottomNavigationItem extends StatelessWidget {
             Icon(
               icon,
               size: 24,
-              color: color,
+              color: iconColor,
             ),
-            const SizedBox(height: 4),
             Text(
               label,
               textAlign: TextAlign.center,
-              style: textStyle,
+              style: AlterTypography.caption.copyWith(
+                color: textColor,
+              ),
             ),
           ],
         ),

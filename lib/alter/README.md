@@ -48,19 +48,24 @@ MaterialApp(
 
 ## 🧩 Available Components
 
+### Navigation Components (`lib/alter/components/`)
 | Component | Version | Description | Figma Node |
 | :--- | :--- | :--- | :--- |
 | **`ApplicationHeader`** | `v1.0.0` | Top header container with title, subtitle, composite action buttons, and a child `Widget? slot`. | Node `119:5716` |
-| **`BottomNavigationBar`** | `v1.0.0` | Standard bottom navigation bar composed of `.BottomNavigationItem` instances (`itemCount`: three, four, five). | Node `117:4152` |
-| **`BottomNavigationBarAction`** | `v1.0.0` | Action bottom bar composed of `.BottomNavigationButton` instances (`defaultAction`, `save`). | Node `60:2061` |
+| **`BottomNavigationBar`** | `v1.0.1` | Standard bottom navigation bar composed of `.BottomNavigationItem` instances (`itemCount`: three, four, five). | Node `117:4152` |
+| **`BottomNavigationBarAction`** | `v1.0.2` | Action bottom bar composed of `BottomNavigationBar` + `BottomNavigationButton` (`Type=Default`) or 3 `BottomNavigationButton` items (`Type=Save`). | Node `60:2061` |
+
+### Button Components (`lib/alter/components/buttons/`)
+| Component | Version | Description | Figma Node |
+| :--- | :--- | :--- | :--- |
 | **`ButtonText`** | `v1.0.1` | Text button with `ButtonType` (`gray`, `white`, `primary`) and `ButtonSize` (`normal`, `large`) variants. `minWidth: 64px`. | Node `130:8382` |
 | **`ButtonIcon`** | `v1.0.0` | Square icon button (`48x48`) supporting `ButtonIconType` (`gray`, `white`, `primary`) variants. | Node `130:8371` |
 | **`ButtonGraphicImage`** | `v1.0.1` | Compact `48x48` icon button container. | Node `28:875` |
 | **`ButtonGraphicText`** | `v1.0.1` | Dual-label badge button (customizable `title` & `subtitle`). | Node `28:876` |
 
-### Internal / Private Components (`lib/alter/components/bottom_navigation/`)
-- **`.BottomNavigationItem` (`v1.0.0`, Node `1:392`)**: Used exclusively inside `BottomNavigationBar`.
-- **`.BottomNavigationButton` (`v1.0.0`, Node `60:1950`)**: Used exclusively inside `BottomNavigationBarAction`.
+### Private Components
+- **`.BottomNavigationItem` (`v1.0.1`, Node `1:392`)**: `lib/alter/components/bottom_navigation/bottom_navigation_item.dart`
+- **`.BottomNavigationButton` (`v1.0.1`, Node `60:1950`)**: `lib/alter/components/bottom_navigation/bottom_navigation_button.dart`
 
 ---
 
