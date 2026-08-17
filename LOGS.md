@@ -33,4 +33,7 @@
 - **2026-08-17 12:10 PM** - Refactored `BottomNavigationBarAction` (v1.0.2) based on Figma node `60:2061`.
 - **2026-08-17 12:45 PM** - Reorganized button components into `lib/alter/components/buttons/`.
 - **2026-08-17 12:47 PM** - Moved pages from `lib/horizon/pages/` to `lib/pages/`.
-- **2026-08-17 01:05 PM** - Verified all 9 components in `lib/alter/` to ensure 100% generic design system defaults (`Home`, `Search`, `Profile`, `Alter`, `Design System`, `STREAK`, `7 DAYS`, `ButtonText`, `Icons.favorite_border`, `Icons.image_outlined`, `Icons.add`).
+- **2026-08-17 01:25 PM** - Refactored header architecture to Approach 1: Single Shared `ApplicationHeader` in `lib/main.dart` configured dynamically per page tab:
+  - **Track Page**: `title: 'Today'`, `subtitle: '0/2300 calories • 0/120g protein'`, `hasProfileAction: true`, `hasStyleButton: true`, ActionOne & ActionTwo hidden.
+  - **Stats Page**: `title: 'Stats'`, `subtitle: 'Just do it'`, `hasStyleButton: true`, all other actions hidden.
+  - **Routine Page**: `title: 'Plan Routine'`, `subtitle: '2300 calories • 120g protein'`, all actions hidden.

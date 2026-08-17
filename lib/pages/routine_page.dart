@@ -6,20 +6,9 @@ class RoutinePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AlterSemanticTokens.baseWhite,
-      body: const SafeArea(
-        child: Column(
-          children: [
-            ApplicationHeader(
-              title: 'Horizon',
-              subtitle: 'Daily Routines',
-              hasActionOne: true,
-              hasProfileAction: true,
-            ),
-          ],
-        ),
-      ),
+    return const Scaffold(
+      backgroundColor: AlterSemanticTokens.baseGray,
+      body: SizedBox.expand(),
     );
   }
 }

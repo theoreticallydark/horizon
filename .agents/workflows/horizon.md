@@ -10,9 +10,7 @@ Horizon is a Flutter project that hosts
 About Alter
 
 1. lib/alter is the Alter design system. All components, styles and other design system resources should live here.
-2. Components in Alter needs to be reusable across projects.
-
-About Horizon
+2. Components in Alter needs to be reusable across projects. Hence, avoid usage of specific icon, labels or images. They should always be generic. Label can be label, choose a default icon, etc.
 
 General Instruction:
 

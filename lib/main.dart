@@ -39,55 +39,114 @@ class _HorizonAppShellState extends State<HorizonAppShell> {
     RoutinePage(),
   ];
 
+  // Configure ApplicationHeader per tab index
+  ApplicationHeader _buildHeaderForIndex(int index) {
+    switch (index) {
+      case 0:
+        // Track Page Header
+        return ApplicationHeader(
+          title: 'Today',
+          subtitle: '0/2300 calories • 0/120g protein',
+          hasStyleButton: true,
+          hasActionOne: false,
+          hasActionTwo: false,
+          hasProfileAction: true,
+          onProfileTap: () {
+            debugPrint('Profile Tapped');
+          },
+          onStyleButtonTap: () {
+            debugPrint('Streak Tapped');
+          },
+        );
+      case 1:
+        // Stats Page Header
+        return ApplicationHeader(
+          title: 'Stats',
+          subtitle: 'Just do it',
+          hasStyleButton: true,
+          hasActionOne: false,
+          hasActionTwo: false,
+          hasProfileAction: false,
+          onStyleButtonTap: () {
+            debugPrint('Streak Tapped');
+          },
+        );
+      case 2:
+        // Routine Page Header
+        return ApplicationHeader(
+          title: 'Plan Routine',
+          subtitle: '2300 calories • 120g protein',
+          hasStyleButton: false,
+          hasActionOne: false,
+          hasActionTwo: false,
+          hasProfileAction: false,
+        );
+      default:
+        return const ApplicationHeader(
+          title: 'Horizon',
+          subtitle: 'Design System',
+        );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AlterSemanticTokens.baseWhite,
-      body: Stack(
-        children: [
-          // Active Page Screen
-          IndexedStack(
-            index: _currentIndex,
-            children: _pages,
-          ),
+      backgroundColor: AlterSemanticTokens.baseGray,
+      body: SafeArea(
+        child: Stack(
+          children: [
+            // Main App Container with Shared Dynamic Header
+            Column(
+              children: [
+                _buildHeaderForIndex(_currentIndex),
+                Expanded(
+                  child: IndexedStack(
+                    index: _currentIndex,
+                    children: _pages,
+                  ),
+                ),
+              ],
+            ),
 
-          // Floating Bottom Navigation Action Bar (Floating 28px from bottom)
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 28,
-            child: Center(
-              child: BottomNavigationBarAction(
-                type: BottomNavigationBarActionType.defaultAction,
-                selectedIndex: _currentIndex,
-                items: const [
-                  BottomNavigationItemData(
-                    label: 'Track',
-                    icon: Icons.track_changes_outlined,
-                  ),
-                  BottomNavigationItemData(
-                    label: 'Stats',
-                    icon: Icons.dataset_outlined,
-                  ),
-                  BottomNavigationItemData(
-                    label: 'Routine',
-                    icon: Icons.egg_outlined,
-                  ),
-                ],
-                primaryActionIcon: Icons.add_circle_outline,
-                primaryActionType: BottomNavigationButtonType.secondary,
-                onItemTapped: (index) {
-                  setState(() {
-                    _currentIndex = index;
-                  });
-                },
-                onPrimaryActionTap: () {
-                  debugPrint('Primary Action Button Tapped!');
-                },
+            // Floating Bottom Navigation Action Bar (Floating 28px from bottom)
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 28,
+              child: Center(
+                child: BottomNavigationBarAction(
+                  type: BottomNavigationBarActionType.defaultAction,
+                  selectedIndex: _currentIndex,
+                  items: const [
+                    BottomNavigationItemData(
+                      label: 'Track',
+                      icon: Icons.track_changes_outlined,
+                    ),
+                    BottomNavigationItemData(
+                      label: 'Stats',
+                      icon: Icons.dataset_outlined,
+                    ),
+                    BottomNavigationItemData(
+                      label: 'Routine',
+                      icon: Icons.egg_outlined,
+                    ),
+                  ],
+                  primaryActionIcon: Icons.add_circle_outline,
+                  primaryActionType: BottomNavigationButtonType.secondary,
+                  onItemTapped: (index) {
+                    setState(() {
+                      _currentIndex = index;
+                    });
+                  },
+                  onPrimaryActionTap: () {
+                    debugPrint('Primary Action Button Tapped!');
+                  },
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
