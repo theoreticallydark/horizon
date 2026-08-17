@@ -13,7 +13,7 @@ class BottomNavigationButton extends StatelessWidget {
 
   const BottomNavigationButton({
     super.key,
-    required this.icon,
+    this.icon = Icons.add,
     this.type = BottomNavigationButtonType.secondary,
     this.onTap,
   });

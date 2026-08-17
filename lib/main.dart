@@ -67,13 +67,15 @@ class _HorizonAppShellState extends State<HorizonAppShell> {
                   ),
                   BottomNavigationItemData(
                     label: 'Stats',
-                    icon: Icons.bar_chart_outlined,
+                    icon: Icons.dataset_outlined,
                   ),
                   BottomNavigationItemData(
                     label: 'Routine',
-                    icon: Icons.repeat_outlined,
+                    icon: Icons.egg_outlined,
                   ),
                 ],
+                primaryActionIcon: Icons.add_circle_outline,
+                primaryActionType: BottomNavigationButtonType.secondary,
                 onItemTapped: (index) {
                   setState(() {
                     _currentIndex = index;

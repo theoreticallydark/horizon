@@ -13,9 +13,10 @@ class BottomNavigationBarAction extends StatelessWidget {
   final List<BottomNavigationItemData> items;
   final ValueChanged<int>? onItemTapped;
 
-  // Primary Action Button (Default Type: Add, Save Type: Check/Save)
+  // Action Button (Default Type: add_circle Secondary, Save Type: Check/Save)
   final VoidCallback? onPrimaryActionTap;
   final IconData primaryActionIcon;
+  final BottomNavigationButtonType primaryActionType;
 
   // Additional Action Buttons (Save Type)
   final VoidCallback? onSecondaryActionOneTap;
@@ -35,6 +36,7 @@ class BottomNavigationBarAction extends StatelessWidget {
     this.onItemTapped,
     this.onPrimaryActionTap,
     this.primaryActionIcon = Icons.add,
+    this.primaryActionType = BottomNavigationButtonType.primary,
     this.onSecondaryActionOneTap,
     this.secondaryActionOneIcon = Icons.favorite_border,
     this.onSecondaryActionTwoTap,
@@ -56,7 +58,7 @@ class BottomNavigationBarAction extends StatelessWidget {
           const SizedBox(width: 10),
           BottomNavigationButton(
             icon: primaryActionIcon,
-            type: BottomNavigationButtonType.primary,
+            type: primaryActionType,
             onTap: onPrimaryActionTap,
           ),
         ],
