@@ -2,6 +2,7 @@ export 'components/application_header.dart';
 export 'components/bottom_navigation/bottom_navigation_bar.dart';
 export 'components/bottom_navigation/bottom_navigation_bar_action.dart';
 export 'components/bottom_navigation/bottom_navigation_button.dart';
+export 'components/pills/pill.dart';
 export 'components/buttons/button_graphic_image.dart';
 export 'components/buttons/button_graphic_text.dart';
 export 'components/buttons/button_icon.dart';

@@ -33,7 +33,9 @@
 - **2026-08-17 12:10 PM** - Refactored `BottomNavigationBarAction` (v1.0.2) based on Figma node `60:2061`.
 - **2026-08-17 12:45 PM** - Reorganized button components into `lib/alter/components/buttons/`.
 - **2026-08-17 12:47 PM** - Moved pages from `lib/horizon/pages/` to `lib/pages/`.
-- **2026-08-17 01:25 PM** - Refactored header architecture to Approach 1: Single Shared `ApplicationHeader` in `lib/main.dart` configured dynamically per page tab:
-  - **Track Page**: `title: 'Today'`, `subtitle: '0/2300 calories • 0/120g protein'`, `hasProfileAction: true`, `hasStyleButton: true`, ActionOne & ActionTwo hidden.
-  - **Stats Page**: `title: 'Stats'`, `subtitle: 'Just do it'`, `hasStyleButton: true`, all other actions hidden.
-  - **Routine Page**: `title: 'Plan Routine'`, `subtitle: '2300 calories • 120g protein'`, all actions hidden.
+- **2026-08-17 01:05 PM** - Enforced Design System separation rule across all Alter components.
+- **2026-08-17 01:25 PM** - Configured single shared `ApplicationHeader` dynamically in `lib/main.dart`.
+- **2026-08-17 01:37 PM** - Built `Pill` component (v1.0.0) in `lib/alter/components/pills/pill.dart` from Figma node `23:270`.
+- **2026-08-17 01:41 PM** - Fixed stroke alignment behavior (strokeAlign: INSIDE) in `Pill`: compensated padding by `_borderWidth`.
+- **2026-08-17 01:45 PM** - Refactored `Pill` (v1.0.1) to vertical layout (`Column`) with `2px` spacing between `label` and `value` for `defaultSize`, and updated gray fill to `AlterSemanticTokens.ui1` (`#F3F4F6`).
+- **2026-08-17 01:49 PM** - Fixed completed unselected pill `_borderWidth` to return `0.0` (instead of `1.0`), guaranteeing exact matching outer box dimensions when transitioning between unselected completed (`0px` stroke) and selected completed (`2px` stroke).
