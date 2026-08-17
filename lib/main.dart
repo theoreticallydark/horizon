@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'alter/alter.dart';
+import 'horizon/horizon_application_header.dart';
+import 'horizon/horizon_bottom_navigation_bar_action.dart';
 import 'pages/routine_page.dart';
 import 'pages/stats_page.dart';
 import 'pages/track_page.dart';
@@ -39,56 +41,6 @@ class _HorizonAppShellState extends State<HorizonAppShell> {
     RoutinePage(),
   ];
 
-  // Configure ApplicationHeader per tab index
-  ApplicationHeader _buildHeaderForIndex(int index) {
-    switch (index) {
-      case 0:
-        // Track Page Header
-        return ApplicationHeader(
-          title: 'Today',
-          subtitle: '0/2300 calories • 0/120g protein',
-          hasStyleButton: true,
-          hasActionOne: false,
-          hasActionTwo: false,
-          hasProfileAction: true,
-          onProfileTap: () {
-            debugPrint('Profile Tapped');
-          },
-          onStyleButtonTap: () {
-            debugPrint('Streak Tapped');
-          },
-        );
-      case 1:
-        // Stats Page Header
-        return ApplicationHeader(
-          title: 'Stats',
-          subtitle: 'Just do it',
-          hasStyleButton: true,
-          hasActionOne: false,
-          hasActionTwo: false,
-          hasProfileAction: false,
-          onStyleButtonTap: () {
-            debugPrint('Streak Tapped');
-          },
-        );
-      case 2:
-        // Routine Page Header
-        return ApplicationHeader(
-          title: 'Plan Routine',
-          subtitle: '2300 calories • 120g protein',
-          hasStyleButton: false,
-          hasActionOne: false,
-          hasActionTwo: false,
-          hasProfileAction: false,
-        );
-      default:
-        return const ApplicationHeader(
-          title: 'Horizon',
-          subtitle: 'Design System',
-        );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -96,10 +48,18 @@ class _HorizonAppShellState extends State<HorizonAppShell> {
       body: SafeArea(
         child: Stack(
           children: [
-            // Main App Container with Shared Dynamic Header
+            // Main App Container with Shared Horizon Header Wrapper
             Column(
               children: [
-                _buildHeaderForIndex(_currentIndex),
+                HorizonApplicationHeader(
+                  currentIndex: _currentIndex,
+                  onProfileTap: () {
+                    debugPrint('Profile Tapped');
+                  },
+                  onStreakTap: () {
+                    debugPrint('Streak Tapped');
+                  },
+                ),
                 Expanded(
                   child: IndexedStack(
                     index: _currentIndex,
@@ -115,25 +75,8 @@ class _HorizonAppShellState extends State<HorizonAppShell> {
               right: 0,
               bottom: 28,
               child: Center(
-                child: BottomNavigationBarAction(
-                  type: BottomNavigationBarActionType.defaultAction,
+                child: HorizonBottomNavigationBarAction(
                   selectedIndex: _currentIndex,
-                  items: const [
-                    BottomNavigationItemData(
-                      label: 'Track',
-                      icon: Icons.track_changes_outlined,
-                    ),
-                    BottomNavigationItemData(
-                      label: 'Stats',
-                      icon: Icons.dataset_outlined,
-                    ),
-                    BottomNavigationItemData(
-                      label: 'Routine',
-                      icon: Icons.egg_outlined,
-                    ),
-                  ],
-                  primaryActionIcon: Icons.add_circle_outline,
-                  primaryActionType: BottomNavigationButtonType.secondary,
                   onItemTapped: (index) {
                     setState(() {
                       _currentIndex = index;

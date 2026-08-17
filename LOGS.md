@@ -38,4 +38,6 @@
 - **2026-08-17 01:37 PM** - Built `Pill` component (v1.0.0) in `lib/alter/components/pills/pill.dart` from Figma node `23:270`.
 - **2026-08-17 01:41 PM** - Fixed stroke alignment behavior (strokeAlign: INSIDE) in `Pill`: compensated padding by `_borderWidth`.
 - **2026-08-17 01:45 PM** - Refactored `Pill` (v1.0.1) to vertical layout (`Column`) with `2px` spacing between `label` and `value` for `defaultSize`, and updated gray fill to `AlterSemanticTokens.ui1` (`#F3F4F6`).
-- **2026-08-17 01:49 PM** - Fixed completed unselected pill `_borderWidth` to return `0.0` (instead of `1.0`), guaranteeing exact matching outer box dimensions when transitioning between unselected completed (`0px` stroke) and selected completed (`2px` stroke).
+- **2026-08-17 01:49 PM** - Fixed completed unselected pill `_borderWidth` to return `0.0` (instead of `1.0`).
+- **2026-08-17 03:45 PM** - Created `HorizonApplicationHeader` wrapper in `lib/horizon/horizon_application_header.dart`.
+- **2026-08-17 03:47 PM** - Created `HorizonBottomNavigationBarAction` wrapper in `lib/horizon/horizon_bottom_navigation_bar_action.dart`, encapsulating Horizon domain tabs (`Track`, `Stats`, `Routine`) and action button configuration cleanly out of `lib/main.dart`.
