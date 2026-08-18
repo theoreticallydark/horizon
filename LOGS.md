@@ -40,4 +40,9 @@
 - **2026-08-17 01:45 PM** - Refactored `Pill` (v1.0.1) to vertical layout (`Column`) with `2px` spacing between `label` and `value` for `defaultSize`, and updated gray fill to `AlterSemanticTokens.ui1` (`#F3F4F6`).
 - **2026-08-17 01:49 PM** - Fixed completed unselected pill `_borderWidth` to return `0.0` (instead of `1.0`).
 - **2026-08-17 03:45 PM** - Created `HorizonApplicationHeader` wrapper in `lib/horizon/horizon_application_header.dart`.
-- **2026-08-17 03:47 PM** - Created `HorizonBottomNavigationBarAction` wrapper in `lib/horizon/horizon_bottom_navigation_bar_action.dart`, encapsulating Horizon domain tabs (`Track`, `Stats`, `Routine`) and action button configuration cleanly out of `lib/main.dart`.
+- **2026-08-17 03:47 PM** - Created `HorizonBottomNavigationBarAction` wrapper in `lib/horizon/horizon_bottom_navigation_bar_action.dart`.
+- **2026-08-18 02:33 PM** - Created `NutrientPill` wrapper component in `lib/horizon/nutrient_pill.dart`.
+- **2026-08-18 02:42 PM** - Created `NutrientMap` component in `lib/horizon/nutrient_map.dart` from Figma node `120:6965`.
+- **2026-08-18 02:45 PM** - Updated `HorizonApplicationHeader` to inject `NutrientMap` into `ApplicationHeader.slot`.
+- **2026-08-18 02:50 PM** - Configured `NutrientPill` with `horizontalPadding: 4.0`.
+- **2026-08-18 02:52 PM** - Added `hasLabel` and `hasValue` to Alter's `Pill` (matching Figma node `23:270`), and updated `NutrientPill` to default `hasValue: true` and `value: '85%'`.

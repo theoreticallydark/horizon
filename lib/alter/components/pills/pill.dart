@@ -14,20 +14,26 @@ class Pill extends StatelessWidget {
   final String? value;
   final PillSize size;
   final PillColor color;
+  final bool hasLabel;
+  final bool hasValue;
   final bool isSelected;
   final bool isCompleted;
   final bool isInteractive;
+  final double? horizontalPadding;
   final VoidCallback? onTap;
 
   const Pill({
     super.key,
     this.label = 'Label',
     this.value,
+    this.hasLabel = true,
+    this.hasValue = true,
     this.size = PillSize.defaultSize,
     this.color = PillColor.gray,
     this.isSelected = false,
     this.isCompleted = false,
     this.isInteractive = true,
+    this.horizontalPadding,
     this.onTap,
   });
 
@@ -68,7 +74,8 @@ class Pill extends StatelessWidget {
   }
 
   EdgeInsets get _padding {
-    final horizontal = 16.0 - _borderWidth;
+    final baseHorizontal = horizontalPadding ?? 16.0;
+    final horizontal = baseHorizontal - _borderWidth;
     final vertical = (size == PillSize.defaultSize ? 12.0 : 6.0) - _borderWidth;
     return EdgeInsets.symmetric(
       horizontal: horizontal > 0 ? horizontal : 0,
@@ -91,36 +98,30 @@ class Pill extends StatelessWidget {
               )
             : null,
       ),
-      child: size == PillSize.defaultSize && value != null
-          ? Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  label,
-                  textAlign: TextAlign.center,
-                  style: AlterTypography.captionBold.copyWith(
-                    color: _textColor,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  value!,
-                  textAlign: TextAlign.center,
-                  style: AlterTypography.caption.copyWith(
-                    color: _textColor,
-                  ),
-                ),
-              ],
-            )
-          : Text(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          if (hasLabel)
+            Text(
               label,
               textAlign: TextAlign.center,
               style: AlterTypography.captionBold.copyWith(
                 color: _textColor,
               ),
             ),
+          if (hasLabel && hasValue && value != null) const SizedBox(height: 2),
+          if (hasValue && value != null)
+            Text(
+              value!,
+              textAlign: TextAlign.center,
+              style: AlterTypography.caption.copyWith(
+                color: _textColor,
+              ),
+            ),
+        ],
+      ),
     );
 
     if (!isInteractive) {
