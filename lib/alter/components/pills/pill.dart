@@ -8,7 +8,7 @@ enum PillColor { gray, neutral }
 
 class Pill extends StatelessWidget {
   /// Component version for reference.
-  static const String version = '1.0.1';
+  static const String version = '1.0.2';
 
   final String label;
   final String? value;
@@ -86,7 +86,11 @@ class Pill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final borderColor = _borderColor;
-    final content = Container(
+    final showValue = hasValue && value != null;
+
+    final content = AnimatedContainer(
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeInOutCubic,
       padding: _padding,
       decoration: BoxDecoration(
         color: _backgroundColor,
@@ -111,15 +115,30 @@ class Pill extends StatelessWidget {
                 color: _textColor,
               ),
             ),
-          if (hasLabel && hasValue && value != null) const SizedBox(height: 2),
-          if (hasValue && value != null)
-            Text(
-              value!,
-              textAlign: TextAlign.center,
-              style: AlterTypography.caption.copyWith(
-                color: _textColor,
-              ),
-            ),
+          AnimatedSize(
+            duration: const Duration(milliseconds: 250),
+            curve: Curves.easeInOutCubic,
+            child: showValue
+                ? Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (hasLabel) const SizedBox(height: 2),
+                      AnimatedOpacity(
+                        duration: const Duration(milliseconds: 200),
+                        curve: Curves.easeInOutCubic,
+                        opacity: showValue ? 1.0 : 0.0,
+                        child: Text(
+                          value!,
+                          textAlign: TextAlign.center,
+                          style: AlterTypography.caption.copyWith(
+                            color: _textColor,
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                : const SizedBox.shrink(),
+          ),
         ],
       ),
     );

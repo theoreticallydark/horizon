@@ -45,4 +45,5 @@
 - **2026-08-18 02:42 PM** - Created `NutrientMap` component in `lib/horizon/nutrient_map.dart` from Figma node `120:6965`.
 - **2026-08-18 02:45 PM** - Updated `HorizonApplicationHeader` to inject `NutrientMap` into `ApplicationHeader.slot`.
 - **2026-08-18 02:50 PM** - Configured `NutrientPill` with `horizontalPadding: 4.0`.
-- **2026-08-18 02:52 PM** - Added `hasLabel` and `hasValue` to Alter's `Pill` (matching Figma node `23:270`), and updated `NutrientPill` to default `hasValue: true` and `value: '85%'`.
+- **2026-08-18 02:52 PM** - Added `hasLabel` and `hasValue` to Alter's `Pill`, and set `NutrientPill` default `value: '85%'`.
+- **2026-08-18 03:06 PM** - Upgraded `Pill` (v1.0.2) and `ApplicationHeader` with smooth implicit transitions (`AnimatedContainer`, `AnimatedSize`, `AnimatedOpacity`, curve `Curves.easeInOutCubic`, duration `250ms`) across all variant changes, value visibility toggles, and slot content switches.

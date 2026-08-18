@@ -113,7 +113,11 @@ class ApplicationHeader extends StatelessWidget {
             ],
           ),
         ),
-        if (slot != null) ...[slot!],
+        AnimatedSize(
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeInOutCubic,
+          child: slot ?? const SizedBox.shrink(),
+        ),
       ],
     );
   }
