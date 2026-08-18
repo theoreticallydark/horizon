@@ -27,7 +27,7 @@ class HorizonApplicationHeader extends StatelessWidget {
           hasStyleButton: true,
           hasActionOne: false,
           hasActionTwo: false,
-          hasProfileAction: true,
+          hasProfileAction: false,
           onProfileTap: onProfileTap,
           onStyleButtonTap: onStreakTap,
           slot: Padding(
@@ -57,7 +57,8 @@ class HorizonApplicationHeader extends StatelessWidget {
           hasStyleButton: false,
           hasActionOne: false,
           hasActionTwo: false,
-          hasProfileAction: false,
+          hasProfileAction: true,
+          onProfileTap: onProfileTap,
           slot: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: NutrientMap(

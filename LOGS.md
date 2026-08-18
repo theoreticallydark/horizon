@@ -46,4 +46,6 @@
 - **2026-08-18 02:45 PM** - Updated `HorizonApplicationHeader` to inject `NutrientMap` into `ApplicationHeader.slot`.
 - **2026-08-18 02:50 PM** - Configured `NutrientPill` with `horizontalPadding: 4.0`.
 - **2026-08-18 02:52 PM** - Added `hasLabel` and `hasValue` to Alter's `Pill`, and set `NutrientPill` default `value: '85%'`.
-- **2026-08-18 03:06 PM** - Upgraded `Pill` (v1.0.2) and `ApplicationHeader` with smooth implicit transitions (`AnimatedContainer`, `AnimatedSize`, `AnimatedOpacity`, curve `Curves.easeInOutCubic`, duration `250ms`) across all variant changes, value visibility toggles, and slot content switches.
+- **2026-08-18 03:06 PM** - Upgraded `Pill` (v1.0.2) and `ApplicationHeader` with smooth implicit transitions (`AnimatedContainer`, `AnimatedSize`, `AnimatedOpacity`, curve `Curves.easeInOutCubic`, duration `250ms`).
+- **2026-08-18 03:10 PM** - Updated `HorizonApplicationHeader`: set `hasProfileAction = false` and `hasStyleButton = true` on Track page (`Today`).
+- **2026-08-18 03:12 PM** - Updated `HorizonApplicationHeader`: set `hasStyleButton = false` and `hasProfileAction = true` on Routine page (`Plan Routine`).
