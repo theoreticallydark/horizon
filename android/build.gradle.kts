@@ -19,6 +19,15 @@ subprojects {
     project.evaluationDependsOn(":app")
 }
 
+subprojects {
+    plugins.withId("com.android.library") {
+        val android = extensions.findByType(com.android.build.gradle.LibraryExtension::class.java)
+        if (android != null && android.namespace == null) {
+            android.namespace = "dev.isar.isar_flutter_libs"
+        }
+    }
+}
+
 tasks.register<Delete>("clean") {
     delete(rootProject.layout.buildDirectory)
 }

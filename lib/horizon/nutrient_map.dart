@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../alter/alter.dart';
+import '../data/models/nutrient_info.dart';
+import '../data/services/isar_service.dart';
 import 'nutrient_pill.dart';
 
 enum NutrientMapVariant {
@@ -9,6 +11,7 @@ enum NutrientMapVariant {
 }
 
 class NutrientData {
+  final String nutrientKey;
   final String label;
   final String? value;
   final PillColor color;
@@ -18,6 +21,7 @@ class NutrientData {
 
   const NutrientData({
     required this.label,
+    this.nutrientKey = '',
     this.value,
     this.color = PillColor.gray,
     this.isSelected = false,
@@ -26,6 +30,7 @@ class NutrientData {
   });
 
   NutrientData copyWith({
+    String? nutrientKey,
     String? label,
     String? value,
     PillColor? color,
@@ -34,6 +39,7 @@ class NutrientData {
     bool? isInteractive,
   }) {
     return NutrientData(
+      nutrientKey: nutrientKey ?? this.nutrientKey,
       label: label ?? this.label,
       value: value ?? this.value,
       color: color ?? this.color,
@@ -46,62 +52,80 @@ class NutrientData {
 
 class NutrientMap extends StatelessWidget {
   final NutrientMapVariant variant;
-  final List<NutrientData> nutrients;
+  final List<NutrientData>? nutrients;
   final ValueChanged<int>? onNutrientTap;
   final double spacing;
   final double runSpacing;
 
-  /// Default 21 standard nutrients configured according to Figma node `120:6965`
+  /// Default 20 standard nutrients configured with exact key labels and dynamic colors
   static const List<NutrientData> defaultNutrients = [
-    // Row 1 (Macro / Core Nutrients - neutral color in Figma)
-    NutrientData(label: 'Vit C', value: '85%', color: PillColor.neutral),
-    NutrientData(label: 'Coll.', value: '85%', color: PillColor.neutral),
-    NutrientData(label: 'Fiber', value: '85%', color: PillColor.neutral),
-    NutrientData(label: 'Mg', value: '85%', color: PillColor.neutral),
-    NutrientData(label: 'Ca', value: '85%', color: PillColor.neutral),
-    NutrientData(label: 'K', value: '85%', color: PillColor.neutral),
-    NutrientData(label: 'Creat.', value: '85%', color: PillColor.neutral),
+    // Row 1 (7 Daily Nutrients: Vit C, Coll., Fiber, Mg, Ca, K, Creat. -> neutral color)
+    NutrientData(nutrientKey: 'vitamin_c', label: 'Vit C', value: '85%', color: PillColor.neutral),
+    NutrientData(nutrientKey: 'collagen', label: 'Coll.', value: '85%', color: PillColor.neutral),
+    NutrientData(nutrientKey: 'total_fiber', label: 'Fiber', value: '85%', color: PillColor.neutral),
+    NutrientData(nutrientKey: 'magnesium', label: 'Mg', value: '85%', color: PillColor.neutral),
+    NutrientData(nutrientKey: 'calcium', label: 'Ca', value: '85%', color: PillColor.neutral),
+    NutrientData(nutrientKey: 'potassium', label: 'K', value: '85%', color: PillColor.neutral),
+    NutrientData(nutrientKey: 'creatine', label: 'Creat.', value: '85%', color: PillColor.neutral),
 
-    // Row 2 (Vitamins & Minerals - gray color in Figma)
-    NutrientData(label: 'Vit A', value: '85%', color: PillColor.gray),
-    NutrientData(label: 'Vit E', value: '85%', color: PillColor.gray),
-    NutrientData(label: 'Vit B12', value: '85%', color: PillColor.gray),
-    NutrientData(label: 'Se', value: '85%', color: PillColor.gray),
-    NutrientData(label: 'Zinc', value: '85%', color: PillColor.gray),
-    NutrientData(label: 'Iron', value: '85%', color: PillColor.gray),
-    NutrientData(label: 'Iodine', value: '85%', color: PillColor.gray),
+    // Row 2 (Weekly Nutrients -> gray color)
+    NutrientData(nutrientKey: 'vitamin_a', label: 'Vit A', value: '85%', color: PillColor.gray),
+    NutrientData(nutrientKey: 'vitamin_e', label: 'Vit E', value: '85%', color: PillColor.gray),
+    NutrientData(nutrientKey: 'vitamin_b12', label: 'Vit B12', value: '85%', color: PillColor.gray),
+    NutrientData(nutrientKey: 'selenium', label: 'Se', value: '85%', color: PillColor.gray),
+    NutrientData(nutrientKey: 'zinc', label: 'Zinc', value: '85%', color: PillColor.gray),
+    NutrientData(nutrientKey: 'iron', label: 'Iron', value: '85%', color: PillColor.gray),
+    NutrientData(nutrientKey: 'iodine', label: 'Iodine', value: '85%', color: PillColor.gray),
 
-    // Row 3 (Trace & Fatty Acids - gray color in Figma)
-    NutrientData(label: 'Vit K', value: '85%', color: PillColor.gray),
-    NutrientData(label: 'Folate', value: '85%', color: PillColor.gray),
-    NutrientData(label: 'Vit D', value: '85%', color: PillColor.gray),
-    NutrientData(label: 'Om6', value: '85%', color: PillColor.gray),
-    NutrientData(label: 'ALA', value: '85%', color: PillColor.gray),
-    NutrientData(label: 'EPA', value: '85%', color: PillColor.gray),
-    NutrientData(label: 'DHA', value: '85%', color: PillColor.gray),
+    // Row 3 (Weekly Nutrients & Essential Lipids -> gray color)
+    NutrientData(nutrientKey: 'vitamin_k', label: 'Vit K', value: '85%', color: PillColor.gray),
+    NutrientData(nutrientKey: 'folate', label: 'Folate', value: '85%', color: PillColor.gray),
+    NutrientData(nutrientKey: 'vitamin_d', label: 'Vit D', value: '85%', color: PillColor.gray),
+    NutrientData(nutrientKey: 'linoleic_acid_omega_6', label: 'Om6', value: '85%', color: PillColor.gray),
+    NutrientData(nutrientKey: 'alpha_linolenic_acid_omega_3', label: 'ALA', value: '85%', color: PillColor.gray),
+    NutrientData(nutrientKey: 'omega_3_epa_dha', label: 'Om3', value: '85%', color: PillColor.gray),
   ];
 
   const NutrientMap({
     super.key,
     this.variant = NutrientMapVariant.routine,
-    this.nutrients = defaultNutrients,
+    this.nutrients,
     this.onNutrientTap,
     this.spacing = 3.5,
     this.runSpacing = 3.5,
   });
 
-  @override
-  Widget build(BuildContext context) {
+  /// Map database NutrientInfo list to NutrientData UI items
+  List<NutrientData> _mapFromEntities(List<NutrientInfo> list) {
+    if (list.isEmpty) return defaultNutrients;
+
+    // Sort: Daily nutrients first (Row 1), then Weekly nutrients
+    final daily = list.where((n) => n.frequency == TrackingFrequency.daily).toList();
+    final weekly = list.where((n) => n.frequency == TrackingFrequency.weekly).toList();
+    final ordered = [...daily, ...weekly];
+
+    return ordered.map((n) {
+      final label = n.shortKey ?? n.displayName;
+      final isDaily = n.frequency == TrackingFrequency.daily;
+      return NutrientData(
+        nutrientKey: n.nutrientKey,
+        label: label,
+        value: '85%', // placeholder
+        color: isDaily ? PillColor.neutral : PillColor.gray,
+      );
+    }).toList();
+  }
+
+  Widget _buildGrid(List<NutrientData> dataList) {
     final isCompact = variant != NutrientMapVariant.routine;
     final pillSize = isCompact ? PillSize.compact : PillSize.defaultSize;
 
-    // Track Daily View shows 1 row (7 pills), other variants show 3 rows (21 pills)
-    final itemCount = variant == NutrientMapVariant.trackDailyView ? 7 : nutrients.length;
-    final displayedNutrients = nutrients.take(itemCount).toList();
+    // Track Daily View shows 1 row (7 pills), other variants show all tracked pills
+    final itemCount = variant == NutrientMapVariant.trackDailyView ? 7 : dataList.length;
+    final displayedNutrients = dataList.take(itemCount).toList();
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        // Calculate equal width for each of the 7 columns taking into account the 6 gaps
         final totalSpacing = spacing * 6;
         final columnWidth = (constraints.maxWidth - totalSpacing) / 7;
 
@@ -146,6 +170,23 @@ class NutrientMap extends StatelessWidget {
             ],
           ],
         );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // If nutrients are passed explicitly, use them directly
+    if (nutrients != null) {
+      return _buildGrid(nutrients!);
+    }
+
+    // Otherwise, dynamically watch Isar database for tracked nutrients excluding energy and total_protein
+    return StreamBuilder<List<NutrientInfo>>(
+      stream: IsarService.instance.watchTrackedNutrientsForMap(),
+      builder: (context, snapshot) {
+        final items = _mapFromEntities(snapshot.data ?? []);
+        return _buildGrid(items);
       },
     );
   }

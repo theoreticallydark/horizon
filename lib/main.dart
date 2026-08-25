@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'alter/alter.dart';
+import 'data/services/isar_service.dart';
 import 'horizon/horizon_application_header.dart';
 import 'horizon/horizon_bottom_navigation_bar_action.dart';
 import 'pages/routine_page.dart';
 import 'pages/stats_page.dart';
 import 'pages/track_page.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await IsarService.instance.init();
   runApp(const MyApp());
 }
 

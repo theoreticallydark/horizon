@@ -106,6 +106,17 @@ class IsarService {
       'omega_3_epa_dha',
     };
 
+    // 7 specific daily nutrients in database
+    const dailyNutrients = {
+      'vitamin_c', // Vit C
+      'collagen',  // Coll.
+      'total_fiber', // Fiber
+      'magnesium', // Mg
+      'calcium',   // Ca
+      'potassium', // K
+      'creatine',  // Creat.
+    };
+
     // 1. Sync / Add / Update NutrientInfo items
     final List<NutrientInfo> nutrientEntitiesToSave = [];
     for (final entry in driNutrients.entries) {
@@ -113,6 +124,9 @@ class IsarService {
       final valMap = entry.value as Map<String, dynamic>;
       final shortKeyVal = valMap['key']?.toString();
       final isVisible = primaryVisibleNutrients.contains(key);
+      final frequency = dailyNutrients.contains(key)
+          ? TrackingFrequency.daily
+          : TrackingFrequency.weekly;
       final existing = await isar.nutrientInfos.getByNutrientKey(key);
 
       if (existing == null) {
@@ -123,7 +137,7 @@ class IsarService {
           ..unit = valMap['unit']?.toString() ?? ''
           ..isVisibleOnApp = isVisible
           ..isTracked = isVisible
-          ..frequency = TrackingFrequency.daily
+          ..frequency = frequency
           ..ear = (valMap['ear'] as num?)?.toDouble()
           ..rdaOrAi = (valMap['rda_or_ai'] as num?)?.toDouble()
           ..ul = (valMap['ul'] as num?)?.toDouble();
@@ -139,6 +153,10 @@ class IsarService {
           if (!isVisible) {
             existing.isTracked = false;
           }
+          changed = true;
+        }
+        if (existing.frequency != frequency) {
+          existing.frequency = frequency;
           changed = true;
         }
         if (changed) {
@@ -206,6 +224,32 @@ class IsarService {
         await isar.foodSourceItems.putAll(foodEntities.sublist(i, end));
       }
     });
+  }
+
+  /// Returns all tracked nutrients excluding energy and total_protein for the NutrientMap
+  Future<List<NutrientInfo>> getTrackedNutrientsForMap() async {
+    final allTracked = await isar.nutrientInfos
+        .filter()
+        .isTrackedEqualTo(true)
+        .findAll();
+
+    return allTracked
+        .where((n) => n.nutrientKey != 'energy' && n.nutrientKey != 'total_protein')
+        .toList();
+  }
+
+  /// Watch stream of tracked nutrients excluding energy and total_protein for reactive NutrientMap
+  Stream<List<NutrientInfo>> watchTrackedNutrientsForMap() {
+    if (_isar == null) {
+      return Stream.value([]);
+    }
+    return isar.nutrientInfos
+        .filter()
+        .isTrackedEqualTo(true)
+        .watch(fireImmediately: true)
+        .map((list) => list
+            .where((n) => n.nutrientKey != 'energy' && n.nutrientKey != 'total_protein')
+            .toList());
   }
 
   static String _formatDisplayName(String key) {
