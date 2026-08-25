@@ -80,12 +80,39 @@ class IsarService {
         ? demoMatch['nutrients'] as Map<String, dynamic>
         : <String, dynamic>{};
 
+    // Primary visible nutrients on app
+    const primaryVisibleNutrients = {
+      'energy',
+      'total_protein',
+      'vitamin_c',
+      'collagen',
+      'total_fiber',
+      'magnesium',
+      'calcium',
+      'potassium',
+      'iodine',
+      'folate',
+      'linoleic_acid_omega_6',
+      'creatine',
+      'vitamin_a',
+      'vitamin_e',
+      'vitamin_b12',
+      'selenium',
+      'zinc',
+      'iron',
+      'vitamin_k',
+      'vitamin_d',
+      'alpha_linolenic_acid_omega_3',
+      'omega_3_epa_dha',
+    };
+
     // 1. Sync / Add / Update NutrientInfo items
     final List<NutrientInfo> nutrientEntitiesToSave = [];
     for (final entry in driNutrients.entries) {
       final key = entry.key;
       final valMap = entry.value as Map<String, dynamic>;
       final shortKeyVal = valMap['key']?.toString();
+      final isVisible = primaryVisibleNutrients.contains(key);
       final existing = await isar.nutrientInfos.getByNutrientKey(key);
 
       if (existing == null) {
@@ -94,16 +121,29 @@ class IsarService {
           ..shortKey = shortKeyVal
           ..displayName = _formatDisplayName(key)
           ..unit = valMap['unit']?.toString() ?? ''
-          ..isVisibleOnApp = true
-          ..isTracked = true
+          ..isVisibleOnApp = isVisible
+          ..isTracked = isVisible
           ..frequency = TrackingFrequency.daily
           ..ear = (valMap['ear'] as num?)?.toDouble()
           ..rdaOrAi = (valMap['rda_or_ai'] as num?)?.toDouble()
           ..ul = (valMap['ul'] as num?)?.toDouble();
         nutrientEntitiesToSave.add(entity);
-      } else if (existing.shortKey != shortKeyVal && shortKeyVal != null) {
-        existing.shortKey = shortKeyVal;
-        nutrientEntitiesToSave.add(existing);
+      } else {
+        bool changed = false;
+        if (existing.shortKey != shortKeyVal && shortKeyVal != null) {
+          existing.shortKey = shortKeyVal;
+          changed = true;
+        }
+        if (existing.isVisibleOnApp != isVisible) {
+          existing.isVisibleOnApp = isVisible;
+          if (!isVisible) {
+            existing.isTracked = false;
+          }
+          changed = true;
+        }
+        if (changed) {
+          nutrientEntitiesToSave.add(existing);
+        }
       }
     }
 

@@ -1,5 +1,5 @@
 {
-  "schema_version": "3.5",
+  "schema_version": "3.6",
   "database": "Micronutrient & Food Database",
   "sources": {
     "dri": {
@@ -262,7 +262,7 @@
               "unit": "g/kg/day",
               "rda_or_ai": 1.52,
               "amdr": null,
-              "key": "Protein"
+              "key": "Prot."
             },
             "carbohydrate": {
               "unit": "g/day",
@@ -312,6 +312,15 @@
               "app_default_target": 3.0,
               "note": "No official DRI. Standard health & fitness maintenance target is 3-5g/day.",
               "key": "Creat."
+            },
+            "energy": {
+              "unit": "kcal/day",
+              "ear": null,
+              "rda_or_ai": 2200.0,
+              "ul": null,
+              "app_default_target": 2200.0,
+              "key": "Cal",
+              "note": "Estimated Energy Requirement baseline target."
             }
           }
         },
@@ -572,7 +581,7 @@
               "unit": "g/kg/day",
               "rda_or_ai": 1.2,
               "amdr": null,
-              "key": "Protein"
+              "key": "Prot."
             },
             "carbohydrate": {
               "unit": "g/day",
@@ -622,6 +631,15 @@
               "app_default_target": 3.0,
               "note": "No official DRI. Standard health & fitness maintenance target is 3-5g/day.",
               "key": "Creat."
+            },
+            "energy": {
+              "unit": "kcal/day",
+              "ear": null,
+              "rda_or_ai": 2200.0,
+              "ul": null,
+              "app_default_target": 2200.0,
+              "key": "Cal",
+              "note": "Estimated Energy Requirement baseline target."
             }
           }
         },
@@ -882,7 +900,7 @@
               "unit": "g/kg/day",
               "rda_or_ai": 1.05,
               "amdr": "5-20%",
-              "key": "Protein"
+              "key": "Prot."
             },
             "carbohydrate": {
               "unit": "g/day",
@@ -932,6 +950,15 @@
               "app_default_target": 3.0,
               "note": "No official DRI. Standard health & fitness maintenance target is 3-5g/day.",
               "key": "Creat."
+            },
+            "energy": {
+              "unit": "kcal/day",
+              "ear": null,
+              "rda_or_ai": 2200.0,
+              "ul": null,
+              "app_default_target": 2200.0,
+              "key": "Cal",
+              "note": "Estimated Energy Requirement baseline target."
             }
           }
         },
@@ -1192,7 +1219,7 @@
               "unit": "g/kg/day",
               "rda_or_ai": 0.95,
               "amdr": "10-30%",
-              "key": "Protein"
+              "key": "Prot."
             },
             "carbohydrate": {
               "unit": "g/day",
@@ -1242,6 +1269,15 @@
               "app_default_target": 3.0,
               "note": "No official DRI. Standard health & fitness maintenance target is 3-5g/day.",
               "key": "Creat."
+            },
+            "energy": {
+              "unit": "kcal/day",
+              "ear": null,
+              "rda_or_ai": 2200.0,
+              "ul": null,
+              "app_default_target": 2200.0,
+              "key": "Cal",
+              "note": "Estimated Energy Requirement baseline target."
             }
           }
         },
@@ -1502,7 +1538,7 @@
               "unit": "g/kg/day",
               "rda_or_ai": 0.95,
               "amdr": "10-30%",
-              "key": "Protein"
+              "key": "Prot."
             },
             "carbohydrate": {
               "unit": "g/day",
@@ -1552,6 +1588,15 @@
               "app_default_target": 3.0,
               "note": "No official DRI. Standard health & fitness maintenance target is 3-5g/day.",
               "key": "Creat."
+            },
+            "energy": {
+              "unit": "kcal/day",
+              "ear": null,
+              "rda_or_ai": 2200.0,
+              "ul": null,
+              "app_default_target": 2200.0,
+              "key": "Cal",
+              "note": "Estimated Energy Requirement baseline target."
             }
           }
         },
@@ -1812,7 +1857,7 @@
               "unit": "g/kg/day",
               "rda_or_ai": 0.95,
               "amdr": "10-30%",
-              "key": "Protein"
+              "key": "Prot."
             },
             "carbohydrate": {
               "unit": "g/day",
@@ -1862,6 +1907,15 @@
               "app_default_target": 3.0,
               "note": "No official DRI. Standard health & fitness maintenance target is 3-5g/day.",
               "key": "Creat."
+            },
+            "energy": {
+              "unit": "kcal/day",
+              "ear": null,
+              "rda_or_ai": 2200.0,
+              "ul": null,
+              "app_default_target": 2200.0,
+              "key": "Cal",
+              "note": "Estimated Energy Requirement baseline target."
             }
           }
         },
@@ -2122,7 +2176,7 @@
               "unit": "g/kg/day",
               "rda_or_ai": 0.85,
               "amdr": "10-30%",
-              "key": "Protein"
+              "key": "Prot."
             },
             "carbohydrate": {
               "unit": "g/day",
@@ -2172,6 +2226,15 @@
               "app_default_target": 3.0,
               "note": "No official DRI. Standard health & fitness maintenance target is 3-5g/day.",
               "key": "Creat."
+            },
+            "energy": {
+              "unit": "kcal/day",
+              "ear": null,
+              "rda_or_ai": 2200.0,
+              "ul": null,
+              "app_default_target": 2200.0,
+              "key": "Cal",
+              "note": "Estimated Energy Requirement baseline target."
             }
           }
         },
@@ -2432,7 +2495,7 @@
               "unit": "g/kg/day",
               "rda_or_ai": 0.85,
               "amdr": "10-30%",
-              "key": "Protein"
+              "key": "Prot."
             },
             "carbohydrate": {
               "unit": "g/day",
@@ -2482,6 +2545,15 @@
               "app_default_target": 3.0,
               "note": "No official DRI. Standard health & fitness maintenance target is 3-5g/day.",
               "key": "Creat."
+            },
+            "energy": {
+              "unit": "kcal/day",
+              "ear": null,
+              "rda_or_ai": 2200.0,
+              "ul": null,
+              "app_default_target": 2200.0,
+              "key": "Cal",
+              "note": "Estimated Energy Requirement baseline target."
             }
           }
         },
@@ -2742,7 +2814,7 @@
               "unit": "g/kg/day",
               "rda_or_ai": 0.8,
               "amdr": "10-35%",
-              "key": "Protein"
+              "key": "Prot."
             },
             "carbohydrate": {
               "unit": "g/day",
@@ -2792,6 +2864,15 @@
               "app_default_target": 3.0,
               "note": "No official DRI. Standard health & fitness maintenance target is 3-5g/day.",
               "key": "Creat."
+            },
+            "energy": {
+              "unit": "kcal/day",
+              "ear": null,
+              "rda_or_ai": 2200.0,
+              "ul": null,
+              "app_default_target": 2200.0,
+              "key": "Cal",
+              "note": "Estimated Energy Requirement baseline target."
             }
           }
         },
@@ -3052,7 +3133,7 @@
               "unit": "g/kg/day",
               "rda_or_ai": 0.8,
               "amdr": "10-35%",
-              "key": "Protein"
+              "key": "Prot."
             },
             "carbohydrate": {
               "unit": "g/day",
@@ -3102,6 +3183,15 @@
               "app_default_target": 3.0,
               "note": "No official DRI. Standard health & fitness maintenance target is 3-5g/day.",
               "key": "Creat."
+            },
+            "energy": {
+              "unit": "kcal/day",
+              "ear": null,
+              "rda_or_ai": 2200.0,
+              "ul": null,
+              "app_default_target": 2200.0,
+              "key": "Cal",
+              "note": "Estimated Energy Requirement baseline target."
             }
           }
         },
@@ -3362,7 +3452,7 @@
               "unit": "g/kg/day",
               "rda_or_ai": 0.8,
               "amdr": "10-35%",
-              "key": "Protein"
+              "key": "Prot."
             },
             "carbohydrate": {
               "unit": "g/day",
@@ -3412,6 +3502,15 @@
               "app_default_target": 3.0,
               "note": "No official DRI. Standard health & fitness maintenance target is 3-5g/day.",
               "key": "Creat."
+            },
+            "energy": {
+              "unit": "kcal/day",
+              "ear": null,
+              "rda_or_ai": 2200.0,
+              "ul": null,
+              "app_default_target": 2200.0,
+              "key": "Cal",
+              "note": "Estimated Energy Requirement baseline target."
             }
           }
         },
@@ -3672,7 +3771,7 @@
               "unit": "g/kg/day",
               "rda_or_ai": 0.8,
               "amdr": "10-35%",
-              "key": "Protein"
+              "key": "Prot."
             },
             "carbohydrate": {
               "unit": "g/day",
@@ -3722,6 +3821,15 @@
               "app_default_target": 3.0,
               "note": "No official DRI. Standard health & fitness maintenance target is 3-5g/day.",
               "key": "Creat."
+            },
+            "energy": {
+              "unit": "kcal/day",
+              "ear": null,
+              "rda_or_ai": 2200.0,
+              "ul": null,
+              "app_default_target": 2200.0,
+              "key": "Cal",
+              "note": "Estimated Energy Requirement baseline target."
             }
           }
         },
@@ -3982,7 +4090,7 @@
               "unit": "g/kg/day",
               "rda_or_ai": 0.8,
               "amdr": "10-35%",
-              "key": "Protein"
+              "key": "Prot."
             },
             "carbohydrate": {
               "unit": "g/day",
@@ -4032,6 +4140,15 @@
               "app_default_target": 3.0,
               "note": "No official DRI. Standard health & fitness maintenance target is 3-5g/day.",
               "key": "Creat."
+            },
+            "energy": {
+              "unit": "kcal/day",
+              "ear": null,
+              "rda_or_ai": 2200.0,
+              "ul": null,
+              "app_default_target": 2200.0,
+              "key": "Cal",
+              "note": "Estimated Energy Requirement baseline target."
             }
           }
         },
@@ -4292,7 +4409,7 @@
               "unit": "g/kg/day",
               "rda_or_ai": 0.8,
               "amdr": "10-35%",
-              "key": "Protein"
+              "key": "Prot."
             },
             "carbohydrate": {
               "unit": "g/day",
@@ -4342,6 +4459,15 @@
               "app_default_target": 3.0,
               "note": "No official DRI. Standard health & fitness maintenance target is 3-5g/day.",
               "key": "Creat."
+            },
+            "energy": {
+              "unit": "kcal/day",
+              "ear": null,
+              "rda_or_ai": 2200.0,
+              "ul": null,
+              "app_default_target": 2200.0,
+              "key": "Cal",
+              "note": "Estimated Energy Requirement baseline target."
             }
           }
         },
@@ -4602,7 +4728,7 @@
               "unit": "g/kg/day",
               "rda_or_ai": 0.8,
               "amdr": "10-35%",
-              "key": "Protein"
+              "key": "Prot."
             },
             "carbohydrate": {
               "unit": "g/day",
@@ -4652,6 +4778,15 @@
               "app_default_target": 3.0,
               "note": "No official DRI. Standard health & fitness maintenance target is 3-5g/day.",
               "key": "Creat."
+            },
+            "energy": {
+              "unit": "kcal/day",
+              "ear": null,
+              "rda_or_ai": 2200.0,
+              "ul": null,
+              "app_default_target": 2200.0,
+              "key": "Cal",
+              "note": "Estimated Energy Requirement baseline target."
             }
           }
         },
@@ -4912,7 +5047,7 @@
               "unit": "g/kg/day",
               "rda_or_ai": 0.8,
               "amdr": "10-35%",
-              "key": "Protein"
+              "key": "Prot."
             },
             "carbohydrate": {
               "unit": "g/day",
@@ -4962,6 +5097,15 @@
               "app_default_target": 3.0,
               "note": "No official DRI. Standard health & fitness maintenance target is 3-5g/day.",
               "key": "Creat."
+            },
+            "energy": {
+              "unit": "kcal/day",
+              "ear": null,
+              "rda_or_ai": 2200.0,
+              "ul": null,
+              "app_default_target": 2200.0,
+              "key": "Cal",
+              "note": "Estimated Energy Requirement baseline target."
             }
           }
         },
@@ -5222,7 +5366,7 @@
               "unit": "g/kg/day",
               "rda_or_ai": 1.1,
               "amdr": "10-35%",
-              "key": "Protein"
+              "key": "Prot."
             },
             "carbohydrate": {
               "unit": "g/day",
@@ -5272,6 +5416,15 @@
               "app_default_target": 3.0,
               "note": "No official DRI. Standard health & fitness maintenance target is 3-5g/day.",
               "key": "Creat."
+            },
+            "energy": {
+              "unit": "kcal/day",
+              "ear": null,
+              "rda_or_ai": 2200.0,
+              "ul": null,
+              "app_default_target": 2200.0,
+              "key": "Cal",
+              "note": "Estimated Energy Requirement baseline target."
             }
           }
         },
@@ -5532,7 +5685,7 @@
               "unit": "g/kg/day",
               "rda_or_ai": 1.1,
               "amdr": "10-35%",
-              "key": "Protein"
+              "key": "Prot."
             },
             "carbohydrate": {
               "unit": "g/day",
@@ -5582,6 +5735,15 @@
               "app_default_target": 3.0,
               "note": "No official DRI. Standard health & fitness maintenance target is 3-5g/day.",
               "key": "Creat."
+            },
+            "energy": {
+              "unit": "kcal/day",
+              "ear": null,
+              "rda_or_ai": 2200.0,
+              "ul": null,
+              "app_default_target": 2200.0,
+              "key": "Cal",
+              "note": "Estimated Energy Requirement baseline target."
             }
           }
         },
@@ -5842,7 +6004,7 @@
               "unit": "g/kg/day",
               "rda_or_ai": 1.1,
               "amdr": "10-35%",
-              "key": "Protein"
+              "key": "Prot."
             },
             "carbohydrate": {
               "unit": "g/day",
@@ -5892,6 +6054,15 @@
               "app_default_target": 3.0,
               "note": "No official DRI. Standard health & fitness maintenance target is 3-5g/day.",
               "key": "Creat."
+            },
+            "energy": {
+              "unit": "kcal/day",
+              "ear": null,
+              "rda_or_ai": 2200.0,
+              "ul": null,
+              "app_default_target": 2200.0,
+              "key": "Cal",
+              "note": "Estimated Energy Requirement baseline target."
             }
           }
         },
@@ -6152,7 +6323,7 @@
               "unit": "g/kg/day",
               "rda_or_ai": 1.3,
               "amdr": "10-35%",
-              "key": "Protein"
+              "key": "Prot."
             },
             "carbohydrate": {
               "unit": "g/day",
@@ -6202,6 +6373,15 @@
               "app_default_target": 3.0,
               "note": "No official DRI. Standard health & fitness maintenance target is 3-5g/day.",
               "key": "Creat."
+            },
+            "energy": {
+              "unit": "kcal/day",
+              "ear": null,
+              "rda_or_ai": 2200.0,
+              "ul": null,
+              "app_default_target": 2200.0,
+              "key": "Cal",
+              "note": "Estimated Energy Requirement baseline target."
             }
           }
         },
@@ -6462,7 +6642,7 @@
               "unit": "g/kg/day",
               "rda_or_ai": 1.3,
               "amdr": "10-35%",
-              "key": "Protein"
+              "key": "Prot."
             },
             "carbohydrate": {
               "unit": "g/day",
@@ -6512,6 +6692,15 @@
               "app_default_target": 3.0,
               "note": "No official DRI. Standard health & fitness maintenance target is 3-5g/day.",
               "key": "Creat."
+            },
+            "energy": {
+              "unit": "kcal/day",
+              "ear": null,
+              "rda_or_ai": 2200.0,
+              "ul": null,
+              "app_default_target": 2200.0,
+              "key": "Cal",
+              "note": "Estimated Energy Requirement baseline target."
             }
           }
         },
@@ -6772,7 +6961,7 @@
               "unit": "g/kg/day",
               "rda_or_ai": 1.3,
               "amdr": "10-35%",
-              "key": "Protein"
+              "key": "Prot."
             },
             "carbohydrate": {
               "unit": "g/day",
@@ -6822,6 +7011,15 @@
               "app_default_target": 3.0,
               "note": "No official DRI. Standard health & fitness maintenance target is 3-5g/day.",
               "key": "Creat."
+            },
+            "energy": {
+              "unit": "kcal/day",
+              "ear": null,
+              "rda_or_ai": 2200.0,
+              "ul": null,
+              "app_default_target": 2200.0,
+              "key": "Cal",
+              "note": "Estimated Energy Requirement baseline target."
             }
           }
         }
@@ -6991,7 +7189,9 @@
             "data_type": "SR Legacy",
             "fdc_id": 171844
           },
-          "search_aliases": ["chapati"],
+          "search_aliases": [
+            "chapati"
+          ],
           "default_portion": {
             "label": "1 piece",
             "grams": 68.0,
@@ -7048,7 +7248,9 @@
             "data_type": "SR Legacy",
             "fdc_id": 174075
           },
-          "search_aliases": ["chapati"],
+          "search_aliases": [
+            "chapati"
+          ],
           "default_portion": {
             "label": "1 piece",
             "grams": 43.0,
@@ -7430,7 +7632,9 @@
             "data_type": "SR Legacy",
             "fdc_id": 172727
           },
-          "search_aliases": ["groundnuts"],
+          "search_aliases": [
+            "groundnuts"
+          ],
           "default_portion": {
             "label": "1 oz",
             "grams": 28.4,
@@ -10113,7 +10317,9 @@
             "data_type": "Foundation Foods",
             "fdc_id": 2710840
           },
-          "search_aliases": ["jowar"],
+          "search_aliases": [
+            "jowar"
+          ],
           "default_portion": {
             "label": "1 serving",
             "grams": 30.0,
@@ -10151,7 +10357,9 @@
             "data_type": "Foundation Foods",
             "fdc_id": 2710841
           },
-          "search_aliases": ["jowar"],
+          "search_aliases": [
+            "jowar"
+          ],
           "default_portion": {
             "label": "1 serving",
             "grams": 45.0,
@@ -10822,7 +11030,9 @@
             "data_type": "Foundation Foods",
             "fdc_id": 2346384
           },
-          "search_aliases": ["paneer"],
+          "search_aliases": [
+            "paneer"
+          ],
           "default_portion": {
             "label": "1 serving",
             "grams": 110.0,
@@ -14807,7 +15017,9 @@
             "data_type": "Foundation Foods",
             "fdc_id": 1750348
           },
-          "search_aliases": ["groundnuts"],
+          "search_aliases": [
+            "groundnuts"
+          ],
           "default_portion": {
             "label": "100 g",
             "grams": 100,
@@ -19989,7 +20201,10 @@
             "data_type": "SR Legacy",
             "fdc_id": 173758
           },
-          "search_aliases": ["lobia", "cowpeas"],
+          "search_aliases": [
+            "lobia",
+            "cowpeas"
+          ],
           "default_portion": {
             "label": "1 tbsp",
             "grams": 10.5,
@@ -20315,7 +20530,12 @@
             "data_type": "SR Legacy",
             "fdc_id": 174257
           },
-          "search_aliases": ["moong dal", "moong", "mung dal", "mung bean"],
+          "search_aliases": [
+            "moong dal",
+            "moong",
+            "mung dal",
+            "mung bean"
+          ],
           "default_portion": {
             "label": "1 cup",
             "grams": 202.0,
@@ -20370,7 +20590,11 @@
             "data_type": "SR Legacy",
             "fdc_id": 174256
           },
-          "search_aliases": ["moong dal", "moong", "mung dal"],
+          "search_aliases": [
+            "moong dal",
+            "moong",
+            "mung dal"
+          ],
           "default_portion": {
             "label": "1 tbsp",
             "grams": 13.0,
@@ -20424,7 +20648,9 @@
             "data_type": "SR Legacy",
             "fdc_id": 172469
           },
-          "search_aliases": ["groundnuts"],
+          "search_aliases": [
+            "groundnuts"
+          ],
           "default_portion": {
             "label": "1 tbsp",
             "grams": 32.0,
@@ -20469,7 +20695,9 @@
             "data_type": "Foundation Foods",
             "fdc_id": 2262072
           },
-          "search_aliases": ["groundnuts"],
+          "search_aliases": [
+            "groundnuts"
+          ],
           "default_portion": {
             "label": "100 g",
             "grams": 100,
@@ -20524,7 +20752,9 @@
             "data_type": "SR Legacy",
             "fdc_id": 174294
           },
-          "search_aliases": ["groundnuts"],
+          "search_aliases": [
+            "groundnuts"
+          ],
           "default_portion": {
             "label": "1 tbsp",
             "grams": 32.0,
@@ -20581,7 +20811,9 @@
             "data_type": "SR Legacy",
             "fdc_id": 172470
           },
-          "search_aliases": ["groundnuts"],
+          "search_aliases": [
+            "groundnuts"
+          ],
           "default_portion": {
             "label": "1 tbsp",
             "grams": 32.0,
@@ -20616,7 +20848,9 @@
             "data_type": "Foundation Foods",
             "fdc_id": 2515376
           },
-          "search_aliases": ["groundnuts"],
+          "search_aliases": [
+            "groundnuts"
+          ],
           "default_portion": {
             "label": "1 serving",
             "grams": 30.0,
@@ -20673,7 +20907,9 @@
             "data_type": "SR Legacy",
             "fdc_id": 174262
           },
-          "search_aliases": ["groundnuts"],
+          "search_aliases": [
+            "groundnuts"
+          ],
           "default_portion": {
             "label": "1 peanut",
             "grams": 1.0,
@@ -20728,7 +20964,9 @@
             "data_type": "SR Legacy",
             "fdc_id": 172430
           },
-          "search_aliases": ["groundnuts"],
+          "search_aliases": [
+            "groundnuts"
+          ],
           "default_portion": {
             "label": "1 cup",
             "grams": 146.0,
@@ -20785,7 +21023,9 @@
             "data_type": "SR Legacy",
             "fdc_id": 173806
           },
-          "search_aliases": ["groundnuts"],
+          "search_aliases": [
+            "groundnuts"
+          ],
           "default_portion": {
             "label": "1 cup",
             "grams": 146.0,
@@ -20890,7 +21130,12 @@
             "data_type": "SR Legacy",
             "fdc_id": 172437
           },
-          "search_aliases": ["toor dal", "arhar dal", "pigeon pea", "red gram"],
+          "search_aliases": [
+            "toor dal",
+            "arhar dal",
+            "pigeon pea",
+            "red gram"
+          ],
           "default_portion": {
             "label": "1 cup",
             "grams": 168.0,
@@ -20939,7 +21184,10 @@
             "data_type": "SR Legacy",
             "fdc_id": 172436
           },
-          "search_aliases": ["toor dal", "arhar dal"],
+          "search_aliases": [
+            "toor dal",
+            "arhar dal"
+          ],
           "default_portion": {
             "label": "1 cup",
             "grams": 205.0,
@@ -21901,7 +22149,9 @@
             "data_type": "SR Legacy",
             "fdc_id": 168600
           },
-          "search_aliases": ["groundnuts"],
+          "search_aliases": [
+            "groundnuts"
+          ],
           "default_portion": {
             "label": "1 cup",
             "grams": 134.0,
@@ -21958,7 +22208,9 @@
             "data_type": "SR Legacy",
             "fdc_id": 170587
           },
-          "search_aliases": ["groundnuts"],
+          "search_aliases": [
+            "groundnuts"
+          ],
           "default_portion": {
             "label": "1 cup",
             "grams": 134.0,
@@ -22015,7 +22267,9 @@
             "data_type": "SR Legacy",
             "fdc_id": 169427
           },
-          "search_aliases": ["groundnuts"],
+          "search_aliases": [
+            "groundnuts"
+          ],
           "default_portion": {
             "label": "1 oz",
             "grams": 28.4,
@@ -25310,7 +25564,11 @@
             "data_type": "SR Legacy",
             "fdc_id": 173139
           },
-          "search_aliases": ["groundnuts", "groundnut", "peanut"],
+          "search_aliases": [
+            "groundnuts",
+            "groundnut",
+            "peanut"
+          ],
           "default_portion": {
             "label": "1 bar",
             "grams": 55.0,
@@ -25810,7 +26068,10 @@
             "data_type": "SR Legacy",
             "fdc_id": 168392
           },
-          "search_aliases": ["bitter gourd", "karela"],
+          "search_aliases": [
+            "bitter gourd",
+            "karela"
+          ],
           "default_portion": {
             "label": "1 cup",
             "grams": 58.0,
@@ -25865,7 +26126,10 @@
             "data_type": "SR Legacy",
             "fdc_id": 168394
           },
-          "search_aliases": ["bitter gourd", "karela"],
+          "search_aliases": [
+            "bitter gourd",
+            "karela"
+          ],
           "default_portion": {
             "label": "0.5 cup (1/2\" pieces)",
             "grams": 62.0,
@@ -27580,7 +27844,10 @@
             "data_type": "Foundation Foods",
             "fdc_id": 2685577
           },
-          "search_aliases": ["brinjal", "aubergine"],
+          "search_aliases": [
+            "brinjal",
+            "aubergine"
+          ],
           "default_portion": {
             "label": "1 serving",
             "grams": 85.0,
@@ -27917,7 +28184,11 @@
             "data_type": "SR Legacy",
             "fdc_id": 169957
           },
-          "search_aliases": ["moong dal", "moong", "mung dal"],
+          "search_aliases": [
+            "moong dal",
+            "moong",
+            "mung dal"
+          ],
           "default_portion": {
             "label": "1 cup",
             "grams": 104.0,
@@ -57112,7 +57383,9 @@
             "data_type": "Foundation Foods",
             "fdc_id": 2512373
           },
-          "search_aliases": ["jowar"],
+          "search_aliases": [
+            "jowar"
+          ],
           "default_portion": {
             "label": "1 serving",
             "grams": 45.0,
@@ -57429,7 +57702,9 @@
             "data_type": "Foundation Foods",
             "fdc_id": 2710839
           },
-          "search_aliases": ["jowar"],
+          "search_aliases": [
+            "jowar"
+          ],
           "default_portion": {
             "label": "1 serving",
             "grams": 45.0,
@@ -57467,7 +57742,9 @@
             "data_type": "Foundation Foods",
             "fdc_id": 2710842
           },
-          "search_aliases": ["jowar"],
+          "search_aliases": [
+            "jowar"
+          ],
           "default_portion": {
             "label": "1 serving",
             "grams": 45.0,
@@ -95252,7 +95529,10 @@
             "data_type": "SR Legacy",
             "fdc_id": 169997
           },
-          "search_aliases": ["cilantro", "coriander leaves"],
+          "search_aliases": [
+            "cilantro",
+            "coriander leaves"
+          ],
           "default_portion": {
             "label": "1 cup",
             "grams": 4.0,
@@ -97458,7 +97738,10 @@
             "data_type": "SR Legacy",
             "fdc_id": 169260
           },
-          "search_aliases": ["ladyfinger", "bhindi"],
+          "search_aliases": [
+            "ladyfinger",
+            "bhindi"
+          ],
           "default_portion": {
             "label": "1 cup",
             "grams": 100.0,
