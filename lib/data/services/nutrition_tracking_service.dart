@@ -60,6 +60,19 @@ class NutritionTrackingService {
     return coverageResults;
   }
 
+  /// Watch stream of routine coverage map whenever tracked foods or nutrients change
+  Stream<Map<String, double>> watchPlannedRoutineCoverage() async* {
+    yield await calculatePlannedRoutineCoverage();
+    final foodStream = _isar.foodSourceItems
+        .filter()
+        .isTrackedEqualTo(true)
+        .watch(fireImmediately: false);
+
+    await for (final _ in foodStream) {
+      yield await calculatePlannedRoutineCoverage();
+    }
+  }
+
   // --------------------------------------------------------------------------
   // DAILY LOGGING & AGGREGATION
   // --------------------------------------------------------------------------

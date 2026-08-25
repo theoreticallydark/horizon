@@ -171,14 +171,14 @@ class IsarService {
       });
     }
 
-    // If foods are already populated, skip re-parsing foods for instant startup
+    // If foods are already populated, skip re-parsing for instant startup
     if (foodCount > 0) return;
 
-
-    // 2. Prepare FoodSourceItem items
+    // 2. Prepare FoodSourceItem items (all default to isTracked = false for a clean user baseline)
     final List<FoodSourceItem> foodEntities = [];
     for (final item in foodsList) {
       final f = item as Map<String, dynamic>;
+      final fid = f['food_id']?.toString() ?? '';
       final defaultPortion = f['default_portion'] as Map<String, dynamic>?;
       final grams = (defaultPortion?['grams'] as num?)?.toDouble() ?? 100.0;
       final label = defaultPortion?['label']?.toString() ?? '100g';
@@ -195,7 +195,7 @@ class IsarService {
       });
 
       final foodItem = FoodSourceItem()
-        ..foodId = f['food_id']?.toString() ?? ''
+        ..foodId = fid
         ..name = f['name']?.toString() ?? ''
         ..title = f['title']?.toString() ?? f['name']?.toString() ?? ''
         ..category = f['category']?.toString() ?? 'Other'
@@ -224,6 +224,53 @@ class IsarService {
         await isar.foodSourceItems.putAll(foodEntities.sublist(i, end));
       }
     });
+  }
+
+  /// Demo helper: Populates the user's routine with 12 sample foods (Chia, Pumpkin Seed, Egg, Yogurt, etc.)
+  Future<void> seedDemoRoutine() async {
+    const demoFoodIds = {
+      'fdc_2710819', // Chia Seeds
+      'fdc_2515380', // Pumpkin Seeds
+      'fdc_2515381', // Sunflower Seeds
+      'fdc_171287',  // Egg
+      'fdc_2259793', // Yogurt
+      'fdc_173044',  // Guava
+      'fdc_1105314', // Banana
+      'fdc_170567',  // Almonds
+      'fdc_170026',  // Potato
+      'fdc_747447',  // Broccoli
+      'fdc_2258587', // Carrot
+      'fdc_171520',  // Chicken
+    };
+
+    final List<FoodSourceItem> updates = [];
+    for (final fid in demoFoodIds) {
+      final item = await isar.foodSourceItems.getByFoodId(fid);
+      if (item != null) {
+        item.isTracked = true;
+        item.plannedDailyGrams = item.defaultPortionGrams;
+        updates.add(item);
+      }
+    }
+
+    if (updates.isNotEmpty) {
+      await isar.writeTxn(() async {
+        await isar.foodSourceItems.putAll(updates);
+      });
+    }
+  }
+
+  /// Demo helper: Resets all foods in the database to isTracked = false
+  Future<void> resetAllFoodsToUntracked() async {
+    final trackedFoods = await isar.foodSourceItems.filter().isTrackedEqualTo(true).findAll();
+    if (trackedFoods.isNotEmpty) {
+      for (final f in trackedFoods) {
+        f.isTracked = false;
+      }
+      await isar.writeTxn(() async {
+        await isar.foodSourceItems.putAll(trackedFoods);
+      });
+    }
   }
 
   /// Returns all tracked nutrients excluding energy and total_protein for the NutrientMap

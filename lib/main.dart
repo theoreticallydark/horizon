@@ -10,6 +10,7 @@ import 'pages/track_page.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await IsarService.instance.init();
+  await IsarService.instance.seedDemoRoutine();
   runApp(const MyApp());
 }
 

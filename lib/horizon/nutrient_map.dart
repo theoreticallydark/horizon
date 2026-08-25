@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../alter/alter.dart';
 import '../data/models/nutrient_info.dart';
 import '../data/services/isar_service.dart';
+import '../data/services/nutrition_tracking_service.dart';
 import 'nutrient_pill.dart';
 
 enum NutrientMapVariant {
@@ -60,30 +61,30 @@ class NutrientMap extends StatelessWidget {
   /// Default 20 standard nutrients configured with exact key labels and dynamic colors
   static const List<NutrientData> defaultNutrients = [
     // Row 1 (7 Daily Nutrients: Vit C, Coll., Fiber, Mg, Ca, K, Creat. -> neutral color)
-    NutrientData(nutrientKey: 'vitamin_c', label: 'Vit C', value: '85%', color: PillColor.neutral),
-    NutrientData(nutrientKey: 'collagen', label: 'Coll.', value: '85%', color: PillColor.neutral),
-    NutrientData(nutrientKey: 'total_fiber', label: 'Fiber', value: '85%', color: PillColor.neutral),
-    NutrientData(nutrientKey: 'magnesium', label: 'Mg', value: '85%', color: PillColor.neutral),
-    NutrientData(nutrientKey: 'calcium', label: 'Ca', value: '85%', color: PillColor.neutral),
-    NutrientData(nutrientKey: 'potassium', label: 'K', value: '85%', color: PillColor.neutral),
-    NutrientData(nutrientKey: 'creatine', label: 'Creat.', value: '85%', color: PillColor.neutral),
+    NutrientData(nutrientKey: 'vitamin_c', label: 'Vit C', value: '0%', color: PillColor.neutral),
+    NutrientData(nutrientKey: 'collagen', label: 'Coll.', value: '0%', color: PillColor.neutral),
+    NutrientData(nutrientKey: 'total_fiber', label: 'Fiber', value: '0%', color: PillColor.neutral),
+    NutrientData(nutrientKey: 'magnesium', label: 'Mg', value: '0%', color: PillColor.neutral),
+    NutrientData(nutrientKey: 'calcium', label: 'Ca', value: '0%', color: PillColor.neutral),
+    NutrientData(nutrientKey: 'potassium', label: 'K', value: '0%', color: PillColor.neutral),
+    NutrientData(nutrientKey: 'creatine', label: 'Creat.', value: '0%', color: PillColor.neutral),
 
     // Row 2 (Weekly Nutrients -> gray color)
-    NutrientData(nutrientKey: 'vitamin_a', label: 'Vit A', value: '85%', color: PillColor.gray),
-    NutrientData(nutrientKey: 'vitamin_e', label: 'Vit E', value: '85%', color: PillColor.gray),
-    NutrientData(nutrientKey: 'vitamin_b12', label: 'Vit B12', value: '85%', color: PillColor.gray),
-    NutrientData(nutrientKey: 'selenium', label: 'Se', value: '85%', color: PillColor.gray),
-    NutrientData(nutrientKey: 'zinc', label: 'Zinc', value: '85%', color: PillColor.gray),
-    NutrientData(nutrientKey: 'iron', label: 'Iron', value: '85%', color: PillColor.gray),
-    NutrientData(nutrientKey: 'iodine', label: 'Iodine', value: '85%', color: PillColor.gray),
+    NutrientData(nutrientKey: 'vitamin_a', label: 'Vit A', value: '0%', color: PillColor.gray),
+    NutrientData(nutrientKey: 'vitamin_e', label: 'Vit E', value: '0%', color: PillColor.gray),
+    NutrientData(nutrientKey: 'vitamin_b12', label: 'Vit B12', value: '0%', color: PillColor.gray),
+    NutrientData(nutrientKey: 'selenium', label: 'Se', value: '0%', color: PillColor.gray),
+    NutrientData(nutrientKey: 'zinc', label: 'Zinc', value: '0%', color: PillColor.gray),
+    NutrientData(nutrientKey: 'iron', label: 'Iron', value: '0%', color: PillColor.gray),
+    NutrientData(nutrientKey: 'iodine', label: 'Iodine', value: '0%', color: PillColor.gray),
 
     // Row 3 (Weekly Nutrients & Essential Lipids -> gray color)
-    NutrientData(nutrientKey: 'vitamin_k', label: 'Vit K', value: '85%', color: PillColor.gray),
-    NutrientData(nutrientKey: 'folate', label: 'Folate', value: '85%', color: PillColor.gray),
-    NutrientData(nutrientKey: 'vitamin_d', label: 'Vit D', value: '85%', color: PillColor.gray),
-    NutrientData(nutrientKey: 'linoleic_acid_omega_6', label: 'Om6', value: '85%', color: PillColor.gray),
-    NutrientData(nutrientKey: 'alpha_linolenic_acid_omega_3', label: 'ALA', value: '85%', color: PillColor.gray),
-    NutrientData(nutrientKey: 'omega_3_epa_dha', label: 'Om3', value: '85%', color: PillColor.gray),
+    NutrientData(nutrientKey: 'vitamin_k', label: 'Vit K', value: '0%', color: PillColor.gray),
+    NutrientData(nutrientKey: 'folate', label: 'Folate', value: '0%', color: PillColor.gray),
+    NutrientData(nutrientKey: 'vitamin_d', label: 'Vit D', value: '0%', color: PillColor.gray),
+    NutrientData(nutrientKey: 'linoleic_acid_omega_6', label: 'Om6', value: '0%', color: PillColor.gray),
+    NutrientData(nutrientKey: 'alpha_linolenic_acid_omega_3', label: 'ALA', value: '0%', color: PillColor.gray),
+    NutrientData(nutrientKey: 'omega_3_epa_dha', label: 'Om3', value: '0%', color: PillColor.gray),
   ];
 
   const NutrientMap({
@@ -95,8 +96,11 @@ class NutrientMap extends StatelessWidget {
     this.runSpacing = 3.5,
   });
 
-  /// Map database NutrientInfo list to NutrientData UI items
-  List<NutrientData> _mapFromEntities(List<NutrientInfo> list) {
+  /// Map database NutrientInfo list and calculated live coverage to NutrientData UI items
+  List<NutrientData> _mapFromEntities(
+    List<NutrientInfo> list,
+    Map<String, double> coverageMap,
+  ) {
     if (list.isEmpty) return defaultNutrients;
 
     // Sort: Daily nutrients first (Row 1), then Weekly nutrients
@@ -107,11 +111,16 @@ class NutrientMap extends StatelessWidget {
     return ordered.map((n) {
       final label = n.shortKey ?? n.displayName;
       final isDaily = n.frequency == TrackingFrequency.daily;
+      final rawPercent = coverageMap[n.nutrientKey] ?? 0.0;
+      final percentClamped = rawPercent.clamp(0.0, 999.0).round();
+      final isCompleted = rawPercent >= 100.0;
+
       return NutrientData(
         nutrientKey: n.nutrientKey,
         label: label,
-        value: '85%', // placeholder
+        value: '$percentClamped%',
         color: isDaily ? PillColor.neutral : PillColor.gray,
+        isCompleted: isCompleted,
       );
     }).toList();
   }
@@ -181,12 +190,22 @@ class NutrientMap extends StatelessWidget {
       return _buildGrid(nutrients!);
     }
 
-    // Otherwise, dynamically watch Isar database for tracked nutrients excluding energy and total_protein
+    final trackingService = NutritionTrackingService();
+
+    // Dynamically watch Isar database for tracked nutrients and live routine coverage
     return StreamBuilder<List<NutrientInfo>>(
       stream: IsarService.instance.watchTrackedNutrientsForMap(),
-      builder: (context, snapshot) {
-        final items = _mapFromEntities(snapshot.data ?? []);
-        return _buildGrid(items);
+      builder: (context, nutrientSnapshot) {
+        final nutrientList = nutrientSnapshot.data ?? [];
+
+        return StreamBuilder<Map<String, double>>(
+          stream: trackingService.watchPlannedRoutineCoverage(),
+          builder: (context, coverageSnapshot) {
+            final coverageMap = coverageSnapshot.data ?? {};
+            final items = _mapFromEntities(nutrientList, coverageMap);
+            return _buildGrid(items);
+          },
+        );
       },
     );
   }
