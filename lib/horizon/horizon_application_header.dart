@@ -30,12 +30,9 @@ class HorizonApplicationHeader extends StatelessWidget {
           hasProfileAction: false,
           onProfileTap: onProfileTap,
           onStyleButtonTap: onStreakTap,
-          slot: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: NutrientMap(
-              variant: NutrientMapVariant.trackFullView,
-              onNutrientTap: onNutrientTap,
-            ),
+          slot: NutrientMap(
+            variant: NutrientMapVariant.trackFullView,
+            onNutrientTap: onNutrientTap,
           ),
         );
       case 1:
@@ -59,12 +56,9 @@ class HorizonApplicationHeader extends StatelessWidget {
           hasActionTwo: false,
           hasProfileAction: true,
           onProfileTap: onProfileTap,
-          slot: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: NutrientMap(
-              variant: NutrientMapVariant.routine,
-              onNutrientTap: onNutrientTap,
-            ),
+          slot: NutrientMap(
+            variant: NutrientMapVariant.routine,
+            onNutrientTap: onNutrientTap,
           ),
         );
       default:

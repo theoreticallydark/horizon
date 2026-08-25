@@ -7,7 +7,8 @@ import 'buttons/button_icon.dart';
 
 class ApplicationHeader extends StatelessWidget {
   /// Component version for reference.
-  static const String version = '1.0.0';
+  /// v1.0.1: Updated outer layout to 24px padding all around and 16px itemSpacing between headerContainer and Slot as per Figma node 119:5716.
+  static const String version = '1.0.1';
 
   final String title;
   final String subtitle;
@@ -47,34 +48,38 @@ class ApplicationHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          child: Row(
+    return Padding(
+      padding: const EdgeInsets.all(24.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Header Row Container (Title + Subtitle on Left, Actions on Right)
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               // Title & Subtitle Group
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: AlterTypography.h1Serif.copyWith(
-                      color: AlterSemanticTokens.textPrimary,
+              Expanded(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: AlterTypography.h1Serif.copyWith(
+                        color: AlterSemanticTokens.textPrimary,
+                      ),
                     ),
-                  ),
-                  Text(
-                    subtitle,
-                    style: AlterTypography.caption.copyWith(
-                      color: AlterSemanticTokens.textSecondary,
+                    const SizedBox(height: 4),
+                    Text(
+                      subtitle,
+                      style: AlterTypography.caption.copyWith(
+                        color: AlterSemanticTokens.textSecondary,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
 
               // Action Items Group
@@ -112,13 +117,20 @@ class ApplicationHeader extends StatelessWidget {
               ),
             ],
           ),
-        ),
-        AnimatedSize(
-          duration: const Duration(milliseconds: 250),
-          curve: Curves.easeInOutCubic,
-          child: slot ?? const SizedBox.shrink(),
-        ),
-      ],
+
+          // Slot Container (Animated with 16px gap above)
+          AnimatedSize(
+            duration: const Duration(milliseconds: 250),
+            curve: Curves.easeInOutCubic,
+            child: slot != null
+                ? Padding(
+                    padding: const EdgeInsets.only(top: 16.0),
+                    child: slot!,
+                  )
+                : const SizedBox.shrink(),
+          ),
+        ],
+      ),
     );
   }
 }

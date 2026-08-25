@@ -25,7 +25,7 @@ class NutrientPill extends StatelessWidget {
     this.isSelected = false,
     this.isCompleted = false,
     this.isInteractive = true,
-    this.horizontalPadding = 4.0,
+    this.horizontalPadding = 3.0,
     this.onTap,
   });
 
