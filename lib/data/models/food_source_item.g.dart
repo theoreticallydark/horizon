@@ -32,49 +32,59 @@ const FoodSourceItemSchema = CollectionSchema(
       name: r'defaultPortionLabel',
       type: IsarType.string,
     ),
-    r'foodId': PropertySchema(
+    r'energy': PropertySchema(
       id: 3,
+      name: r'energy',
+      type: IsarType.double,
+    ),
+    r'foodId': PropertySchema(
+      id: 4,
       name: r'foodId',
       type: IsarType.string,
     ),
     r'foodState': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'foodState',
       type: IsarType.string,
     ),
     r'isFavorite': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'isFavorite',
       type: IsarType.bool,
     ),
     r'isTracked': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'isTracked',
       type: IsarType.bool,
     ),
     r'isVisibleOnApp': PropertySchema(
-      id: 7,
+      id: 8,
       name: r'isVisibleOnApp',
       type: IsarType.bool,
     ),
     r'name': PropertySchema(
-      id: 8,
+      id: 9,
       name: r'name',
       type: IsarType.string,
     ),
     r'nutrients': PropertySchema(
-      id: 9,
+      id: 10,
       name: r'nutrients',
       type: IsarType.objectList,
       target: r'FoodNutrientValue',
     ),
     r'plannedDailyGrams': PropertySchema(
-      id: 10,
+      id: 11,
       name: r'plannedDailyGrams',
       type: IsarType.double,
     ),
+    r'proteinIndex': PropertySchema(
+      id: 12,
+      name: r'proteinIndex',
+      type: IsarType.long,
+    ),
     r'title': PropertySchema(
-      id: 11,
+      id: 13,
       name: r'title',
       type: IsarType.string,
     )
@@ -228,20 +238,22 @@ void _foodSourceItemSerialize(
   writer.writeString(offsets[0], object.category);
   writer.writeDouble(offsets[1], object.defaultPortionGrams);
   writer.writeString(offsets[2], object.defaultPortionLabel);
-  writer.writeString(offsets[3], object.foodId);
-  writer.writeString(offsets[4], object.foodState);
-  writer.writeBool(offsets[5], object.isFavorite);
-  writer.writeBool(offsets[6], object.isTracked);
-  writer.writeBool(offsets[7], object.isVisibleOnApp);
-  writer.writeString(offsets[8], object.name);
+  writer.writeDouble(offsets[3], object.energy);
+  writer.writeString(offsets[4], object.foodId);
+  writer.writeString(offsets[5], object.foodState);
+  writer.writeBool(offsets[6], object.isFavorite);
+  writer.writeBool(offsets[7], object.isTracked);
+  writer.writeBool(offsets[8], object.isVisibleOnApp);
+  writer.writeString(offsets[9], object.name);
   writer.writeObjectList<FoodNutrientValue>(
-    offsets[9],
+    offsets[10],
     allOffsets,
     FoodNutrientValueSchema.serialize,
     object.nutrients,
   );
-  writer.writeDouble(offsets[10], object.plannedDailyGrams);
-  writer.writeString(offsets[11], object.title);
+  writer.writeDouble(offsets[11], object.plannedDailyGrams);
+  writer.writeLong(offsets[12], object.proteinIndex);
+  writer.writeString(offsets[13], object.title);
 }
 
 FoodSourceItem _foodSourceItemDeserialize(
@@ -254,22 +266,24 @@ FoodSourceItem _foodSourceItemDeserialize(
   object.category = reader.readString(offsets[0]);
   object.defaultPortionGrams = reader.readDouble(offsets[1]);
   object.defaultPortionLabel = reader.readStringOrNull(offsets[2]);
-  object.foodId = reader.readString(offsets[3]);
-  object.foodState = reader.readStringOrNull(offsets[4]);
+  object.energy = reader.readDouble(offsets[3]);
+  object.foodId = reader.readString(offsets[4]);
+  object.foodState = reader.readStringOrNull(offsets[5]);
   object.id = id;
-  object.isFavorite = reader.readBool(offsets[5]);
-  object.isTracked = reader.readBool(offsets[6]);
-  object.isVisibleOnApp = reader.readBool(offsets[7]);
-  object.name = reader.readString(offsets[8]);
+  object.isFavorite = reader.readBool(offsets[6]);
+  object.isTracked = reader.readBool(offsets[7]);
+  object.isVisibleOnApp = reader.readBool(offsets[8]);
+  object.name = reader.readString(offsets[9]);
   object.nutrients = reader.readObjectList<FoodNutrientValue>(
-        offsets[9],
+        offsets[10],
         FoodNutrientValueSchema.deserialize,
         allOffsets,
         FoodNutrientValue(),
       ) ??
       [];
-  object.plannedDailyGrams = reader.readDouble(offsets[10]);
-  object.title = reader.readString(offsets[11]);
+  object.plannedDailyGrams = reader.readDouble(offsets[11]);
+  object.proteinIndex = reader.readLong(offsets[12]);
+  object.title = reader.readString(offsets[13]);
   return object;
 }
 
@@ -287,18 +301,20 @@ P _foodSourceItemDeserializeProp<P>(
     case 2:
       return (reader.readStringOrNull(offset)) as P;
     case 3:
-      return (reader.readString(offset)) as P;
+      return (reader.readDouble(offset)) as P;
     case 4:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 5:
-      return (reader.readBool(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 6:
       return (reader.readBool(offset)) as P;
     case 7:
       return (reader.readBool(offset)) as P;
     case 8:
-      return (reader.readString(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 9:
+      return (reader.readString(offset)) as P;
+    case 10:
       return (reader.readObjectList<FoodNutrientValue>(
             offset,
             FoodNutrientValueSchema.deserialize,
@@ -306,9 +322,11 @@ P _foodSourceItemDeserializeProp<P>(
             FoodNutrientValue(),
           ) ??
           []) as P;
-    case 10:
-      return (reader.readDouble(offset)) as P;
     case 11:
+      return (reader.readDouble(offset)) as P;
+    case 12:
+      return (reader.readLong(offset)) as P;
+    case 13:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -1367,6 +1385,72 @@ extension FoodSourceItemQueryFilter
   }
 
   QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterFilterCondition>
+      energyEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'energy',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterFilterCondition>
+      energyGreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'energy',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterFilterCondition>
+      energyLessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'energy',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterFilterCondition>
+      energyBetween(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'energy',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterFilterCondition>
       foodIdEqualTo(
     String value, {
     bool caseSensitive = true,
@@ -2033,6 +2117,62 @@ extension FoodSourceItemQueryFilter
   }
 
   QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterFilterCondition>
+      proteinIndexEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'proteinIndex',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterFilterCondition>
+      proteinIndexGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'proteinIndex',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterFilterCondition>
+      proteinIndexLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'proteinIndex',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterFilterCondition>
+      proteinIndexBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'proteinIndex',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterFilterCondition>
       titleEqualTo(
     String value, {
     bool caseSensitive = true,
@@ -2225,6 +2365,19 @@ extension FoodSourceItemQuerySortBy
     });
   }
 
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterSortBy> sortByEnergy() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'energy', Sort.asc);
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterSortBy>
+      sortByEnergyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'energy', Sort.desc);
+    });
+  }
+
   QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterSortBy> sortByFoodId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'foodId', Sort.asc);
@@ -2318,6 +2471,20 @@ extension FoodSourceItemQuerySortBy
     });
   }
 
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterSortBy>
+      sortByProteinIndex() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'proteinIndex', Sort.asc);
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterSortBy>
+      sortByProteinIndexDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'proteinIndex', Sort.desc);
+    });
+  }
+
   QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterSortBy> sortByTitle() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'title', Sort.asc);
@@ -2371,6 +2538,19 @@ extension FoodSourceItemQuerySortThenBy
       thenByDefaultPortionLabelDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'defaultPortionLabel', Sort.desc);
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterSortBy> thenByEnergy() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'energy', Sort.asc);
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterSortBy>
+      thenByEnergyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'energy', Sort.desc);
     });
   }
 
@@ -2479,6 +2659,20 @@ extension FoodSourceItemQuerySortThenBy
     });
   }
 
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterSortBy>
+      thenByProteinIndex() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'proteinIndex', Sort.asc);
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterSortBy>
+      thenByProteinIndexDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'proteinIndex', Sort.desc);
+    });
+  }
+
   QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterSortBy> thenByTitle() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'title', Sort.asc);
@@ -2513,6 +2707,12 @@ extension FoodSourceItemQueryWhereDistinct
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'defaultPortionLabel',
           caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QDistinct> distinctByEnergy() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'energy');
     });
   }
 
@@ -2565,6 +2765,13 @@ extension FoodSourceItemQueryWhereDistinct
     });
   }
 
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QDistinct>
+      distinctByProteinIndex() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'proteinIndex');
+    });
+  }
+
   QueryBuilder<FoodSourceItem, FoodSourceItem, QDistinct> distinctByTitle(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -2598,6 +2805,12 @@ extension FoodSourceItemQueryProperty
       defaultPortionLabelProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'defaultPortionLabel');
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, double, QQueryOperations> energyProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'energy');
     });
   }
 
@@ -2649,6 +2862,12 @@ extension FoodSourceItemQueryProperty
       plannedDailyGramsProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'plannedDailyGrams');
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, int, QQueryOperations> proteinIndexProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'proteinIndex');
     });
   }
 

@@ -9,6 +9,7 @@ class NutrientInfo {
   @Index(unique: true, replace: true)
   late String nutrientKey; // e.g. "vitamin_a", "total_protein", "iron"
 
+  String? shortKey; // e.g. "Vit A", "Vit C", "Mg", "Coll."
   late String displayName;
   String? category; // 'Vitamins', 'Minerals', 'Macronutrients', 'Lipids'
   late String unit; // 'mg/day', 'µg/day', 'g/day'

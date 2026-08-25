@@ -58,13 +58,18 @@ const NutrientInfoSchema = CollectionSchema(
       name: r'rdaOrAi',
       type: IsarType.double,
     ),
-    r'ul': PropertySchema(
+    r'shortKey': PropertySchema(
       id: 8,
+      name: r'shortKey',
+      type: IsarType.string,
+    ),
+    r'ul': PropertySchema(
+      id: 9,
       name: r'ul',
       type: IsarType.double,
     ),
     r'unit': PropertySchema(
-      id: 9,
+      id: 10,
       name: r'unit',
       type: IsarType.string,
     )
@@ -138,6 +143,12 @@ int _nutrientInfoEstimateSize(
   bytesCount += 3 + object.displayName.length * 3;
   bytesCount += 3 + object.frequency.name.length * 3;
   bytesCount += 3 + object.nutrientKey.length * 3;
+  {
+    final value = object.shortKey;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   bytesCount += 3 + object.unit.length * 3;
   return bytesCount;
 }
@@ -156,8 +167,9 @@ void _nutrientInfoSerialize(
   writer.writeBool(offsets[5], object.isVisibleOnApp);
   writer.writeString(offsets[6], object.nutrientKey);
   writer.writeDouble(offsets[7], object.rdaOrAi);
-  writer.writeDouble(offsets[8], object.ul);
-  writer.writeString(offsets[9], object.unit);
+  writer.writeString(offsets[8], object.shortKey);
+  writer.writeDouble(offsets[9], object.ul);
+  writer.writeString(offsets[10], object.unit);
 }
 
 NutrientInfo _nutrientInfoDeserialize(
@@ -178,8 +190,9 @@ NutrientInfo _nutrientInfoDeserialize(
   object.isVisibleOnApp = reader.readBool(offsets[5]);
   object.nutrientKey = reader.readString(offsets[6]);
   object.rdaOrAi = reader.readDoubleOrNull(offsets[7]);
-  object.ul = reader.readDoubleOrNull(offsets[8]);
-  object.unit = reader.readString(offsets[9]);
+  object.shortKey = reader.readStringOrNull(offsets[8]);
+  object.ul = reader.readDoubleOrNull(offsets[9]);
+  object.unit = reader.readString(offsets[10]);
   return object;
 }
 
@@ -209,8 +222,10 @@ P _nutrientInfoDeserializeProp<P>(
     case 7:
       return (reader.readDoubleOrNull(offset)) as P;
     case 8:
-      return (reader.readDoubleOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 9:
+      return (reader.readDoubleOrNull(offset)) as P;
+    case 10:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -1326,6 +1341,160 @@ extension NutrientInfoQueryFilter
     });
   }
 
+  QueryBuilder<NutrientInfo, NutrientInfo, QAfterFilterCondition>
+      shortKeyIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'shortKey',
+      ));
+    });
+  }
+
+  QueryBuilder<NutrientInfo, NutrientInfo, QAfterFilterCondition>
+      shortKeyIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'shortKey',
+      ));
+    });
+  }
+
+  QueryBuilder<NutrientInfo, NutrientInfo, QAfterFilterCondition>
+      shortKeyEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'shortKey',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<NutrientInfo, NutrientInfo, QAfterFilterCondition>
+      shortKeyGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'shortKey',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<NutrientInfo, NutrientInfo, QAfterFilterCondition>
+      shortKeyLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'shortKey',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<NutrientInfo, NutrientInfo, QAfterFilterCondition>
+      shortKeyBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'shortKey',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<NutrientInfo, NutrientInfo, QAfterFilterCondition>
+      shortKeyStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'shortKey',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<NutrientInfo, NutrientInfo, QAfterFilterCondition>
+      shortKeyEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'shortKey',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<NutrientInfo, NutrientInfo, QAfterFilterCondition>
+      shortKeyContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'shortKey',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<NutrientInfo, NutrientInfo, QAfterFilterCondition>
+      shortKeyMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'shortKey',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<NutrientInfo, NutrientInfo, QAfterFilterCondition>
+      shortKeyIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'shortKey',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<NutrientInfo, NutrientInfo, QAfterFilterCondition>
+      shortKeyIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'shortKey',
+        value: '',
+      ));
+    });
+  }
+
   QueryBuilder<NutrientInfo, NutrientInfo, QAfterFilterCondition> ulIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -1648,6 +1817,18 @@ extension NutrientInfoQuerySortBy
     });
   }
 
+  QueryBuilder<NutrientInfo, NutrientInfo, QAfterSortBy> sortByShortKey() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'shortKey', Sort.asc);
+    });
+  }
+
+  QueryBuilder<NutrientInfo, NutrientInfo, QAfterSortBy> sortByShortKeyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'shortKey', Sort.desc);
+    });
+  }
+
   QueryBuilder<NutrientInfo, NutrientInfo, QAfterSortBy> sortByUl() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'ul', Sort.asc);
@@ -1787,6 +1968,18 @@ extension NutrientInfoQuerySortThenBy
     });
   }
 
+  QueryBuilder<NutrientInfo, NutrientInfo, QAfterSortBy> thenByShortKey() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'shortKey', Sort.asc);
+    });
+  }
+
+  QueryBuilder<NutrientInfo, NutrientInfo, QAfterSortBy> thenByShortKeyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'shortKey', Sort.desc);
+    });
+  }
+
   QueryBuilder<NutrientInfo, NutrientInfo, QAfterSortBy> thenByUl() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'ul', Sort.asc);
@@ -1867,6 +2060,13 @@ extension NutrientInfoQueryWhereDistinct
     });
   }
 
+  QueryBuilder<NutrientInfo, NutrientInfo, QDistinct> distinctByShortKey(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'shortKey', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<NutrientInfo, NutrientInfo, QDistinct> distinctByUl() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'ul');
@@ -1935,6 +2135,12 @@ extension NutrientInfoQueryProperty
   QueryBuilder<NutrientInfo, double?, QQueryOperations> rdaOrAiProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'rdaOrAi');
+    });
+  }
+
+  QueryBuilder<NutrientInfo, String?, QQueryOperations> shortKeyProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'shortKey');
     });
   }
 

@@ -37,6 +37,12 @@ class FoodSourceItem {
   /// Planned Daily Grams in Routine (defaults to defaultPortionGrams when isTracked is toggled on)
   double plannedDailyGrams = 100.0;
 
+  /// Energy in kcal per 100g edible portion
+  double energy = 0.0;
+
+  /// Binary complete protein index (1 = complete/high-quality protein source, 0 = other)
+  int proteinIndex = 0;
+
   /// Nutrients per 100g of edible portion
   List<FoodNutrientValue> nutrients = [];
 }

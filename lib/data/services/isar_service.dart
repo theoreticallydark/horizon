@@ -59,9 +59,6 @@ class IsarService {
       });
     }
 
-    // If foods are already populated, skip re-parsing for instant startup
-    if (foodCount > 0) return;
-
     // Load JSON from bundle
     final jsonString = await rootBundle.loadString('sources/dri_and_foods.json');
     final Map<String, dynamic> root = jsonDecode(jsonString);
@@ -83,22 +80,42 @@ class IsarService {
         ? demoMatch['nutrients'] as Map<String, dynamic>
         : <String, dynamic>{};
 
-    // 1. Prepare NutrientInfo items
-    final List<NutrientInfo> nutrientEntities = [];
-    driNutrients.forEach((key, value) {
-      final valMap = value as Map<String, dynamic>;
-      final entity = NutrientInfo()
-        ..nutrientKey = key
-        ..displayName = _formatDisplayName(key)
-        ..unit = valMap['unit']?.toString() ?? ''
-        ..isVisibleOnApp = true
-        ..isTracked = true
-        ..frequency = TrackingFrequency.daily
-        ..ear = (valMap['ear'] as num?)?.toDouble()
-        ..rdaOrAi = (valMap['rda_or_ai'] as num?)?.toDouble()
-        ..ul = (valMap['ul'] as num?)?.toDouble();
-      nutrientEntities.add(entity);
-    });
+    // 1. Sync / Add / Update NutrientInfo items
+    final List<NutrientInfo> nutrientEntitiesToSave = [];
+    for (final entry in driNutrients.entries) {
+      final key = entry.key;
+      final valMap = entry.value as Map<String, dynamic>;
+      final shortKeyVal = valMap['key']?.toString();
+      final existing = await isar.nutrientInfos.getByNutrientKey(key);
+
+      if (existing == null) {
+        final entity = NutrientInfo()
+          ..nutrientKey = key
+          ..shortKey = shortKeyVal
+          ..displayName = _formatDisplayName(key)
+          ..unit = valMap['unit']?.toString() ?? ''
+          ..isVisibleOnApp = true
+          ..isTracked = true
+          ..frequency = TrackingFrequency.daily
+          ..ear = (valMap['ear'] as num?)?.toDouble()
+          ..rdaOrAi = (valMap['rda_or_ai'] as num?)?.toDouble()
+          ..ul = (valMap['ul'] as num?)?.toDouble();
+        nutrientEntitiesToSave.add(entity);
+      } else if (existing.shortKey != shortKeyVal && shortKeyVal != null) {
+        existing.shortKey = shortKeyVal;
+        nutrientEntitiesToSave.add(existing);
+      }
+    }
+
+    if (nutrientEntitiesToSave.isNotEmpty) {
+      await isar.writeTxn(() async {
+        await isar.nutrientInfos.putAll(nutrientEntitiesToSave);
+      });
+    }
+
+    // If foods are already populated, skip re-parsing foods for instant startup
+    if (foodCount > 0) return;
+
 
     // 2. Prepare FoodSourceItem items
     final List<FoodSourceItem> foodEntities = [];
@@ -131,15 +148,15 @@ class IsarService {
         ..defaultPortionLabel = label
         ..defaultPortionGrams = grams
         ..plannedDailyGrams = grams
+        ..energy = (f['energy'] as num?)?.toDouble() ?? 0.0
+        ..proteinIndex = (f['protein_index'] as num?)?.toInt() ?? 0
         ..nutrients = nutrientValues;
 
       foodEntities.add(foodItem);
     }
 
-    // Batch insert into Isar in chunks
+    // Batch insert foods into Isar in chunks
     await isar.writeTxn(() async {
-      await isar.nutrientInfos.putAll(nutrientEntities);
-      
       // Batch insert foods in chunks of 500 for optimal performance
       const chunkSize = 500;
       for (var i = 0; i < foodEntities.length; i += chunkSize) {
