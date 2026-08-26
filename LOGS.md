@@ -80,4 +80,10 @@
 - **2026-08-26 06:35 AM** - Enabled `Om3` Baseline Target Mapping: `IsarService` now accurately loads `app_default_target` (250mg) from `sources/dri_and_foods.json` when standard RDA is null, allowing `omega_3_epa_dha` to compute live coverage and map to the `Om3` pill.
 - **2026-08-26 06:40 AM** - Updated `NutrientMap` to Single-Select: simplified nutrient filtering to single-selection mode (`selectedNutrientKey`), where tapping an active nutrient highlights that pill and filters Track & Routine lists, and tapping again deselects it.
 - **2026-08-26 06:45 AM** - Normalized `HorizonListItem` Subtitle Coverage: updated `_buildNutrientCoverageSubtitle()` in `RoutinePage` to compute coverage percentages relative to the nutrient's frequency (comparing weekly yield $\times 7$ against weekly target), ensuring subtitle percentages (e.g. Vit B12 82% on Eggs) match the `NutrientMap` pill totals.
+- **2026-08-26 06:50 AM** - Updated `ApplicationHeader` (`v1.0.2`): dynamically hugs action elements with spacing only between adjacent active items, completely eliminating the trailing 8px space when single actions (like `ButtonGraphicText` on Track header) are rendered.
+- **2026-08-26 06:55 AM** - Cleaned `StatsPage`: removed mock `HorizonListItem` variant previews and set a clean placeholder view.
+- **2026-08-26 07:05 AM** - Implemented UI & Database Performance Optimizations:
+  1. *Debounced Target Writes*: Long-pressing `-` / `+` on routine items now updates target locally with instant visual response and flushes a single write transaction to Isar on release, eliminating continuous disk I/O.
+  2. *Consolidated Stream Architecture*: Created `watchRoutinePageState()` and `watchTrackPageState()` in `NutritionTrackingService` to combine multi-tier watcher streams into single unified stream builders.
+  3. *In-Memory Pre-Computed Target Cache*: Routine item subtitles now perform $O(1)$ dictionary lookups against pre-calculated effective nutrient targets rather than re-computing demographic rules per item on every render frame.
 

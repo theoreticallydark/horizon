@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../alter/alter.dart';
 import '../data/models/food_source_item.dart';
 import '../data/models/nutrient_info.dart';
-import '../data/models/user_profile.dart';
 import '../data/services/nutrition_tracking_service.dart';
 import '../horizon/horizon_list_item.dart';
 import '../horizon/horizon_title_bar.dart';
@@ -25,6 +24,8 @@ class _RoutinePageState extends State<RoutinePage> {
 
   // Active timer for continuous increment/decrement during long press
   Timer? _continuousTimer;
+  String? _activeFoodId;
+  double? _activeTargetGrams;
 
   void _startContinuousChange({
     required String foodId,
@@ -32,35 +33,39 @@ class _RoutinePageState extends State<RoutinePage> {
     required double delta,
   }) {
     _continuousTimer?.cancel();
-    double currentVal = currentPlannedGrams;
+    _activeFoodId = foodId;
+    _activeTargetGrams = currentPlannedGrams;
 
-    // Initial step immediately after press
-    currentVal = (currentVal + delta);
-    if (currentVal < 1.0) currentVal = 1.0;
-    _trackingService.updateFoodPlannedTarget(
-      foodId: foodId,
-      newTargetGrams: currentVal,
-    );
+    // Step immediately
+    _activeTargetGrams = (_activeTargetGrams! + delta);
+    if (_activeTargetGrams! < 1.0) _activeTargetGrams = 1.0;
+    setState(() {}); // Instant visual feedback
 
-    // Continuous tick every 100ms
-    _continuousTimer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
-      if (delta < 0 && currentVal <= 1.0) {
+    // Continuous step every 80ms locally without flooding disk I/O
+    _continuousTimer = Timer.periodic(const Duration(milliseconds: 80), (timer) {
+      if (delta < 0 && _activeTargetGrams! <= 1.0) {
         timer.cancel();
         return;
       }
-      currentVal = (currentVal + delta);
-      if (currentVal < 1.0) currentVal = 1.0;
-
-      _trackingService.updateFoodPlannedTarget(
-        foodId: foodId,
-        newTargetGrams: currentVal,
-      );
+      _activeTargetGrams = (_activeTargetGrams! + delta);
+      if (_activeTargetGrams! < 1.0) _activeTargetGrams = 1.0;
+      setState(() {});
     });
   }
 
   void _stopContinuousChange() {
     _continuousTimer?.cancel();
     _continuousTimer = null;
+
+    // Flush single write transaction to Isar on release
+    if (_activeFoodId != null && _activeTargetGrams != null) {
+      _trackingService.updateFoodPlannedTarget(
+        foodId: _activeFoodId!,
+        newTargetGrams: _activeTargetGrams!,
+      );
+    }
+    _activeFoodId = null;
+    _activeTargetGrams = null;
   }
 
   /// Checks whether a given food item provides non-zero coverage for the selected nutrient
@@ -84,15 +89,14 @@ class _RoutinePageState extends State<RoutinePage> {
   }
 
   /// Computes top 2 or 3 nutrient contribution strings: "'Key' 'coverage%' • ..."
+  /// Uses O(1) in-memory targetMap and nutrientMap for zero re-computation overhead.
   String _buildNutrientCoverageSubtitle({
     required FoodSourceItem food,
-    required UserProfile profile,
-    required List<NutrientInfo> allNutrients,
+    required double portionGrams,
+    required Map<String, double> targetMap,
+    required Map<String, NutrientInfo> nutrientMap,
   }) {
-    final nutrientMap = {for (var n in allNutrients) n.nutrientKey: n};
     final List<MapEntry<String, double>> topList = [];
-
-    final portionGrams = food.plannedDailyGrams;
 
     for (final nutrientVal in food.nutrients) {
       // Exclude energy from subtitle list
@@ -104,7 +108,7 @@ class _RoutinePageState extends State<RoutinePage> {
       final nutrientInfo = nutrientMap[nutrientVal.nutrientKey];
       if (nutrientInfo == null || !nutrientInfo.isTracked) continue;
 
-      final target = nutrientInfo.calculateEffectiveTarget(profile);
+      final target = targetMap[nutrientVal.nutrientKey] ?? 0.0;
       if (target <= 0) continue;
 
       final dailyYield = (portionGrams / 100.0) * nutrientVal.amountPer100g;
@@ -137,20 +141,25 @@ class _RoutinePageState extends State<RoutinePage> {
 
   Widget _buildRoutineItem({
     required FoodSourceItem food,
-    required UserProfile profile,
-    required List<NutrientInfo> allNutrients,
+    required Map<String, double> targetMap,
+    required Map<String, NutrientInfo> nutrientMap,
   }) {
+    final currentGrams = (_activeFoodId == food.foodId && _activeTargetGrams != null)
+        ? _activeTargetGrams!
+        : food.plannedDailyGrams;
+
     final isDaily = food.frequency == TrackingFrequency.daily;
-    final targetGrams = isDaily ? food.plannedDailyGrams : food.plannedWeeklyGrams;
-    final targetLabel = '${targetGrams.round()}g';
+    final displayGrams = isDaily ? currentGrams : currentGrams * 7.0;
+    final targetLabel = '${displayGrams.round()}g';
     final itemTitle = '${food.title}, $targetLabel';
     final subtitleText = _buildNutrientCoverageSubtitle(
       food: food,
-      profile: profile,
-      allNutrients: allNutrients,
+      portionGrams: currentGrams,
+      targetMap: targetMap,
+      nutrientMap: nutrientMap,
     );
 
-    final isMinima = food.plannedDailyGrams <= 1.0;
+    final isMinima = currentGrams <= 1.0;
     final hostVariant = isMinima
         ? HorizonListItemHost.routineRemove
         : HorizonListItemHost.routine;
@@ -167,7 +176,7 @@ class _RoutinePageState extends State<RoutinePage> {
           _trackingService.handleRoutineFoodRemoved(food.foodId);
         } else {
           // Single tap decrements target by 1g
-          final updated = (food.plannedDailyGrams - 1.0).clamp(1.0, 99999.0);
+          final updated = (currentGrams - 1.0).clamp(1.0, 99999.0);
           _trackingService.updateFoodPlannedTarget(
             foodId: food.foodId,
             newTargetGrams: updated,
@@ -178,7 +187,7 @@ class _RoutinePageState extends State<RoutinePage> {
         if (!isMinima) {
           _startContinuousChange(
             foodId: food.foodId,
-            currentPlannedGrams: food.plannedDailyGrams,
+            currentPlannedGrams: currentGrams,
             delta: -1.0,
           );
         }
@@ -188,7 +197,7 @@ class _RoutinePageState extends State<RoutinePage> {
 
       // RIGHT ACTION (Increment)
       onRightActionTap: () {
-        final updated = (food.plannedDailyGrams + 1.0).clamp(1.0, 99999.0);
+        final updated = (currentGrams + 1.0).clamp(1.0, 99999.0);
         _trackingService.updateFoodPlannedTarget(
           foodId: food.foodId,
           newTargetGrams: updated,
@@ -197,7 +206,7 @@ class _RoutinePageState extends State<RoutinePage> {
       onRightTapDown: (_) {
         _startContinuousChange(
           foodId: food.foodId,
-          currentPlannedGrams: food.plannedDailyGrams,
+          currentPlannedGrams: currentGrams,
           delta: 1.0,
         );
       },
@@ -216,95 +225,88 @@ class _RoutinePageState extends State<RoutinePage> {
         color: AlterSemanticTokens.baseWhite,
         borderRadius: BorderRadius.circular(24),
       ),
-      child: StreamBuilder<UserProfile?>(
-        stream: _trackingService.watchUserProfile(),
-        builder: (context, profileSnapshot) {
-          final profile = profileSnapshot.data ?? UserProfile();
+      child: StreamBuilder<RoutinePageState>(
+        stream: _trackingService.watchRoutinePageState(),
+        builder: (context, snapshot) {
+          final state = snapshot.data;
+          if (state == null) {
+            return const SizedBox.shrink();
+          }
 
-          return StreamBuilder<List<NutrientInfo>>(
-            stream: _trackingService.watchNutrientInfos(),
-            builder: (context, nutrientSnapshot) {
-              final allNutrients = nutrientSnapshot.data ?? [];
+          final routineFoods = state.routineFoods;
+          final filteredFoods = routineFoods.where(_foodProvidesSelectedNutrient).toList();
 
-              return StreamBuilder<List<FoodSourceItem>>(
-                stream: _trackingService.watchTrackedRoutineFoods(),
-                builder: (context, foodSnapshot) {
-                  final routineFoods = foodSnapshot.data ?? [];
-                  final filteredFoods = routineFoods.where(_foodProvidesSelectedNutrient).toList();
+          if (filteredFoods.isEmpty) {
+            return Center(
+              child: Text(
+                widget.selectedNutrientKey != null
+                    ? 'No foods in your routine provide the selected nutrient.'
+                    : 'No foods in your routine yet.\nAdd foods to build your daily & weekly routine.',
+                textAlign: TextAlign.center,
+                style: AlterTypography.caption,
+              ),
+            );
+          }
 
-                  if (filteredFoods.isEmpty) {
-                    return Center(
-                      child: Text(
-                        widget.selectedNutrientKey != null
-                            ? 'No foods in your routine provide the selected nutrient.'
-                            : 'No foods in your routine yet.\nAdd foods to build your daily & weekly routine.',
-                        textAlign: TextAlign.center,
-                        style: AlterTypography.caption,
-                      ),
-                    );
-                  }
+          final dailyFoods = filteredFoods
+              .where((f) => f.frequency == TrackingFrequency.daily)
+              .toList();
+          final weeklyFoods = filteredFoods
+              .where((f) => f.frequency == TrackingFrequency.weekly)
+              .toList();
 
-                  final dailyFoods = filteredFoods
-                      .where((f) => f.frequency == TrackingFrequency.daily)
-                      .toList();
-                  final weeklyFoods = filteredFoods
-                      .where((f) => f.frequency == TrackingFrequency.weekly)
-                      .toList();
+          return ListView(
+            children: [
+              // Daily Targets Section
+              if (dailyFoods.isNotEmpty) ...[
+                const HorizonTitleBar(
+                  title: 'Daily targets',
+                  subtitle:
+                      'Supports nutrients requiring continuous daily supply.',
+                ),
+                const SizedBox(height: 16),
+                for (int i = 0; i < dailyFoods.length; i++) ...[
+                  if (i > 0) const SizedBox(height: 8),
+                  _buildRoutineItem(
+                    food: dailyFoods[i],
+                    targetMap: state.targetMap,
+                    nutrientMap: state.nutrientMap,
+                  ),
+                ],
+              ],
 
-                  return ListView(
-                    children: [
-                      // Daily Targets Section
-                      if (dailyFoods.isNotEmpty) ...[
-                        const HorizonTitleBar(
-                          title: 'Daily targets',
-                          subtitle:
-                              'Supports nutrients requiring continuous daily supply.',
-                        ),
-                        const SizedBox(height: 16),
-                        for (int i = 0; i < dailyFoods.length; i++) ...[
-                          if (i > 0) const SizedBox(height: 8),
-                          _buildRoutineItem(
-                            food: dailyFoods[i],
-                            profile: profile,
-                            allNutrients: allNutrients,
-                          ),
-                        ],
-                      ],
+              // Divider between Daily and Weekly sections
+              if (dailyFoods.isNotEmpty && weeklyFoods.isNotEmpty) ...[
+                const SizedBox(height: 24),
+                const Divider(
+                  height: 1,
+                  thickness: 1,
+                  color: AlterSemanticTokens.stroke200,
+                ),
+                const SizedBox(height: 24),
+              ],
 
-                      // Divider and Weekly Targets Section
-                      if (weeklyFoods.isNotEmpty) ...[
-                        if (dailyFoods.isNotEmpty) ...[
-                          const SizedBox(height: 16),
-                          const Divider(
-                            height: 1,
-                            thickness: 1,
-                            color: AlterColors.colorsGray100,
-                          ),
-                          const SizedBox(height: 16),
-                        ],
-                        const HorizonTitleBar(
-                          title: 'Weekly targets',
-                          subtitle:
-                              'Supports nutrients that can be stored longer by the body.',
-                        ),
-                        const SizedBox(height: 16),
-                        for (int i = 0; i < weeklyFoods.length; i++) ...[
-                          if (i > 0) const SizedBox(height: 8),
-                          _buildRoutineItem(
-                            food: weeklyFoods[i],
-                            profile: profile,
-                            allNutrients: allNutrients,
-                          ),
-                        ],
-                      ],
+              // Weekly Targets Section
+              if (weeklyFoods.isNotEmpty) ...[
+                const HorizonTitleBar(
+                  title: 'Weekly targets',
+                  subtitle:
+                      'Supports nutrients with longer biological half-lives.',
+                ),
+                const SizedBox(height: 16),
+                for (int i = 0; i < weeklyFoods.length; i++) ...[
+                  if (i > 0) const SizedBox(height: 8),
+                  _buildRoutineItem(
+                    food: weeklyFoods[i],
+                    targetMap: state.targetMap,
+                    nutrientMap: state.nutrientMap,
+                  ),
+                ],
+              ],
 
-                      // Bottom padding offset for bottom navigation bar
-                      const SizedBox(height: 120),
-                    ],
-                  );
-                },
-              );
-            },
+              // Bottom padding offset for bottom navigation bar
+              const SizedBox(height: 120),
+            ],
           );
         },
       ),

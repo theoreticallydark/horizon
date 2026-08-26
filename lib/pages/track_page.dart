@@ -45,42 +45,36 @@ class TrackPage extends StatelessWidget {
         color: AlterSemanticTokens.baseWhite,
         borderRadius: BorderRadius.circular(24),
       ),
-      child: StreamBuilder<List<FoodSourceItem>>(
-        stream: trackingService.watchTrackedRoutineFoods(),
-        builder: (context, foodListSnapshot) {
-          final routineFoods = foodListSnapshot.data ?? [];
-          final foodMap = {for (var f in routineFoods) f.foodId: f};
+      child: StreamBuilder<TrackPageState>(
+        stream: trackingService.watchTrackPageState(),
+        builder: (context, snapshot) {
+          final state = snapshot.data;
+          if (state == null) {
+            return const SizedBox.shrink();
+          }
 
-          return StreamBuilder<TrackRecordDaily?>(
-            stream: trackingService.watchTodayDailyRecord(),
-            builder: (context, dailySnapshot) {
-              final dailyRecord = dailySnapshot.data;
-              final dailyFoods = dailyRecord?.loggedFoods ?? [];
+          final foodMap = state.foodMap;
+          final dailyFoods = state.dailyRecord?.loggedFoods ?? [];
+          final weeklyFoods = state.weeklyRecord?.loggedFoods ?? [];
 
-              return StreamBuilder<TrackRecordWeekly?>(
-                stream: trackingService.watchCurrentWeeklyRecord(),
-                builder: (context, weeklySnapshot) {
-                  final weeklyRecord = weeklySnapshot.data;
-                  final weeklyFoods = weeklyRecord?.loggedFoods ?? [];
+          final filteredDaily = dailyFoods
+              .where((f) => _foodProvidesSelectedNutrient(f, foodMap))
+              .toList();
+          final filteredWeekly = weeklyFoods
+              .where((f) => _foodProvidesSelectedNutrient(f, foodMap))
+              .toList();
 
-                  final filteredDaily = dailyFoods
-                      .where((f) => _foodProvidesSelectedNutrient(f, foodMap))
-                      .toList();
-                  final filteredWeekly = weeklyFoods
-                      .where((f) => _foodProvidesSelectedNutrient(f, foodMap))
-                      .toList();
-
-                  if (filteredDaily.isEmpty && filteredWeekly.isEmpty) {
-                    return Center(
-                      child: Text(
-                        selectedNutrientKey != null
-                            ? 'No logged foods provide the selected nutrient.'
-                            : 'No foods in your routine yet.\nAdd foods in the Routine tab to track them here.',
-                        textAlign: TextAlign.center,
-                        style: AlterTypography.caption,
-                      ),
-                    );
-                  }
+          if (filteredDaily.isEmpty && filteredWeekly.isEmpty) {
+            return Center(
+              child: Text(
+                selectedNutrientKey != null
+                    ? 'No logged foods provide the selected nutrient.'
+                    : 'No foods in your routine yet.\nAdd foods in the Routine tab to track them here.',
+                textAlign: TextAlign.center,
+                style: AlterTypography.caption,
+              ),
+            );
+          }
 
                   return ListView(
                     children: [
@@ -194,11 +188,7 @@ class TrackPage extends StatelessWidget {
                 ],
               );
             },
-          );
-        },
-      );
-    },
-  ),
-);
-  }
-}
+          ),
+        );
+      }
+    }

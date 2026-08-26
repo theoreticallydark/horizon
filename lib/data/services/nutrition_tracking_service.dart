@@ -446,6 +446,68 @@ class NutritionTrackingService {
         .watch(fireImmediately: true);
   }
 
+  /// Consolidated Routine Page State Model
+  Stream<RoutinePageState> watchRoutinePageState() {
+    return _isar.foodSourceItems
+        .filter()
+        .isVisibleOnAppEqualTo(true)
+        .and()
+        .isTrackedEqualTo(true)
+        .watch(fireImmediately: true)
+        .asyncMap((routineFoods) async {
+      final profile = await _isar.userProfiles.get(1) ?? UserProfile();
+      final allNutrients = await _isar.nutrientInfos.where().findAll();
+
+      // Pre-compute effective targets for fast O(1) in-memory lookup
+      final targetMap = <String, double>{};
+      final nutrientMap = <String, NutrientInfo>{};
+      for (final n in allNutrients) {
+        nutrientMap[n.nutrientKey] = n;
+        targetMap[n.nutrientKey] = n.calculateEffectiveTarget(profile);
+      }
+
+      return RoutinePageState(
+        profile: profile,
+        allNutrients: allNutrients,
+        routineFoods: routineFoods,
+        targetMap: targetMap,
+        nutrientMap: nutrientMap,
+      );
+    });
+  }
+
+  /// Consolidated Track Page State Model
+  Stream<TrackPageState> watchTrackPageState() {
+    final today = _normalizeDate(DateTime.now());
+    final thisWeekMonday = _normalizeWeekMonday(today);
+
+    return _isar.foodSourceItems
+        .filter()
+        .isVisibleOnAppEqualTo(true)
+        .and()
+        .isTrackedEqualTo(true)
+        .watch(fireImmediately: true)
+        .asyncMap((routineFoods) async {
+      final dailyRecord = await _isar.trackRecordDailys
+          .filter()
+          .dateEqualTo(today)
+          .findFirst();
+      final weeklyRecord = await _isar.trackRecordWeeklys
+          .filter()
+          .weekStartDateEqualTo(thisWeekMonday)
+          .findFirst();
+
+      final foodMap = {for (var f in routineFoods) f.foodId: f};
+
+      return TrackPageState(
+        routineFoods: routineFoods,
+        foodMap: foodMap,
+        dailyRecord: dailyRecord,
+        weeklyRecord: weeklyRecord,
+      );
+    });
+  }
+
   /// Watch stream of all active routine foods (isTracked == true) sorted by title
   Stream<List<FoodSourceItem>> watchTrackedRoutineFoods() {
     return _isar.foodSourceItems
@@ -739,4 +801,36 @@ class NutritionTrackingService {
           (adherenceSum / routineEntries.length) * 100.0;
     }
   }
+}
+
+/// Consolidated state model for RoutinePage
+class RoutinePageState {
+  final UserProfile profile;
+  final List<NutrientInfo> allNutrients;
+  final List<FoodSourceItem> routineFoods;
+  final Map<String, double> targetMap;
+  final Map<String, NutrientInfo> nutrientMap;
+
+  const RoutinePageState({
+    required this.profile,
+    required this.allNutrients,
+    required this.routineFoods,
+    required this.targetMap,
+    required this.nutrientMap,
+  });
+}
+
+/// Consolidated state model for TrackPage
+class TrackPageState {
+  final List<FoodSourceItem> routineFoods;
+  final Map<String, FoodSourceItem> foodMap;
+  final TrackRecordDaily? dailyRecord;
+  final TrackRecordWeekly? weeklyRecord;
+
+  const TrackPageState({
+    required this.routineFoods,
+    required this.foodMap,
+    this.dailyRecord,
+    this.weeklyRecord,
+  });
 }
