@@ -172,6 +172,7 @@ class NutrientMap extends StatelessWidget {
                               isSelected: isSelected,
                               isCompleted: item.isCompleted,
                               isInteractive: item.isInteractive,
+                              horizontalPadding: 2.4,
                               onTap: () {
                                 if (item.nutrientKey.isNotEmpty) {
                                   onNutrientTap?.call(item.nutrientKey);

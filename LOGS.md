@@ -98,4 +98,5 @@
   1. *Merged Watcher Triggers*: Updated `watchTrackPageState()` in `NutritionTrackingService` to subscribe concurrently to both `trackRecordDailys` and `trackRecordWeeklys`, ensuring changes to either daily checkboxes or weekly steppers update the UI immediately in real time.
   2. *Design Token Alignment*: Updated `TrackPage` section divider from hardcoded `AlterColors.colorsGray100` to `AlterSemanticTokens.stroke200` with 24px vertical padding, aligning with `RoutinePage`.
 - **2026-08-26 08:15 AM** - Standardized Section Dividers to `stroke100`: updated the `Divider` color token across both `TrackPage` and `RoutinePage` to `AlterSemanticTokens.stroke100` (`stroke/100`).
+- **2026-08-26 08:25 AM** - Configured `Pill` Horizontal Padding: set `horizontalPadding: 2.4` on all `Pill` instances rendered within `NutrientMap`.
 
