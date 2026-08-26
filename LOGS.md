@@ -86,4 +86,7 @@
   1. *Debounced Target Writes*: Long-pressing `-` / `+` on routine items now updates target locally with instant visual response and flushes a single write transaction to Isar on release, eliminating continuous disk I/O.
   2. *Consolidated Stream Architecture*: Created `watchRoutinePageState()` and `watchTrackPageState()` in `NutritionTrackingService` to combine multi-tier watcher streams into single unified stream builders.
   3. *In-Memory Pre-Computed Target Cache*: Routine item subtitles now perform $O(1)$ dictionary lookups against pre-calculated effective nutrient targets rather than re-computing demographic rules per item on every render frame.
+- **2026-08-26 07:15 AM** - Smoothed `HorizonApplicationHeader` Tab Transitions: unified the header widget instance across all navigation tabs and wrapped it in `AnimatedSize(duration: 300ms, curve: Curves.easeInOutCubic)`, enabling seamless height and content transitions between Stats (no slot) and Track/Routine (with `NutrientMap` in slot).
+- **2026-08-26 07:25 AM** - Fixed `TrackPage` Immediate Checkbox Reaction: updated `watchTrackPageState()` in `NutritionTrackingService` to listen directly to `trackRecordDailys` changes rather than routine food items, ensuring checkboxes and stepper values reflect immediately upon click without needing to navigate across tabs.
+- **2026-08-26 07:35 AM** - Removed Redundant `NutrientPill`: deleted `lib/horizon/nutrient_pill.dart` and refactored `NutrientMap` to render the design system `Pill` directly, removing an unnecessary pass-through layer.
 

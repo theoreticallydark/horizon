@@ -481,13 +481,19 @@ class NutritionTrackingService {
     final today = _normalizeDate(DateTime.now());
     final thisWeekMonday = _normalizeWeekMonday(today);
 
-    return _isar.foodSourceItems
+    // Watch both daily and weekly records so toggling checkboxes or steppers updates immediately
+    return _isar.trackRecordDailys
         .filter()
-        .isVisibleOnAppEqualTo(true)
-        .and()
-        .isTrackedEqualTo(true)
+        .dateEqualTo(today)
         .watch(fireImmediately: true)
-        .asyncMap((routineFoods) async {
+        .asyncMap((_) async {
+      final routineFoods = await _isar.foodSourceItems
+          .filter()
+          .isVisibleOnAppEqualTo(true)
+          .and()
+          .isTrackedEqualTo(true)
+          .findAll();
+
       final dailyRecord = await _isar.trackRecordDailys
           .filter()
           .dateEqualTo(today)

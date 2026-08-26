@@ -3,7 +3,6 @@ import '../alter/alter.dart';
 import '../data/models/nutrient_info.dart';
 import '../data/services/isar_service.dart';
 import '../data/services/nutrition_tracking_service.dart';
-import 'nutrient_pill.dart';
 
 enum NutrientMapVariant {
   routine,
@@ -166,7 +165,7 @@ class NutrientMap extends StatelessWidget {
 
                           return SizedBox(
                             width: columnWidth,
-                            child: NutrientPill(
+                            child: Pill(
                               label: item.label,
                               value: isCompact ? null : item.value,
                               size: pillSize,

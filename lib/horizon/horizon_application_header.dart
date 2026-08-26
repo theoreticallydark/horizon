@@ -23,74 +23,73 @@ class HorizonApplicationHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final trackingService = NutritionTrackingService();
 
-    switch (currentIndex) {
-      case 0:
-        // Track Page Header (with NutrientMap TrackFullView in slot)
-        return StreamBuilder<({double calories, double protein})>(
-          stream: trackingService.watchPlannedRoutineEnergyAndProtein(),
-          builder: (context, snapshot) {
-            final plannedCal = snapshot.data?.calories.round() ?? 0;
-            final plannedProt = snapshot.data?.protein.round() ?? 0;
+    return StreamBuilder<({double calories, double protein})>(
+      stream: trackingService.watchPlannedRoutineEnergyAndProtein(),
+      builder: (context, snapshot) {
+        final plannedCal = snapshot.data?.calories.round() ?? 0;
+        final plannedProt = snapshot.data?.protein.round() ?? 0;
 
-            return ApplicationHeader(
-              title: 'Today',
-              subtitle: '0/$plannedCal calories • 0/${plannedProt}g protein',
-              hasStyleButton: true,
-              hasActionOne: false,
-              hasActionTwo: false,
-              hasProfileAction: false,
-              onProfileTap: onProfileTap,
-              onStyleButtonTap: onStreakTap,
-              slot: NutrientMap(
-                variant: NutrientMapVariant.trackFullView,
-                selectedNutrientKey: selectedNutrientKey,
-                onNutrientTap: onNutrientTap,
-              ),
-            );
-          },
-        );
-      case 1:
-        // Stats Page Header (no slot)
-        return ApplicationHeader(
-          title: 'Stats',
-          subtitle: 'Just do it',
-          hasStyleButton: true,
-          hasActionOne: false,
-          hasActionTwo: false,
-          hasProfileAction: false,
-          onStyleButtonTap: onStreakTap,
-        );
-      case 2:
-        // Routine Page Header (with NutrientMap Routine in slot)
-        return StreamBuilder<({double calories, double protein})>(
-          stream: trackingService.watchPlannedRoutineEnergyAndProtein(),
-          builder: (context, snapshot) {
-            final calories = snapshot.data?.calories.round() ?? 0;
-            final protein = snapshot.data?.protein.round() ?? 0;
-            final subtitleText = '$calories calories • ${protein}g protein';
+        String title;
+        String subtitle;
+        bool hasStyleButton = false;
+        bool hasProfileAction = false;
+        Widget? slotWidget;
 
-            return ApplicationHeader(
-              title: 'Plan Routine',
-              subtitle: subtitleText,
-              hasStyleButton: false,
-              hasActionOne: false,
-              hasActionTwo: false,
-              hasProfileAction: true,
-              onProfileTap: onProfileTap,
-              slot: NutrientMap(
-                variant: NutrientMapVariant.routine,
-                selectedNutrientKey: selectedNutrientKey,
-                onNutrientTap: onNutrientTap,
-              ),
+        switch (currentIndex) {
+          case 0:
+            title = 'Today';
+            subtitle = '0/$plannedCal calories • 0/${plannedProt}g protein';
+            hasStyleButton = true;
+            hasProfileAction = false;
+            slotWidget = NutrientMap(
+              key: const ValueKey('track_map'),
+              variant: NutrientMapVariant.trackFullView,
+              selectedNutrientKey: selectedNutrientKey,
+              onNutrientTap: onNutrientTap,
             );
-          },
+            break;
+          case 1:
+            title = 'Stats';
+            subtitle = 'Just do it';
+            hasStyleButton = true;
+            hasProfileAction = false;
+            slotWidget = null;
+            break;
+          case 2:
+            title = 'Plan Routine';
+            subtitle = '$plannedCal calories • ${plannedProt}g protein';
+            hasStyleButton = false;
+            hasProfileAction = true;
+            slotWidget = NutrientMap(
+              key: const ValueKey('routine_map'),
+              variant: NutrientMapVariant.routine,
+              selectedNutrientKey: selectedNutrientKey,
+              onNutrientTap: onNutrientTap,
+            );
+            break;
+          default:
+            title = 'Horizon';
+            subtitle = 'Design System';
+            break;
+        }
+
+        return AnimatedSize(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOutCubic,
+          child: ApplicationHeader(
+            title: title,
+            subtitle: subtitle,
+            hasStyleButton: hasStyleButton,
+            hasActionOne: false,
+            hasActionTwo: false,
+            hasProfileAction: hasProfileAction,
+            onProfileTap: onProfileTap,
+            onStyleButtonTap: onStreakTap,
+            slot: slotWidget,
+          ),
         );
-      default:
-        return const ApplicationHeader(
-          title: 'Horizon',
-          subtitle: 'Design System',
-        );
-    }
+      },
+    );
   }
 }
 
