@@ -9,11 +9,11 @@ import '../horizon/horizon_list_item.dart';
 import '../horizon/horizon_title_bar.dart';
 
 class RoutinePage extends StatefulWidget {
-  final Set<String> selectedNutrientKeys;
+  final String? selectedNutrientKey;
 
   const RoutinePage({
     super.key,
-    this.selectedNutrientKeys = const {},
+    this.selectedNutrientKey,
   });
 
   @override
@@ -63,9 +63,9 @@ class _RoutinePageState extends State<RoutinePage> {
     _continuousTimer = null;
   }
 
-  /// Checks whether a given food item provides non-zero coverage for all selected nutrients
-  bool _foodProvidesSelectedNutrients(FoodSourceItem food) {
-    if (widget.selectedNutrientKeys.isEmpty) return true;
+  /// Checks whether a given food item provides non-zero coverage for the selected nutrient
+  bool _foodProvidesSelectedNutrient(FoodSourceItem food) {
+    if (widget.selectedNutrientKey == null) return true;
 
     final foodNutrientKeys = {
       for (final n in food.nutrients)
@@ -74,9 +74,7 @@ class _RoutinePageState extends State<RoutinePage> {
           n.nutrientKey
     };
 
-    // If multi-select is active, check if food provides at least one of the selected nutrients
-    // (or any of the selected filters)
-    return widget.selectedNutrientKeys.any((k) => foodNutrientKeys.contains(k));
+    return foodNutrientKeys.contains(widget.selectedNutrientKey);
   }
 
   @override
@@ -109,8 +107,13 @@ class _RoutinePageState extends State<RoutinePage> {
       final target = nutrientInfo.calculateEffectiveTarget(profile);
       if (target <= 0) continue;
 
-      final yieldAmount = (portionGrams / 100.0) * nutrientVal.amountPer100g;
-      final coveragePercent = (yieldAmount / target) * 100.0;
+      final dailyYield = (portionGrams / 100.0) * nutrientVal.amountPer100g;
+      // If nutrient frequency is weekly, compare weekly yield (dailyYield * 7) against weekly target
+      final plannedYield = nutrientInfo.frequency == TrackingFrequency.weekly
+          ? dailyYield * 7.0
+          : dailyYield;
+
+      final coveragePercent = (plannedYield / target) * 100.0;
 
       if (coveragePercent > 0.0) {
         final keyLabel = nutrientInfo.shortKey ?? nutrientInfo.displayName;
@@ -227,13 +230,13 @@ class _RoutinePageState extends State<RoutinePage> {
                 stream: _trackingService.watchTrackedRoutineFoods(),
                 builder: (context, foodSnapshot) {
                   final routineFoods = foodSnapshot.data ?? [];
-                  final filteredFoods = routineFoods.where(_foodProvidesSelectedNutrients).toList();
+                  final filteredFoods = routineFoods.where(_foodProvidesSelectedNutrient).toList();
 
                   if (filteredFoods.isEmpty) {
                     return Center(
                       child: Text(
-                        widget.selectedNutrientKeys.isNotEmpty
-                            ? 'No foods in your routine provide the selected nutrients.'
+                        widget.selectedNutrientKey != null
+                            ? 'No foods in your routine provide the selected nutrient.'
                             : 'No foods in your routine yet.\nAdd foods to build your daily & weekly routine.',
                         textAlign: TextAlign.center,
                         style: AlterTypography.caption,

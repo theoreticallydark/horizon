@@ -54,7 +54,7 @@ class NutrientData {
 class NutrientMap extends StatelessWidget {
   final NutrientMapVariant variant;
   final List<NutrientData>? nutrients;
-  final Set<String> selectedNutrientKeys;
+  final String? selectedNutrientKey;
   final ValueChanged<String>? onNutrientTap;
   final double spacing;
   final double runSpacing;
@@ -92,7 +92,7 @@ class NutrientMap extends StatelessWidget {
     super.key,
     this.variant = NutrientMapVariant.routine,
     this.nutrients,
-    this.selectedNutrientKeys = const {},
+    this.selectedNutrientKey,
     this.onNutrientTap,
     this.spacing = 3.5,
     this.runSpacing = 3.5,
@@ -116,7 +116,7 @@ class NutrientMap extends StatelessWidget {
       final rawPercent = coverageMap[n.nutrientKey] ?? 0.0;
       final percentClamped = rawPercent.clamp(0.0, 999.0).round();
       final isCompleted = rawPercent >= 100.0;
-      final isSelected = selectedNutrientKeys.contains(n.nutrientKey);
+      final isSelected = selectedNutrientKey == n.nutrientKey;
 
       return NutrientData(
         nutrientKey: n.nutrientKey,
@@ -162,7 +162,7 @@ class NutrientMap extends StatelessWidget {
                           }
                           final item = displayedNutrients[itemIndex];
                           final isSelected = item.nutrientKey.isNotEmpty &&
-                              selectedNutrientKeys.contains(item.nutrientKey);
+                              selectedNutrientKey == item.nutrientKey;
 
                           return SizedBox(
                             width: columnWidth,

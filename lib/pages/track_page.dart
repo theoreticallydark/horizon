@@ -7,18 +7,18 @@ import '../horizon/horizon_list_item.dart';
 import '../horizon/horizon_title_bar.dart';
 
 class TrackPage extends StatelessWidget {
-  final Set<String> selectedNutrientKeys;
+  final String? selectedNutrientKey;
 
   const TrackPage({
     super.key,
-    this.selectedNutrientKeys = const {},
+    this.selectedNutrientKey,
   });
 
-  bool _foodProvidesSelectedNutrients(
+  bool _foodProvidesSelectedNutrient(
     TrackedFoodEntry entry,
     Map<String, FoodSourceItem> foodMap,
   ) {
-    if (selectedNutrientKeys.isEmpty) return true;
+    if (selectedNutrientKey == null) return true;
 
     final food = foodMap[entry.foodId];
     if (food == null) return true;
@@ -30,7 +30,7 @@ class TrackPage extends StatelessWidget {
           n.nutrientKey
     };
 
-    return selectedNutrientKeys.any((k) => foodNutrientKeys.contains(k));
+    return foodNutrientKeys.contains(selectedNutrientKey);
   }
 
   @override
@@ -64,17 +64,17 @@ class TrackPage extends StatelessWidget {
                   final weeklyFoods = weeklyRecord?.loggedFoods ?? [];
 
                   final filteredDaily = dailyFoods
-                      .where((f) => _foodProvidesSelectedNutrients(f, foodMap))
+                      .where((f) => _foodProvidesSelectedNutrient(f, foodMap))
                       .toList();
                   final filteredWeekly = weeklyFoods
-                      .where((f) => _foodProvidesSelectedNutrients(f, foodMap))
+                      .where((f) => _foodProvidesSelectedNutrient(f, foodMap))
                       .toList();
 
                   if (filteredDaily.isEmpty && filteredWeekly.isEmpty) {
                     return Center(
                       child: Text(
-                        selectedNutrientKeys.isNotEmpty
-                            ? 'No logged foods provide the selected nutrients.'
+                        selectedNutrientKey != null
+                            ? 'No logged foods provide the selected nutrient.'
                             : 'No foods in your routine yet.\nAdd foods in the Routine tab to track them here.',
                         textAlign: TextAlign.center,
                         style: AlterTypography.caption,

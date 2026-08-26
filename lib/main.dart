@@ -40,14 +40,14 @@ class HorizonAppShell extends StatefulWidget {
 
 class _HorizonAppShellState extends State<HorizonAppShell> {
   int _currentIndex = 0;
-  final Set<String> _selectedNutrientKeys = <String>{};
+  String? _selectedNutrientKey;
 
   void _handleNutrientTap(String nutrientKey) {
     setState(() {
-      if (_selectedNutrientKeys.contains(nutrientKey)) {
-        _selectedNutrientKeys.remove(nutrientKey);
+      if (_selectedNutrientKey == nutrientKey) {
+        _selectedNutrientKey = null; // deselect on second tap
       } else {
-        _selectedNutrientKeys.add(nutrientKey);
+        _selectedNutrientKey = nutrientKey;
       }
     });
   }
@@ -55,9 +55,9 @@ class _HorizonAppShellState extends State<HorizonAppShell> {
   @override
   Widget build(BuildContext context) {
     final pages = [
-      TrackPage(selectedNutrientKeys: _selectedNutrientKeys),
+      TrackPage(selectedNutrientKey: _selectedNutrientKey),
       const StatsPage(),
-      RoutinePage(selectedNutrientKeys: _selectedNutrientKeys),
+      RoutinePage(selectedNutrientKey: _selectedNutrientKey),
     ];
 
     return Scaffold(
@@ -70,7 +70,7 @@ class _HorizonAppShellState extends State<HorizonAppShell> {
               children: [
                 HorizonApplicationHeader(
                   currentIndex: _currentIndex,
-                  selectedNutrientKeys: _selectedNutrientKeys,
+                  selectedNutrientKey: _selectedNutrientKey,
                   onNutrientTap: _handleNutrientTap,
                   onProfileTap: () {
                     debugPrint('Profile Tapped');
@@ -99,7 +99,7 @@ class _HorizonAppShellState extends State<HorizonAppShell> {
                   onItemTapped: (index) {
                     setState(() {
                       if (_currentIndex != index) {
-                        _selectedNutrientKeys.clear();
+                        _selectedNutrientKey = null;
                       }
                       _currentIndex = index;
                     });

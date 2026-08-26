@@ -130,6 +130,9 @@ class IsarService {
           : TrackingFrequency.weekly;
       final existing = await isar.nutrientInfos.getByNutrientKey(key);
 
+      final rawTarget = (valMap['rda_or_ai'] as num?)?.toDouble() ??
+          (valMap['app_default_target'] as num?)?.toDouble();
+
       if (existing == null) {
         final entity = NutrientInfo()
           ..nutrientKey = key
@@ -140,13 +143,17 @@ class IsarService {
           ..isTracked = isVisible
           ..frequency = frequency
           ..ear = (valMap['ear'] as num?)?.toDouble()
-          ..rdaOrAi = (valMap['rda_or_ai'] as num?)?.toDouble()
+          ..rdaOrAi = rawTarget
           ..ul = (valMap['ul'] as num?)?.toDouble();
         nutrientEntitiesToSave.add(entity);
       } else {
         bool changed = false;
         if (existing.shortKey != shortKeyVal && shortKeyVal != null) {
           existing.shortKey = shortKeyVal;
+          changed = true;
+        }
+        if (existing.rdaOrAi != rawTarget && rawTarget != null) {
+          existing.rdaOrAi = rawTarget;
           changed = true;
         }
         if (existing.isVisibleOnApp != isVisible) {
@@ -232,20 +239,20 @@ class IsarService {
 
     final Map<String, double> demoRoutineTargets = {
       'fdc_173044': 165.0,  // Guava (Vit C, Fiber, K)
-      'fdc_2515380': 129.0, // Pumpkin Seeds (Mg, Protein, K, Fiber)
-      'fdc_2515381': 50.0,  // Sunflower Seeds (Vit E, Se)
+      'fdc_170556': 100.0,  // Pumpkin Seeds (Mg, Zinc, K, Protein)
+      'fdc_168593': 40.0,   // Sunflower Seeds (Vit E, Se, Om6)
       'fdc_2262075': 25.0,  // Flaxseed ground (ALA Omega-3, Fiber)
-      'fdc_170567': 92.0,   // Almonds (Vit E, Mg, Ca)
-      'fdc_171287': 243.0,  // Eggs (Protein, Choline, Vit D, Iodine, B12)
-      'fdc_175167': 150.0,  // Salmon Raw (EPA/DHA, Creatine, Vit D, B12, Se)
-      'fdc_171538': 150.0,  // Bone Broth (Collagen, Creatine, Complete Protein)
-      'fdc_2259793': 170.0, // Yogurt (Calcium, Protein, B12)
-      'fdc_168462': 100.0,  // Spinach (Vit K, Folate, Iron, Vit A)
-      'fdc_172420': 80.0,   // Lentils (Folate, Fiber, Iron, K)
-      'fdc_2258587': 100.0, // Carrot (Vit A / beta-carotene)
-      'fdc_747447': 100.0,  // Broccoli (Vit C, Vit K, Folate)
-      'fdc_170026': 170.0,  // Potatoes (Potassium, Vit C, B6)
-      'fdc_1105314': 140.0, // Banana (Potassium, Vit C, B6)
+      'fdc_170567': 80.0,   // Almonds (Vit E, Ca, Mg)
+      'fdc_171287': 200.0,  // Eggs (Protein, Vit D, B12, Se)
+      'fdc_168462': 100.0,  // Spinach Raw (Vit K, Folate, Iron, Vit A)
+      'fdc_172420': 80.0,   // Lentils Raw (Folate, Iron, Fiber, K)
+      'fdc_170393': 120.0,  // Carrots Raw (Vit A / beta-carotene)
+      'fdc_2259793': 200.0, // Yogurt (Calcium, Iodine, Protein)
+      'fdc_173418': 50.0,   // Cheddar Cheese (Calcium, Protein)
+      'fdc_747447': 150.0,  // Broccoli Raw (Vit C, Vit K, Folate)
+      'fdc_170026': 200.0,  // Potatoes Raw (Potassium, Vit C, B6)
+      'fdc_173944': 120.0,  // Banana (Potassium, Vit C, B6)
+      'fdc_746775': 2.0,    // Iodized Table Salt (Iodine)
     };
 
     // Load updated JSON to ensure nutrients and metadata are refreshed

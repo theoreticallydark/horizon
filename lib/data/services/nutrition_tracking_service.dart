@@ -85,8 +85,12 @@ class NutritionTrackingService {
     final Map<String, double> coverageResults = {};
     for (final nutrient in trackedNutrients) {
       final target = nutrient.calculateEffectiveTarget(profile);
-      final consumed = plannedTotals[nutrient.nutrientKey] ?? 0.0;
-      final percent = target > 0 ? (consumed / target) * 100.0 : 0.0;
+      final dailyConsumed = plannedTotals[nutrient.nutrientKey] ?? 0.0;
+      // If nutrient target is weekly (7 days), compare planned weekly yield (dailyConsumed * 7) against weekly target
+      final plannedYield = nutrient.frequency == TrackingFrequency.weekly
+          ? dailyConsumed * 7.0
+          : dailyConsumed;
+      final percent = target > 0 ? (plannedYield / target) * 100.0 : 0.0;
       coverageResults[nutrient.nutrientKey] = percent;
     }
 
@@ -706,7 +710,7 @@ class NutritionTrackingService {
 
     final List<TrackNutrientSummary> summaries = [];
     for (final nutrient in allNutrients) {
-      final target = nutrient.calculateEffectiveTarget(profile) * 7.0;
+      final target = nutrient.calculateEffectiveTarget(profile);
       final consumed = aggregatedNutrients[nutrient.nutrientKey] ?? 0.0;
       final percent = target > 0 ? (consumed / target) * 100.0 : 0.0;
 

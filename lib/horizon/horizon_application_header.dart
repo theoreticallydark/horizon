@@ -7,7 +7,7 @@ class HorizonApplicationHeader extends StatelessWidget {
   final int currentIndex;
   final VoidCallback? onProfileTap;
   final VoidCallback? onStreakTap;
-  final Set<String> selectedNutrientKeys;
+  final String? selectedNutrientKey;
   final ValueChanged<String>? onNutrientTap;
 
   const HorizonApplicationHeader({
@@ -15,7 +15,7 @@ class HorizonApplicationHeader extends StatelessWidget {
     required this.currentIndex,
     this.onProfileTap,
     this.onStreakTap,
-    this.selectedNutrientKeys = const {},
+    this.selectedNutrientKey,
     this.onNutrientTap,
   });
 
@@ -43,7 +43,7 @@ class HorizonApplicationHeader extends StatelessWidget {
               onStyleButtonTap: onStreakTap,
               slot: NutrientMap(
                 variant: NutrientMapVariant.trackFullView,
-                selectedNutrientKeys: selectedNutrientKeys,
+                selectedNutrientKey: selectedNutrientKey,
                 onNutrientTap: onNutrientTap,
               ),
             );
@@ -79,7 +79,7 @@ class HorizonApplicationHeader extends StatelessWidget {
               onProfileTap: onProfileTap,
               slot: NutrientMap(
                 variant: NutrientMapVariant.routine,
-                selectedNutrientKeys: selectedNutrientKeys,
+                selectedNutrientKey: selectedNutrientKey,
                 onNutrientTap: onNutrientTap,
               ),
             );
