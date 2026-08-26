@@ -172,84 +172,145 @@ class IsarService {
       });
     }
 
-    // If foods are already populated, skip re-parsing for instant startup
-    if (foodCount > 0) return;
+    // 2. Prepare FoodSourceItem items (insert if empty or refresh existing)
+    if (foodCount == 0) {
+      final List<FoodSourceItem> foodEntities = [];
+      for (final item in foodsList) {
+        final f = item as Map<String, dynamic>;
+        final fid = f['food_id']?.toString() ?? '';
+        final defaultPortion = f['default_portion'] as Map<String, dynamic>?;
+        final grams = (defaultPortion?['grams'] as num?)?.toDouble() ?? 100.0;
+        final label = defaultPortion?['label']?.toString() ?? '100g';
 
-    // 2. Prepare FoodSourceItem items (all default to isTracked = false for a clean user baseline)
-    final List<FoodSourceItem> foodEntities = [];
-    for (final item in foodsList) {
-      final f = item as Map<String, dynamic>;
-      final fid = f['food_id']?.toString() ?? '';
-      final defaultPortion = f['default_portion'] as Map<String, dynamic>?;
-      final grams = (defaultPortion?['grams'] as num?)?.toDouble() ?? 100.0;
-      final label = defaultPortion?['label']?.toString() ?? '100g';
+        final nutrientMap = f['nutrients'] as Map<String, dynamic>? ?? {};
+        final List<FoodNutrientValue> nutrientValues = [];
+        nutrientMap.forEach((nKey, nVal) {
+          final amount = (nVal as num?)?.toDouble() ?? 0.0;
+          nutrientValues.add(
+            FoodNutrientValue()
+              ..nutrientKey = nKey
+              ..amountPer100g = amount,
+          );
+        });
 
-      final nutrientMap = f['nutrients'] as Map<String, dynamic>? ?? {};
-      final List<FoodNutrientValue> nutrientValues = [];
-      nutrientMap.forEach((nKey, nVal) {
-        final amount = (nVal as num?)?.toDouble() ?? 0.0;
-        nutrientValues.add(
-          FoodNutrientValue()
-            ..nutrientKey = nKey
-            ..amountPer100g = amount,
-        );
-      });
+        final foodItem = FoodSourceItem()
+          ..foodId = fid
+          ..name = f['name']?.toString() ?? ''
+          ..title = f['title']?.toString() ?? f['name']?.toString() ?? ''
+          ..category = f['category']?.toString() ?? 'Other'
+          ..foodState = f['food_state']?.toString()
+          ..isVisibleOnApp = true
+          ..isTracked = false
+          ..isFavorite = false
+          ..defaultPortionLabel = label
+          ..defaultPortionGrams = grams
+          ..plannedDailyGrams = grams
+          ..energy = (f['energy'] as num?)?.toDouble() ?? 0.0
+          ..proteinIndex = (f['protein_index'] as num?)?.toInt() ?? 0
+          ..nutrients = nutrientValues;
 
-      final foodItem = FoodSourceItem()
-        ..foodId = fid
-        ..name = f['name']?.toString() ?? ''
-        ..title = f['title']?.toString() ?? f['name']?.toString() ?? ''
-        ..category = f['category']?.toString() ?? 'Other'
-        ..foodState = f['food_state']?.toString()
-        ..isVisibleOnApp = true
-        ..isTracked = false
-        ..isFavorite = false
-        ..defaultPortionLabel = label
-        ..defaultPortionGrams = grams
-        ..plannedDailyGrams = grams
-        ..energy = (f['energy'] as num?)?.toDouble() ?? 0.0
-        ..proteinIndex = (f['protein_index'] as num?)?.toInt() ?? 0
-        ..nutrients = nutrientValues;
-
-      foodEntities.add(foodItem);
-    }
-
-    // Batch insert foods into Isar in chunks
-    await isar.writeTxn(() async {
-      // Batch insert foods in chunks of 500 for optimal performance
-      const chunkSize = 500;
-      for (var i = 0; i < foodEntities.length; i += chunkSize) {
-        final end = (i + chunkSize < foodEntities.length)
-            ? i + chunkSize
-            : foodEntities.length;
-        await isar.foodSourceItems.putAll(foodEntities.sublist(i, end));
+        foodEntities.add(foodItem);
       }
-    });
+
+      // Batch insert foods into Isar in chunks
+      await isar.writeTxn(() async {
+        const chunkSize = 500;
+        for (var i = 0; i < foodEntities.length; i += chunkSize) {
+          final end = (i + chunkSize < foodEntities.length)
+              ? i + chunkSize
+              : foodEntities.length;
+          await isar.foodSourceItems.putAll(foodEntities.sublist(i, end));
+        }
+      });
+    }
   }
 
-  /// Demo helper: Populates the user's routine with 12 sample foods (Chia, Pumpkin Seed, Egg, Yogurt, etc.)
+  /// Demo helper: Populates the user's routine with a comprehensive set of foods covering all 20 nutrients 100%+
   Future<void> seedDemoRoutine() async {
-    const demoFoodIds = {
-      'fdc_2710819', // Chia Seeds
-      'fdc_2515380', // Pumpkin Seeds
-      'fdc_2515381', // Sunflower Seeds
-      'fdc_171287',  // Egg
-      'fdc_2259793', // Yogurt
-      'fdc_173044',  // Guava
-      'fdc_1105314', // Banana
-      'fdc_170567',  // Almonds
-      'fdc_170026',  // Potato
-      'fdc_747447',  // Broccoli
-      'fdc_2258587', // Carrot
-      'fdc_171520',  // Chicken
+    final profile = await isar.userProfiles.get(1) ?? UserProfile();
+    final allNutrients = await isar.nutrientInfos.where().findAll();
+
+    final Map<String, double> demoRoutineTargets = {
+      'fdc_173044': 165.0,  // Guava (Vit C, Fiber, K)
+      'fdc_2515380': 129.0, // Pumpkin Seeds (Mg, Protein, K, Fiber)
+      'fdc_2515381': 50.0,  // Sunflower Seeds (Vit E, Se)
+      'fdc_2262075': 25.0,  // Flaxseed ground (ALA Omega-3, Fiber)
+      'fdc_170567': 92.0,   // Almonds (Vit E, Mg, Ca)
+      'fdc_171287': 243.0,  // Eggs (Protein, Choline, Vit D, Iodine, B12)
+      'fdc_175167': 150.0,  // Salmon Raw (EPA/DHA, Creatine, Vit D, B12, Se)
+      'fdc_171538': 150.0,  // Bone Broth (Collagen, Creatine, Complete Protein)
+      'fdc_2259793': 170.0, // Yogurt (Calcium, Protein, B12)
+      'fdc_168462': 100.0,  // Spinach (Vit K, Folate, Iron, Vit A)
+      'fdc_172420': 80.0,   // Lentils (Folate, Fiber, Iron, K)
+      'fdc_2258587': 100.0, // Carrot (Vit A / beta-carotene)
+      'fdc_747447': 100.0,  // Broccoli (Vit C, Vit K, Folate)
+      'fdc_170026': 170.0,  // Potatoes (Potassium, Vit C, B6)
+      'fdc_1105314': 140.0, // Banana (Potassium, Vit C, B6)
     };
 
+    // Load updated JSON to ensure nutrients and metadata are refreshed
+    final jsonString = await rootBundle.loadString('sources/dri_and_foods.json');
+    final Map<String, dynamic> root = jsonDecode(jsonString);
+    final foodsList = root['sources']['foods']['foods'] as List<dynamic>;
+    final foodJsonMap = {for (var f in foodsList) (f as Map<String, dynamic>)['food_id']?.toString(): f};
+
+    // Untrack all current foods first
+    final allFoods = await isar.foodSourceItems.where().findAll();
+    for (final f in allFoods) {
+      f.isTracked = false;
+      final jsonFood = foodJsonMap[f.foodId];
+      if (jsonFood != null) {
+        f.energy = (jsonFood['energy'] as num?)?.toDouble() ?? 0.0;
+        f.proteinIndex = (jsonFood['protein_index'] as num?)?.toInt() ?? 0;
+      }
+    }
+    if (allFoods.isNotEmpty) {
+      await isar.writeTxn(() async {
+        await isar.foodSourceItems.putAll(allFoods);
+      });
+    }
+
     final List<FoodSourceItem> updates = [];
-    for (final fid in demoFoodIds) {
-      final item = await isar.foodSourceItems.getByFoodId(fid);
+    for (final entry in demoRoutineTargets.entries) {
+      final fid = entry.key;
+      final plannedGrams = entry.value;
+
+      var item = await isar.foodSourceItems.getByFoodId(fid);
+      final jsonFood = foodJsonMap[fid];
+
+      if (jsonFood != null) {
+        final nutrientMap = jsonFood['nutrients'] as Map<String, dynamic>? ?? {};
+        final List<FoodNutrientValue> nutrientValues = [];
+        nutrientMap.forEach((nKey, nVal) {
+          final amount = (nVal as num?)?.toDouble() ?? 0.0;
+          nutrientValues.add(
+            FoodNutrientValue()
+              ..nutrientKey = nKey
+              ..amountPer100g = amount,
+          );
+        });
+
+        item ??= FoodSourceItem()
+          ..foodId = fid
+          ..name = jsonFood['name']?.toString() ?? ''
+          ..title = jsonFood['title']?.toString() ?? jsonFood['name']?.toString() ?? ''
+          ..category = jsonFood['category']?.toString() ?? 'Other'
+          ..foodState = jsonFood['food_state']?.toString()
+          ..isVisibleOnApp = true
+          ..defaultPortionGrams = plannedGrams;
+
+        item.name = jsonFood['name']?.toString() ?? item.name;
+        item.title = jsonFood['title']?.toString() ?? jsonFood['name']?.toString() ?? item.title;
+        item.category = jsonFood['category']?.toString() ?? item.category;
+        item.energy = (jsonFood['energy'] as num?)?.toDouble() ?? 0.0;
+        item.proteinIndex = (jsonFood['protein_index'] as num?)?.toInt() ?? 0;
+        item.nutrients = nutrientValues;
+      }
+
       if (item != null) {
         item.isTracked = true;
-        item.plannedDailyGrams = item.defaultPortionGrams;
+        item.plannedDailyGrams = plannedGrams;
+        item.frequency = item.calculateFrequency(profile: profile, allNutrients: allNutrients);
         updates.add(item);
       }
     }

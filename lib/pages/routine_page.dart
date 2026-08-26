@@ -9,7 +9,12 @@ import '../horizon/horizon_list_item.dart';
 import '../horizon/horizon_title_bar.dart';
 
 class RoutinePage extends StatefulWidget {
-  const RoutinePage({super.key});
+  final Set<String> selectedNutrientKeys;
+
+  const RoutinePage({
+    super.key,
+    this.selectedNutrientKeys = const {},
+  });
 
   @override
   State<RoutinePage> createState() => _RoutinePageState();
@@ -58,6 +63,22 @@ class _RoutinePageState extends State<RoutinePage> {
     _continuousTimer = null;
   }
 
+  /// Checks whether a given food item provides non-zero coverage for all selected nutrients
+  bool _foodProvidesSelectedNutrients(FoodSourceItem food) {
+    if (widget.selectedNutrientKeys.isEmpty) return true;
+
+    final foodNutrientKeys = {
+      for (final n in food.nutrients)
+        if (n.amountPer100g > 0 &&
+            (n.nutrientKey != 'total_protein' || food.proteinIndex == 1))
+          n.nutrientKey
+    };
+
+    // If multi-select is active, check if food provides at least one of the selected nutrients
+    // (or any of the selected filters)
+    return widget.selectedNutrientKeys.any((k) => foodNutrientKeys.contains(k));
+  }
+
   @override
   void dispose() {
     _continuousTimer?.cancel();
@@ -79,8 +100,11 @@ class _RoutinePageState extends State<RoutinePage> {
       // Exclude energy from subtitle list
       if (nutrientVal.nutrientKey == 'energy') continue;
 
+      // Protein qualification requires food to be a complete protein source (proteinIndex == 1)
+      if (nutrientVal.nutrientKey == 'total_protein' && food.proteinIndex != 1) continue;
+
       final nutrientInfo = nutrientMap[nutrientVal.nutrientKey];
-      if (nutrientInfo == null) continue;
+      if (nutrientInfo == null || !nutrientInfo.isTracked) continue;
 
       final target = nutrientInfo.calculateEffectiveTarget(profile);
       if (target <= 0) continue;
@@ -203,21 +227,24 @@ class _RoutinePageState extends State<RoutinePage> {
                 stream: _trackingService.watchTrackedRoutineFoods(),
                 builder: (context, foodSnapshot) {
                   final routineFoods = foodSnapshot.data ?? [];
+                  final filteredFoods = routineFoods.where(_foodProvidesSelectedNutrients).toList();
 
-                  if (routineFoods.isEmpty) {
-                    return const Center(
+                  if (filteredFoods.isEmpty) {
+                    return Center(
                       child: Text(
-                        'No foods in your routine yet.\nAdd foods to build your daily & weekly routine.',
+                        widget.selectedNutrientKeys.isNotEmpty
+                            ? 'No foods in your routine provide the selected nutrients.'
+                            : 'No foods in your routine yet.\nAdd foods to build your daily & weekly routine.',
                         textAlign: TextAlign.center,
                         style: AlterTypography.caption,
                       ),
                     );
                   }
 
-                  final dailyFoods = routineFoods
+                  final dailyFoods = filteredFoods
                       .where((f) => f.frequency == TrackingFrequency.daily)
                       .toList();
-                  final weeklyFoods = routineFoods
+                  final weeklyFoods = filteredFoods
                       .where((f) => f.frequency == TrackingFrequency.weekly)
                       .toList();
 

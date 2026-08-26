@@ -1,12 +1,37 @@
 import 'package:flutter/material.dart';
 import '../alter/alter.dart';
+import '../data/models/food_source_item.dart';
 import '../data/models/track_record.dart';
 import '../data/services/nutrition_tracking_service.dart';
 import '../horizon/horizon_list_item.dart';
 import '../horizon/horizon_title_bar.dart';
 
 class TrackPage extends StatelessWidget {
-  const TrackPage({super.key});
+  final Set<String> selectedNutrientKeys;
+
+  const TrackPage({
+    super.key,
+    this.selectedNutrientKeys = const {},
+  });
+
+  bool _foodProvidesSelectedNutrients(
+    TrackedFoodEntry entry,
+    Map<String, FoodSourceItem> foodMap,
+  ) {
+    if (selectedNutrientKeys.isEmpty) return true;
+
+    final food = foodMap[entry.foodId];
+    if (food == null) return true;
+
+    final foodNutrientKeys = {
+      for (final n in food.nutrients)
+        if (n.amountPer100g > 0 &&
+            (n.nutrientKey != 'total_protein' || food.proteinIndex == 1))
+          n.nutrientKey
+    };
+
+    return selectedNutrientKeys.any((k) => foodNutrientKeys.contains(k));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,40 +45,55 @@ class TrackPage extends StatelessWidget {
         color: AlterSemanticTokens.baseWhite,
         borderRadius: BorderRadius.circular(24),
       ),
-      child: StreamBuilder<TrackRecordDaily?>(
-        stream: trackingService.watchTodayDailyRecord(),
-        builder: (context, dailySnapshot) {
-          final dailyRecord = dailySnapshot.data;
-          final dailyFoods = dailyRecord?.loggedFoods ?? [];
+      child: StreamBuilder<List<FoodSourceItem>>(
+        stream: trackingService.watchTrackedRoutineFoods(),
+        builder: (context, foodListSnapshot) {
+          final routineFoods = foodListSnapshot.data ?? [];
+          final foodMap = {for (var f in routineFoods) f.foodId: f};
 
-          return StreamBuilder<TrackRecordWeekly?>(
-            stream: trackingService.watchCurrentWeeklyRecord(),
-            builder: (context, weeklySnapshot) {
-              final weeklyRecord = weeklySnapshot.data;
-              final weeklyFoods = weeklyRecord?.loggedFoods ?? [];
+          return StreamBuilder<TrackRecordDaily?>(
+            stream: trackingService.watchTodayDailyRecord(),
+            builder: (context, dailySnapshot) {
+              final dailyRecord = dailySnapshot.data;
+              final dailyFoods = dailyRecord?.loggedFoods ?? [];
 
-              if (dailyFoods.isEmpty && weeklyFoods.isEmpty) {
-                return const Center(
-                  child: Text(
-                    'No foods in your routine yet.\nAdd foods in the Routine tab to track them here.',
-                    textAlign: TextAlign.center,
-                    style: AlterTypography.caption,
-                  ),
-                );
-              }
+              return StreamBuilder<TrackRecordWeekly?>(
+                stream: trackingService.watchCurrentWeeklyRecord(),
+                builder: (context, weeklySnapshot) {
+                  final weeklyRecord = weeklySnapshot.data;
+                  final weeklyFoods = weeklyRecord?.loggedFoods ?? [];
 
-              return ListView(
-                children: [
-                  // Daily Foods Section
-                  if (dailyFoods.isNotEmpty) ...[
-                    for (int i = 0; i < dailyFoods.length; i++) ...[
-                      if (i > 0) const SizedBox(height: 8),
-                      Builder(
-                        builder: (context) {
-                          final item = dailyFoods[i];
-                          final isChecked = item.amountConsumedGrams > 0;
-                          final targetLabel = '${item.plannedGrams.round()}g';
-                          final itemTitle = '${item.foodTitle}, $targetLabel';
+                  final filteredDaily = dailyFoods
+                      .where((f) => _foodProvidesSelectedNutrients(f, foodMap))
+                      .toList();
+                  final filteredWeekly = weeklyFoods
+                      .where((f) => _foodProvidesSelectedNutrients(f, foodMap))
+                      .toList();
+
+                  if (filteredDaily.isEmpty && filteredWeekly.isEmpty) {
+                    return Center(
+                      child: Text(
+                        selectedNutrientKeys.isNotEmpty
+                            ? 'No logged foods provide the selected nutrients.'
+                            : 'No foods in your routine yet.\nAdd foods in the Routine tab to track them here.',
+                        textAlign: TextAlign.center,
+                        style: AlterTypography.caption,
+                      ),
+                    );
+                  }
+
+                  return ListView(
+                    children: [
+                      // Daily Foods Section
+                      if (filteredDaily.isNotEmpty) ...[
+                        for (int i = 0; i < filteredDaily.length; i++) ...[
+                          if (i > 0) const SizedBox(height: 8),
+                          Builder(
+                            builder: (context) {
+                              final item = filteredDaily[i];
+                              final isChecked = item.amountConsumedGrams > 0;
+                              final targetLabel = '${item.plannedGrams.round()}g';
+                              final itemTitle = '${item.foodTitle}, $targetLabel';
 
                           return HorizonListItem(
                             title: itemTitle,
@@ -156,7 +196,9 @@ class TrackPage extends StatelessWidget {
             },
           );
         },
-      ),
-    );
+      );
+    },
+  ),
+);
   }
 }

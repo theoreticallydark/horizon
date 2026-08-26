@@ -40,15 +40,26 @@ class HorizonAppShell extends StatefulWidget {
 
 class _HorizonAppShellState extends State<HorizonAppShell> {
   int _currentIndex = 0;
+  final Set<String> _selectedNutrientKeys = <String>{};
 
-  final List<Widget> _pages = const [
-    TrackPage(),
-    StatsPage(),
-    RoutinePage(),
-  ];
+  void _handleNutrientTap(String nutrientKey) {
+    setState(() {
+      if (_selectedNutrientKeys.contains(nutrientKey)) {
+        _selectedNutrientKeys.remove(nutrientKey);
+      } else {
+        _selectedNutrientKeys.add(nutrientKey);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    final pages = [
+      TrackPage(selectedNutrientKeys: _selectedNutrientKeys),
+      const StatsPage(),
+      RoutinePage(selectedNutrientKeys: _selectedNutrientKeys),
+    ];
+
     return Scaffold(
       backgroundColor: AlterSemanticTokens.baseGray,
       body: SafeArea(
@@ -59,6 +70,8 @@ class _HorizonAppShellState extends State<HorizonAppShell> {
               children: [
                 HorizonApplicationHeader(
                   currentIndex: _currentIndex,
+                  selectedNutrientKeys: _selectedNutrientKeys,
+                  onNutrientTap: _handleNutrientTap,
                   onProfileTap: () {
                     debugPrint('Profile Tapped');
                   },
@@ -69,7 +82,7 @@ class _HorizonAppShellState extends State<HorizonAppShell> {
                 Expanded(
                   child: IndexedStack(
                     index: _currentIndex,
-                    children: _pages,
+                    children: pages,
                   ),
                 ),
               ],
@@ -85,6 +98,9 @@ class _HorizonAppShellState extends State<HorizonAppShell> {
                   selectedIndex: _currentIndex,
                   onItemTapped: (index) {
                     setState(() {
+                      if (_currentIndex != index) {
+                        _selectedNutrientKeys.clear();
+                      }
                       _currentIndex = index;
                     });
                   },

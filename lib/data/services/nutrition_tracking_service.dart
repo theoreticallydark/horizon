@@ -75,6 +75,7 @@ class NutritionTrackingService {
     for (final food in routineFoods) {
       final portionGrams = food.plannedDailyGrams;
       for (final nutrient in food.nutrients) {
+        if (nutrient.nutrientKey == 'total_protein' && food.proteinIndex != 1) continue;
         final contribution = (portionGrams / 100.0) * nutrient.amountPer100g;
         plannedTotals[nutrient.nutrientKey] =
             (plannedTotals[nutrient.nutrientKey] ?? 0.0) + contribution;
@@ -93,16 +94,10 @@ class NutritionTrackingService {
   }
 
   /// Watch stream of routine coverage map whenever tracked foods change
-  Stream<Map<String, double>> watchPlannedRoutineCoverage() async* {
-    yield await calculatePlannedRoutineCoverage();
-    final foodStream = _isar.foodSourceItems
-        .filter()
-        .isTrackedEqualTo(true)
-        .watch(fireImmediately: false);
-
-    await for (final _ in foodStream) {
-      yield await calculatePlannedRoutineCoverage();
-    }
+  Stream<Map<String, double>> watchPlannedRoutineCoverage() {
+    return watchTrackedRoutineFoods().asyncMap((_) async {
+      return await calculatePlannedRoutineCoverage();
+    });
   }
 
   // --------------------------------------------------------------------------
@@ -179,6 +174,7 @@ class NutritionTrackingService {
       ..date = date
       ..isSynced = false;
 
+    record.loggedFoods = List<TrackedFoodEntry>.from(record.loggedFoods);
     bool modified = false;
     final existingMap = {for (var f in record.loggedFoods) f.foodId: f};
 
@@ -235,6 +231,7 @@ class NutritionTrackingService {
           ..weekKey = _formatWeekKey(weekMonday)
           ..isSynced = false;
 
+    record.loggedFoods = List<TrackedFoodEntry>.from(record.loggedFoods);
     bool modified = false;
     final existingMap = {for (var f in record.loggedFoods) f.foodId: f};
 
@@ -455,6 +452,38 @@ class NutritionTrackingService {
         .watch(fireImmediately: true);
   }
 
+  /// Watch stream of total planned routine daily calories and complete protein (proteinIndex == 1)
+  Stream<({double calories, double protein})> watchPlannedRoutineEnergyAndProtein() {
+    return watchTrackedRoutineFoods().map((routineFoods) {
+      double totalEnergy = 0.0;
+      double totalCompleteProtein = 0.0;
+
+      for (final food in routineFoods) {
+        final portionGrams = food.plannedDailyGrams;
+
+        // Calories from food.energy, or fallback to nutrient 'energy'
+        double energyPer100g = food.energy;
+        if (energyPer100g <= 0) {
+          final energyNutr = food.nutrients.where((n) => n.nutrientKey == 'energy').firstOrNull;
+          energyPer100g = energyNutr?.amountPer100g ?? 0.0;
+        }
+        totalEnergy += (portionGrams / 100.0) * energyPer100g;
+
+        // Complete protein from food.nutrients where proteinIndex == 1
+        if (food.proteinIndex == 1) {
+          final proteinNutrient = food.nutrients
+              .where((n) => n.nutrientKey == 'total_protein')
+              .firstOrNull;
+          if (proteinNutrient != null) {
+            totalCompleteProtein += (portionGrams / 100.0) * proteinNutrient.amountPer100g;
+          }
+        }
+      }
+
+      return (calories: totalEnergy, protein: totalCompleteProtein);
+    });
+  }
+
   Stream<TrackRecordDaily?> watchTodayDailyRecord() {
     final today = _normalizeDate(DateTime.now());
     return _isar.trackRecordDailys
@@ -608,6 +637,7 @@ class NutritionTrackingService {
       if (food == null) continue;
 
       for (final nutrient in food.nutrients) {
+        if (nutrient.nutrientKey == 'total_protein' && food.proteinIndex != 1) continue;
         final consumed =
             (logged.amountConsumedGrams / 100.0) * nutrient.amountPer100g;
         aggregatedNutrients[nutrient.nutrientKey] =
@@ -666,6 +696,7 @@ class NutritionTrackingService {
       if (food == null) continue;
 
       for (final nutrient in food.nutrients) {
+        if (nutrient.nutrientKey == 'total_protein' && food.proteinIndex != 1) continue;
         final consumed =
             (logged.amountConsumedGrams / 100.0) * nutrient.amountPer100g;
         aggregatedNutrients[nutrient.nutrientKey] =

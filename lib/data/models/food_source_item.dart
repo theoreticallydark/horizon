@@ -89,6 +89,9 @@ class FoodSourceItem {
     for (final nutrientVal in nutrients) {
       if (!triggerNutrientKeys.contains(nutrientVal.nutrientKey)) continue;
 
+      // Protein qualification requires food to be a complete protein source (proteinIndex == 1)
+      if (nutrientVal.nutrientKey == 'total_protein' && proteinIndex != 1) continue;
+
       final nutrientInfo = nutrientMap[nutrientVal.nutrientKey];
       if (nutrientInfo == null) continue;
 
