@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'daily_record.dart';
+part of 'track_record.dart';
 
 // **************************************************************************
 // IsarCollectionGenerator
@@ -9,13 +9,13 @@ part of 'daily_record.dart';
 // coverage:ignore-file
 // ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
 
-extension GetDailyRecordCollection on Isar {
-  IsarCollection<DailyRecord> get dailyRecords => this.collection();
+extension GetTrackRecordCollection on Isar {
+  IsarCollection<TrackRecord> get trackRecords => this.collection();
 }
 
-const DailyRecordSchema = CollectionSchema(
-  name: r'DailyRecord',
-  id: -1016922496390167466,
+const TrackRecordSchema = CollectionSchema(
+  name: r'TrackRecord',
+  id: 7443229866473957398,
   properties: {
     r'date': PropertySchema(
       id: 0,
@@ -31,13 +31,13 @@ const DailyRecordSchema = CollectionSchema(
       id: 2,
       name: r'loggedFoods',
       type: IsarType.objectList,
-      target: r'DailyFoodLogEntry',
+      target: r'TrackedFoodEntry',
     ),
     r'nutrientSummaries': PropertySchema(
       id: 3,
       name: r'nutrientSummaries',
       type: IsarType.objectList,
-      target: r'DailyNutrientSummary',
+      target: r'TrackNutrientSummary',
     ),
     r'routineAdherencePercent': PropertySchema(
       id: 4,
@@ -45,10 +45,10 @@ const DailyRecordSchema = CollectionSchema(
       type: IsarType.double,
     )
   },
-  estimateSize: _dailyRecordEstimateSize,
-  serialize: _dailyRecordSerialize,
-  deserialize: _dailyRecordDeserialize,
-  deserializeProp: _dailyRecordDeserializeProp,
+  estimateSize: _trackRecordEstimateSize,
+  serialize: _trackRecordSerialize,
+  deserialize: _trackRecordDeserialize,
+  deserializeProp: _trackRecordDeserializeProp,
   idName: r'id',
   indexes: {
     r'date': IndexSchema(
@@ -80,94 +80,94 @@ const DailyRecordSchema = CollectionSchema(
   },
   links: {},
   embeddedSchemas: {
-    r'DailyFoodLogEntry': DailyFoodLogEntrySchema,
-    r'DailyNutrientSummary': DailyNutrientSummarySchema
+    r'TrackedFoodEntry': TrackedFoodEntrySchema,
+    r'TrackNutrientSummary': TrackNutrientSummarySchema
   },
-  getId: _dailyRecordGetId,
-  getLinks: _dailyRecordGetLinks,
-  attach: _dailyRecordAttach,
+  getId: _trackRecordGetId,
+  getLinks: _trackRecordGetLinks,
+  attach: _trackRecordAttach,
   version: '3.1.0+1',
 );
 
-int _dailyRecordEstimateSize(
-  DailyRecord object,
+int _trackRecordEstimateSize(
+  TrackRecord object,
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
   bytesCount += 3 + object.loggedFoods.length * 3;
   {
-    final offsets = allOffsets[DailyFoodLogEntry]!;
+    final offsets = allOffsets[TrackedFoodEntry]!;
     for (var i = 0; i < object.loggedFoods.length; i++) {
       final value = object.loggedFoods[i];
       bytesCount +=
-          DailyFoodLogEntrySchema.estimateSize(value, offsets, allOffsets);
+          TrackedFoodEntrySchema.estimateSize(value, offsets, allOffsets);
     }
   }
   bytesCount += 3 + object.nutrientSummaries.length * 3;
   {
-    final offsets = allOffsets[DailyNutrientSummary]!;
+    final offsets = allOffsets[TrackNutrientSummary]!;
     for (var i = 0; i < object.nutrientSummaries.length; i++) {
       final value = object.nutrientSummaries[i];
       bytesCount +=
-          DailyNutrientSummarySchema.estimateSize(value, offsets, allOffsets);
+          TrackNutrientSummarySchema.estimateSize(value, offsets, allOffsets);
     }
   }
   return bytesCount;
 }
 
-void _dailyRecordSerialize(
-  DailyRecord object,
+void _trackRecordSerialize(
+  TrackRecord object,
   IsarWriter writer,
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeDateTime(offsets[0], object.date);
   writer.writeBool(offsets[1], object.isSynced);
-  writer.writeObjectList<DailyFoodLogEntry>(
+  writer.writeObjectList<TrackedFoodEntry>(
     offsets[2],
     allOffsets,
-    DailyFoodLogEntrySchema.serialize,
+    TrackedFoodEntrySchema.serialize,
     object.loggedFoods,
   );
-  writer.writeObjectList<DailyNutrientSummary>(
+  writer.writeObjectList<TrackNutrientSummary>(
     offsets[3],
     allOffsets,
-    DailyNutrientSummarySchema.serialize,
+    TrackNutrientSummarySchema.serialize,
     object.nutrientSummaries,
   );
   writer.writeDouble(offsets[4], object.routineAdherencePercent);
 }
 
-DailyRecord _dailyRecordDeserialize(
+TrackRecord _trackRecordDeserialize(
   Id id,
   IsarReader reader,
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  final object = DailyRecord();
+  final object = TrackRecord();
   object.date = reader.readDateTime(offsets[0]);
   object.id = id;
   object.isSynced = reader.readBool(offsets[1]);
-  object.loggedFoods = reader.readObjectList<DailyFoodLogEntry>(
+  object.loggedFoods = reader.readObjectList<TrackedFoodEntry>(
         offsets[2],
-        DailyFoodLogEntrySchema.deserialize,
+        TrackedFoodEntrySchema.deserialize,
         allOffsets,
-        DailyFoodLogEntry(),
+        TrackedFoodEntry(),
       ) ??
       [];
-  object.nutrientSummaries = reader.readObjectList<DailyNutrientSummary>(
+  object.nutrientSummaries = reader.readObjectList<TrackNutrientSummary>(
         offsets[3],
-        DailyNutrientSummarySchema.deserialize,
+        TrackNutrientSummarySchema.deserialize,
         allOffsets,
-        DailyNutrientSummary(),
+        TrackNutrientSummary(),
       ) ??
       [];
   object.routineAdherencePercent = reader.readDouble(offsets[4]);
   return object;
 }
 
-P _dailyRecordDeserializeProp<P>(
+P _trackRecordDeserializeProp<P>(
   IsarReader reader,
   int propertyId,
   int offset,
@@ -179,19 +179,19 @@ P _dailyRecordDeserializeProp<P>(
     case 1:
       return (reader.readBool(offset)) as P;
     case 2:
-      return (reader.readObjectList<DailyFoodLogEntry>(
+      return (reader.readObjectList<TrackedFoodEntry>(
             offset,
-            DailyFoodLogEntrySchema.deserialize,
+            TrackedFoodEntrySchema.deserialize,
             allOffsets,
-            DailyFoodLogEntry(),
+            TrackedFoodEntry(),
           ) ??
           []) as P;
     case 3:
-      return (reader.readObjectList<DailyNutrientSummary>(
+      return (reader.readObjectList<TrackNutrientSummary>(
             offset,
-            DailyNutrientSummarySchema.deserialize,
+            TrackNutrientSummarySchema.deserialize,
             allOffsets,
-            DailyNutrientSummary(),
+            TrackNutrientSummary(),
           ) ??
           []) as P;
     case 4:
@@ -201,25 +201,25 @@ P _dailyRecordDeserializeProp<P>(
   }
 }
 
-Id _dailyRecordGetId(DailyRecord object) {
+Id _trackRecordGetId(TrackRecord object) {
   return object.id;
 }
 
-List<IsarLinkBase<dynamic>> _dailyRecordGetLinks(DailyRecord object) {
+List<IsarLinkBase<dynamic>> _trackRecordGetLinks(TrackRecord object) {
   return [];
 }
 
-void _dailyRecordAttach(
-    IsarCollection<dynamic> col, Id id, DailyRecord object) {
+void _trackRecordAttach(
+    IsarCollection<dynamic> col, Id id, TrackRecord object) {
   object.id = id;
 }
 
-extension DailyRecordByIndex on IsarCollection<DailyRecord> {
-  Future<DailyRecord?> getByDate(DateTime date) {
+extension TrackRecordByIndex on IsarCollection<TrackRecord> {
+  Future<TrackRecord?> getByDate(DateTime date) {
     return getByIndex(r'date', [date]);
   }
 
-  DailyRecord? getByDateSync(DateTime date) {
+  TrackRecord? getByDateSync(DateTime date) {
     return getByIndexSync(r'date', [date]);
   }
 
@@ -231,12 +231,12 @@ extension DailyRecordByIndex on IsarCollection<DailyRecord> {
     return deleteByIndexSync(r'date', [date]);
   }
 
-  Future<List<DailyRecord?>> getAllByDate(List<DateTime> dateValues) {
+  Future<List<TrackRecord?>> getAllByDate(List<DateTime> dateValues) {
     final values = dateValues.map((e) => [e]).toList();
     return getAllByIndex(r'date', values);
   }
 
-  List<DailyRecord?> getAllByDateSync(List<DateTime> dateValues) {
+  List<TrackRecord?> getAllByDateSync(List<DateTime> dateValues) {
     final values = dateValues.map((e) => [e]).toList();
     return getAllByIndexSync(r'date', values);
   }
@@ -251,33 +251,33 @@ extension DailyRecordByIndex on IsarCollection<DailyRecord> {
     return deleteAllByIndexSync(r'date', values);
   }
 
-  Future<Id> putByDate(DailyRecord object) {
+  Future<Id> putByDate(TrackRecord object) {
     return putByIndex(r'date', object);
   }
 
-  Id putByDateSync(DailyRecord object, {bool saveLinks = true}) {
+  Id putByDateSync(TrackRecord object, {bool saveLinks = true}) {
     return putByIndexSync(r'date', object, saveLinks: saveLinks);
   }
 
-  Future<List<Id>> putAllByDate(List<DailyRecord> objects) {
+  Future<List<Id>> putAllByDate(List<TrackRecord> objects) {
     return putAllByIndex(r'date', objects);
   }
 
-  List<Id> putAllByDateSync(List<DailyRecord> objects,
+  List<Id> putAllByDateSync(List<TrackRecord> objects,
       {bool saveLinks = true}) {
     return putAllByIndexSync(r'date', objects, saveLinks: saveLinks);
   }
 }
 
-extension DailyRecordQueryWhereSort
-    on QueryBuilder<DailyRecord, DailyRecord, QWhere> {
-  QueryBuilder<DailyRecord, DailyRecord, QAfterWhere> anyId() {
+extension TrackRecordQueryWhereSort
+    on QueryBuilder<TrackRecord, TrackRecord, QWhere> {
+  QueryBuilder<TrackRecord, TrackRecord, QAfterWhere> anyId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
     });
   }
 
-  QueryBuilder<DailyRecord, DailyRecord, QAfterWhere> anyDate() {
+  QueryBuilder<TrackRecord, TrackRecord, QAfterWhere> anyDate() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         const IndexWhereClause.any(indexName: r'date'),
@@ -285,7 +285,7 @@ extension DailyRecordQueryWhereSort
     });
   }
 
-  QueryBuilder<DailyRecord, DailyRecord, QAfterWhere> anyIsSynced() {
+  QueryBuilder<TrackRecord, TrackRecord, QAfterWhere> anyIsSynced() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         const IndexWhereClause.any(indexName: r'isSynced'),
@@ -294,9 +294,9 @@ extension DailyRecordQueryWhereSort
   }
 }
 
-extension DailyRecordQueryWhere
-    on QueryBuilder<DailyRecord, DailyRecord, QWhereClause> {
-  QueryBuilder<DailyRecord, DailyRecord, QAfterWhereClause> idEqualTo(Id id) {
+extension TrackRecordQueryWhere
+    on QueryBuilder<TrackRecord, TrackRecord, QWhereClause> {
+  QueryBuilder<TrackRecord, TrackRecord, QAfterWhereClause> idEqualTo(Id id) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IdWhereClause.between(
         lower: id,
@@ -305,7 +305,7 @@ extension DailyRecordQueryWhere
     });
   }
 
-  QueryBuilder<DailyRecord, DailyRecord, QAfterWhereClause> idNotEqualTo(
+  QueryBuilder<TrackRecord, TrackRecord, QAfterWhereClause> idNotEqualTo(
       Id id) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
@@ -328,7 +328,7 @@ extension DailyRecordQueryWhere
     });
   }
 
-  QueryBuilder<DailyRecord, DailyRecord, QAfterWhereClause> idGreaterThan(Id id,
+  QueryBuilder<TrackRecord, TrackRecord, QAfterWhereClause> idGreaterThan(Id id,
       {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
@@ -337,7 +337,7 @@ extension DailyRecordQueryWhere
     });
   }
 
-  QueryBuilder<DailyRecord, DailyRecord, QAfterWhereClause> idLessThan(Id id,
+  QueryBuilder<TrackRecord, TrackRecord, QAfterWhereClause> idLessThan(Id id,
       {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
@@ -346,7 +346,7 @@ extension DailyRecordQueryWhere
     });
   }
 
-  QueryBuilder<DailyRecord, DailyRecord, QAfterWhereClause> idBetween(
+  QueryBuilder<TrackRecord, TrackRecord, QAfterWhereClause> idBetween(
     Id lowerId,
     Id upperId, {
     bool includeLower = true,
@@ -362,7 +362,7 @@ extension DailyRecordQueryWhere
     });
   }
 
-  QueryBuilder<DailyRecord, DailyRecord, QAfterWhereClause> dateEqualTo(
+  QueryBuilder<TrackRecord, TrackRecord, QAfterWhereClause> dateEqualTo(
       DateTime date) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IndexWhereClause.equalTo(
@@ -372,7 +372,7 @@ extension DailyRecordQueryWhere
     });
   }
 
-  QueryBuilder<DailyRecord, DailyRecord, QAfterWhereClause> dateNotEqualTo(
+  QueryBuilder<TrackRecord, TrackRecord, QAfterWhereClause> dateNotEqualTo(
       DateTime date) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
@@ -407,7 +407,7 @@ extension DailyRecordQueryWhere
     });
   }
 
-  QueryBuilder<DailyRecord, DailyRecord, QAfterWhereClause> dateGreaterThan(
+  QueryBuilder<TrackRecord, TrackRecord, QAfterWhereClause> dateGreaterThan(
     DateTime date, {
     bool include = false,
   }) {
@@ -421,7 +421,7 @@ extension DailyRecordQueryWhere
     });
   }
 
-  QueryBuilder<DailyRecord, DailyRecord, QAfterWhereClause> dateLessThan(
+  QueryBuilder<TrackRecord, TrackRecord, QAfterWhereClause> dateLessThan(
     DateTime date, {
     bool include = false,
   }) {
@@ -435,7 +435,7 @@ extension DailyRecordQueryWhere
     });
   }
 
-  QueryBuilder<DailyRecord, DailyRecord, QAfterWhereClause> dateBetween(
+  QueryBuilder<TrackRecord, TrackRecord, QAfterWhereClause> dateBetween(
     DateTime lowerDate,
     DateTime upperDate, {
     bool includeLower = true,
@@ -452,7 +452,7 @@ extension DailyRecordQueryWhere
     });
   }
 
-  QueryBuilder<DailyRecord, DailyRecord, QAfterWhereClause> isSyncedEqualTo(
+  QueryBuilder<TrackRecord, TrackRecord, QAfterWhereClause> isSyncedEqualTo(
       bool isSynced) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IndexWhereClause.equalTo(
@@ -462,7 +462,7 @@ extension DailyRecordQueryWhere
     });
   }
 
-  QueryBuilder<DailyRecord, DailyRecord, QAfterWhereClause> isSyncedNotEqualTo(
+  QueryBuilder<TrackRecord, TrackRecord, QAfterWhereClause> isSyncedNotEqualTo(
       bool isSynced) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
@@ -498,9 +498,9 @@ extension DailyRecordQueryWhere
   }
 }
 
-extension DailyRecordQueryFilter
-    on QueryBuilder<DailyRecord, DailyRecord, QFilterCondition> {
-  QueryBuilder<DailyRecord, DailyRecord, QAfterFilterCondition> dateEqualTo(
+extension TrackRecordQueryFilter
+    on QueryBuilder<TrackRecord, TrackRecord, QFilterCondition> {
+  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition> dateEqualTo(
       DateTime value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -510,7 +510,7 @@ extension DailyRecordQueryFilter
     });
   }
 
-  QueryBuilder<DailyRecord, DailyRecord, QAfterFilterCondition> dateGreaterThan(
+  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition> dateGreaterThan(
     DateTime value, {
     bool include = false,
   }) {
@@ -523,7 +523,7 @@ extension DailyRecordQueryFilter
     });
   }
 
-  QueryBuilder<DailyRecord, DailyRecord, QAfterFilterCondition> dateLessThan(
+  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition> dateLessThan(
     DateTime value, {
     bool include = false,
   }) {
@@ -536,7 +536,7 @@ extension DailyRecordQueryFilter
     });
   }
 
-  QueryBuilder<DailyRecord, DailyRecord, QAfterFilterCondition> dateBetween(
+  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition> dateBetween(
     DateTime lower,
     DateTime upper, {
     bool includeLower = true,
@@ -553,7 +553,7 @@ extension DailyRecordQueryFilter
     });
   }
 
-  QueryBuilder<DailyRecord, DailyRecord, QAfterFilterCondition> idEqualTo(
+  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition> idEqualTo(
       Id value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -563,7 +563,7 @@ extension DailyRecordQueryFilter
     });
   }
 
-  QueryBuilder<DailyRecord, DailyRecord, QAfterFilterCondition> idGreaterThan(
+  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition> idGreaterThan(
     Id value, {
     bool include = false,
   }) {
@@ -576,7 +576,7 @@ extension DailyRecordQueryFilter
     });
   }
 
-  QueryBuilder<DailyRecord, DailyRecord, QAfterFilterCondition> idLessThan(
+  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition> idLessThan(
     Id value, {
     bool include = false,
   }) {
@@ -589,7 +589,7 @@ extension DailyRecordQueryFilter
     });
   }
 
-  QueryBuilder<DailyRecord, DailyRecord, QAfterFilterCondition> idBetween(
+  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition> idBetween(
     Id lower,
     Id upper, {
     bool includeLower = true,
@@ -606,7 +606,7 @@ extension DailyRecordQueryFilter
     });
   }
 
-  QueryBuilder<DailyRecord, DailyRecord, QAfterFilterCondition> isSyncedEqualTo(
+  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition> isSyncedEqualTo(
       bool value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -616,7 +616,7 @@ extension DailyRecordQueryFilter
     });
   }
 
-  QueryBuilder<DailyRecord, DailyRecord, QAfterFilterCondition>
+  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition>
       loggedFoodsLengthEqualTo(int length) {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
@@ -629,7 +629,7 @@ extension DailyRecordQueryFilter
     });
   }
 
-  QueryBuilder<DailyRecord, DailyRecord, QAfterFilterCondition>
+  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition>
       loggedFoodsIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
@@ -642,7 +642,7 @@ extension DailyRecordQueryFilter
     });
   }
 
-  QueryBuilder<DailyRecord, DailyRecord, QAfterFilterCondition>
+  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition>
       loggedFoodsIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
@@ -655,7 +655,7 @@ extension DailyRecordQueryFilter
     });
   }
 
-  QueryBuilder<DailyRecord, DailyRecord, QAfterFilterCondition>
+  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition>
       loggedFoodsLengthLessThan(
     int length, {
     bool include = false,
@@ -671,7 +671,7 @@ extension DailyRecordQueryFilter
     });
   }
 
-  QueryBuilder<DailyRecord, DailyRecord, QAfterFilterCondition>
+  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition>
       loggedFoodsLengthGreaterThan(
     int length, {
     bool include = false,
@@ -687,7 +687,7 @@ extension DailyRecordQueryFilter
     });
   }
 
-  QueryBuilder<DailyRecord, DailyRecord, QAfterFilterCondition>
+  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition>
       loggedFoodsLengthBetween(
     int lower,
     int upper, {
@@ -705,7 +705,7 @@ extension DailyRecordQueryFilter
     });
   }
 
-  QueryBuilder<DailyRecord, DailyRecord, QAfterFilterCondition>
+  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition>
       nutrientSummariesLengthEqualTo(int length) {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
@@ -718,7 +718,7 @@ extension DailyRecordQueryFilter
     });
   }
 
-  QueryBuilder<DailyRecord, DailyRecord, QAfterFilterCondition>
+  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition>
       nutrientSummariesIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
@@ -731,7 +731,7 @@ extension DailyRecordQueryFilter
     });
   }
 
-  QueryBuilder<DailyRecord, DailyRecord, QAfterFilterCondition>
+  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition>
       nutrientSummariesIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
@@ -744,7 +744,7 @@ extension DailyRecordQueryFilter
     });
   }
 
-  QueryBuilder<DailyRecord, DailyRecord, QAfterFilterCondition>
+  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition>
       nutrientSummariesLengthLessThan(
     int length, {
     bool include = false,
@@ -760,7 +760,7 @@ extension DailyRecordQueryFilter
     });
   }
 
-  QueryBuilder<DailyRecord, DailyRecord, QAfterFilterCondition>
+  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition>
       nutrientSummariesLengthGreaterThan(
     int length, {
     bool include = false,
@@ -776,7 +776,7 @@ extension DailyRecordQueryFilter
     });
   }
 
-  QueryBuilder<DailyRecord, DailyRecord, QAfterFilterCondition>
+  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition>
       nutrientSummariesLengthBetween(
     int lower,
     int upper, {
@@ -794,7 +794,7 @@ extension DailyRecordQueryFilter
     });
   }
 
-  QueryBuilder<DailyRecord, DailyRecord, QAfterFilterCondition>
+  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition>
       routineAdherencePercentEqualTo(
     double value, {
     double epsilon = Query.epsilon,
@@ -808,7 +808,7 @@ extension DailyRecordQueryFilter
     });
   }
 
-  QueryBuilder<DailyRecord, DailyRecord, QAfterFilterCondition>
+  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition>
       routineAdherencePercentGreaterThan(
     double value, {
     bool include = false,
@@ -824,7 +824,7 @@ extension DailyRecordQueryFilter
     });
   }
 
-  QueryBuilder<DailyRecord, DailyRecord, QAfterFilterCondition>
+  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition>
       routineAdherencePercentLessThan(
     double value, {
     bool include = false,
@@ -840,7 +840,7 @@ extension DailyRecordQueryFilter
     });
   }
 
-  QueryBuilder<DailyRecord, DailyRecord, QAfterFilterCondition>
+  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition>
       routineAdherencePercentBetween(
     double lower,
     double upper, {
@@ -861,60 +861,60 @@ extension DailyRecordQueryFilter
   }
 }
 
-extension DailyRecordQueryObject
-    on QueryBuilder<DailyRecord, DailyRecord, QFilterCondition> {
-  QueryBuilder<DailyRecord, DailyRecord, QAfterFilterCondition>
-      loggedFoodsElement(FilterQuery<DailyFoodLogEntry> q) {
+extension TrackRecordQueryObject
+    on QueryBuilder<TrackRecord, TrackRecord, QFilterCondition> {
+  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition>
+      loggedFoodsElement(FilterQuery<TrackedFoodEntry> q) {
     return QueryBuilder.apply(this, (query) {
       return query.object(q, r'loggedFoods');
     });
   }
 
-  QueryBuilder<DailyRecord, DailyRecord, QAfterFilterCondition>
-      nutrientSummariesElement(FilterQuery<DailyNutrientSummary> q) {
+  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition>
+      nutrientSummariesElement(FilterQuery<TrackNutrientSummary> q) {
     return QueryBuilder.apply(this, (query) {
       return query.object(q, r'nutrientSummaries');
     });
   }
 }
 
-extension DailyRecordQueryLinks
-    on QueryBuilder<DailyRecord, DailyRecord, QFilterCondition> {}
+extension TrackRecordQueryLinks
+    on QueryBuilder<TrackRecord, TrackRecord, QFilterCondition> {}
 
-extension DailyRecordQuerySortBy
-    on QueryBuilder<DailyRecord, DailyRecord, QSortBy> {
-  QueryBuilder<DailyRecord, DailyRecord, QAfterSortBy> sortByDate() {
+extension TrackRecordQuerySortBy
+    on QueryBuilder<TrackRecord, TrackRecord, QSortBy> {
+  QueryBuilder<TrackRecord, TrackRecord, QAfterSortBy> sortByDate() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'date', Sort.asc);
     });
   }
 
-  QueryBuilder<DailyRecord, DailyRecord, QAfterSortBy> sortByDateDesc() {
+  QueryBuilder<TrackRecord, TrackRecord, QAfterSortBy> sortByDateDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'date', Sort.desc);
     });
   }
 
-  QueryBuilder<DailyRecord, DailyRecord, QAfterSortBy> sortByIsSynced() {
+  QueryBuilder<TrackRecord, TrackRecord, QAfterSortBy> sortByIsSynced() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isSynced', Sort.asc);
     });
   }
 
-  QueryBuilder<DailyRecord, DailyRecord, QAfterSortBy> sortByIsSyncedDesc() {
+  QueryBuilder<TrackRecord, TrackRecord, QAfterSortBy> sortByIsSyncedDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isSynced', Sort.desc);
     });
   }
 
-  QueryBuilder<DailyRecord, DailyRecord, QAfterSortBy>
+  QueryBuilder<TrackRecord, TrackRecord, QAfterSortBy>
       sortByRoutineAdherencePercent() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'routineAdherencePercent', Sort.asc);
     });
   }
 
-  QueryBuilder<DailyRecord, DailyRecord, QAfterSortBy>
+  QueryBuilder<TrackRecord, TrackRecord, QAfterSortBy>
       sortByRoutineAdherencePercentDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'routineAdherencePercent', Sort.desc);
@@ -922,52 +922,52 @@ extension DailyRecordQuerySortBy
   }
 }
 
-extension DailyRecordQuerySortThenBy
-    on QueryBuilder<DailyRecord, DailyRecord, QSortThenBy> {
-  QueryBuilder<DailyRecord, DailyRecord, QAfterSortBy> thenByDate() {
+extension TrackRecordQuerySortThenBy
+    on QueryBuilder<TrackRecord, TrackRecord, QSortThenBy> {
+  QueryBuilder<TrackRecord, TrackRecord, QAfterSortBy> thenByDate() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'date', Sort.asc);
     });
   }
 
-  QueryBuilder<DailyRecord, DailyRecord, QAfterSortBy> thenByDateDesc() {
+  QueryBuilder<TrackRecord, TrackRecord, QAfterSortBy> thenByDateDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'date', Sort.desc);
     });
   }
 
-  QueryBuilder<DailyRecord, DailyRecord, QAfterSortBy> thenById() {
+  QueryBuilder<TrackRecord, TrackRecord, QAfterSortBy> thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
     });
   }
 
-  QueryBuilder<DailyRecord, DailyRecord, QAfterSortBy> thenByIdDesc() {
+  QueryBuilder<TrackRecord, TrackRecord, QAfterSortBy> thenByIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.desc);
     });
   }
 
-  QueryBuilder<DailyRecord, DailyRecord, QAfterSortBy> thenByIsSynced() {
+  QueryBuilder<TrackRecord, TrackRecord, QAfterSortBy> thenByIsSynced() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isSynced', Sort.asc);
     });
   }
 
-  QueryBuilder<DailyRecord, DailyRecord, QAfterSortBy> thenByIsSyncedDesc() {
+  QueryBuilder<TrackRecord, TrackRecord, QAfterSortBy> thenByIsSyncedDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isSynced', Sort.desc);
     });
   }
 
-  QueryBuilder<DailyRecord, DailyRecord, QAfterSortBy>
+  QueryBuilder<TrackRecord, TrackRecord, QAfterSortBy>
       thenByRoutineAdherencePercent() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'routineAdherencePercent', Sort.asc);
     });
   }
 
-  QueryBuilder<DailyRecord, DailyRecord, QAfterSortBy>
+  QueryBuilder<TrackRecord, TrackRecord, QAfterSortBy>
       thenByRoutineAdherencePercentDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'routineAdherencePercent', Sort.desc);
@@ -975,21 +975,21 @@ extension DailyRecordQuerySortThenBy
   }
 }
 
-extension DailyRecordQueryWhereDistinct
-    on QueryBuilder<DailyRecord, DailyRecord, QDistinct> {
-  QueryBuilder<DailyRecord, DailyRecord, QDistinct> distinctByDate() {
+extension TrackRecordQueryWhereDistinct
+    on QueryBuilder<TrackRecord, TrackRecord, QDistinct> {
+  QueryBuilder<TrackRecord, TrackRecord, QDistinct> distinctByDate() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'date');
     });
   }
 
-  QueryBuilder<DailyRecord, DailyRecord, QDistinct> distinctByIsSynced() {
+  QueryBuilder<TrackRecord, TrackRecord, QDistinct> distinctByIsSynced() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isSynced');
     });
   }
 
-  QueryBuilder<DailyRecord, DailyRecord, QDistinct>
+  QueryBuilder<TrackRecord, TrackRecord, QDistinct>
       distinctByRoutineAdherencePercent() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'routineAdherencePercent');
@@ -997,41 +997,41 @@ extension DailyRecordQueryWhereDistinct
   }
 }
 
-extension DailyRecordQueryProperty
-    on QueryBuilder<DailyRecord, DailyRecord, QQueryProperty> {
-  QueryBuilder<DailyRecord, int, QQueryOperations> idProperty() {
+extension TrackRecordQueryProperty
+    on QueryBuilder<TrackRecord, TrackRecord, QQueryProperty> {
+  QueryBuilder<TrackRecord, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
     });
   }
 
-  QueryBuilder<DailyRecord, DateTime, QQueryOperations> dateProperty() {
+  QueryBuilder<TrackRecord, DateTime, QQueryOperations> dateProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'date');
     });
   }
 
-  QueryBuilder<DailyRecord, bool, QQueryOperations> isSyncedProperty() {
+  QueryBuilder<TrackRecord, bool, QQueryOperations> isSyncedProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isSynced');
     });
   }
 
-  QueryBuilder<DailyRecord, List<DailyFoodLogEntry>, QQueryOperations>
+  QueryBuilder<TrackRecord, List<TrackedFoodEntry>, QQueryOperations>
       loggedFoodsProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'loggedFoods');
     });
   }
 
-  QueryBuilder<DailyRecord, List<DailyNutrientSummary>, QQueryOperations>
+  QueryBuilder<TrackRecord, List<TrackNutrientSummary>, QQueryOperations>
       nutrientSummariesProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'nutrientSummaries');
     });
   }
 
-  QueryBuilder<DailyRecord, double, QQueryOperations>
+  QueryBuilder<TrackRecord, double, QQueryOperations>
       routineAdherencePercentProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'routineAdherencePercent');
@@ -1046,9 +1046,9 @@ extension DailyRecordQueryProperty
 // coverage:ignore-file
 // ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
 
-const DailyFoodLogEntrySchema = Schema(
-  name: r'DailyFoodLogEntry',
-  id: 2823341316557612288,
+const TrackedFoodEntrySchema = Schema(
+  name: r'TrackedFoodEntry',
+  id: 553257056315010556,
   properties: {
     r'amountConsumedGrams': PropertySchema(
       id: 0,
@@ -1081,14 +1081,14 @@ const DailyFoodLogEntrySchema = Schema(
       type: IsarType.double,
     )
   },
-  estimateSize: _dailyFoodLogEntryEstimateSize,
-  serialize: _dailyFoodLogEntrySerialize,
-  deserialize: _dailyFoodLogEntryDeserialize,
-  deserializeProp: _dailyFoodLogEntryDeserializeProp,
+  estimateSize: _trackedFoodEntryEstimateSize,
+  serialize: _trackedFoodEntrySerialize,
+  deserialize: _trackedFoodEntryDeserialize,
+  deserializeProp: _trackedFoodEntryDeserializeProp,
 );
 
-int _dailyFoodLogEntryEstimateSize(
-  DailyFoodLogEntry object,
+int _trackedFoodEntryEstimateSize(
+  TrackedFoodEntry object,
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
@@ -1098,8 +1098,8 @@ int _dailyFoodLogEntryEstimateSize(
   return bytesCount;
 }
 
-void _dailyFoodLogEntrySerialize(
-  DailyFoodLogEntry object,
+void _trackedFoodEntrySerialize(
+  TrackedFoodEntry object,
   IsarWriter writer,
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
@@ -1112,13 +1112,13 @@ void _dailyFoodLogEntrySerialize(
   writer.writeDouble(offsets[5], object.plannedGrams);
 }
 
-DailyFoodLogEntry _dailyFoodLogEntryDeserialize(
+TrackedFoodEntry _trackedFoodEntryDeserialize(
   Id id,
   IsarReader reader,
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  final object = DailyFoodLogEntry();
+  final object = TrackedFoodEntry();
   object.amountConsumedGrams = reader.readDouble(offsets[0]);
   object.foodId = reader.readString(offsets[1]);
   object.foodTitle = reader.readString(offsets[2]);
@@ -1128,7 +1128,7 @@ DailyFoodLogEntry _dailyFoodLogEntryDeserialize(
   return object;
 }
 
-P _dailyFoodLogEntryDeserializeProp<P>(
+P _trackedFoodEntryDeserializeProp<P>(
   IsarReader reader,
   int propertyId,
   int offset,
@@ -1152,9 +1152,9 @@ P _dailyFoodLogEntryDeserializeProp<P>(
   }
 }
 
-extension DailyFoodLogEntryQueryFilter
-    on QueryBuilder<DailyFoodLogEntry, DailyFoodLogEntry, QFilterCondition> {
-  QueryBuilder<DailyFoodLogEntry, DailyFoodLogEntry, QAfterFilterCondition>
+extension TrackedFoodEntryQueryFilter
+    on QueryBuilder<TrackedFoodEntry, TrackedFoodEntry, QFilterCondition> {
+  QueryBuilder<TrackedFoodEntry, TrackedFoodEntry, QAfterFilterCondition>
       amountConsumedGramsEqualTo(
     double value, {
     double epsilon = Query.epsilon,
@@ -1168,7 +1168,7 @@ extension DailyFoodLogEntryQueryFilter
     });
   }
 
-  QueryBuilder<DailyFoodLogEntry, DailyFoodLogEntry, QAfterFilterCondition>
+  QueryBuilder<TrackedFoodEntry, TrackedFoodEntry, QAfterFilterCondition>
       amountConsumedGramsGreaterThan(
     double value, {
     bool include = false,
@@ -1184,7 +1184,7 @@ extension DailyFoodLogEntryQueryFilter
     });
   }
 
-  QueryBuilder<DailyFoodLogEntry, DailyFoodLogEntry, QAfterFilterCondition>
+  QueryBuilder<TrackedFoodEntry, TrackedFoodEntry, QAfterFilterCondition>
       amountConsumedGramsLessThan(
     double value, {
     bool include = false,
@@ -1200,7 +1200,7 @@ extension DailyFoodLogEntryQueryFilter
     });
   }
 
-  QueryBuilder<DailyFoodLogEntry, DailyFoodLogEntry, QAfterFilterCondition>
+  QueryBuilder<TrackedFoodEntry, TrackedFoodEntry, QAfterFilterCondition>
       amountConsumedGramsBetween(
     double lower,
     double upper, {
@@ -1220,7 +1220,7 @@ extension DailyFoodLogEntryQueryFilter
     });
   }
 
-  QueryBuilder<DailyFoodLogEntry, DailyFoodLogEntry, QAfterFilterCondition>
+  QueryBuilder<TrackedFoodEntry, TrackedFoodEntry, QAfterFilterCondition>
       foodIdEqualTo(
     String value, {
     bool caseSensitive = true,
@@ -1234,7 +1234,7 @@ extension DailyFoodLogEntryQueryFilter
     });
   }
 
-  QueryBuilder<DailyFoodLogEntry, DailyFoodLogEntry, QAfterFilterCondition>
+  QueryBuilder<TrackedFoodEntry, TrackedFoodEntry, QAfterFilterCondition>
       foodIdGreaterThan(
     String value, {
     bool include = false,
@@ -1250,7 +1250,7 @@ extension DailyFoodLogEntryQueryFilter
     });
   }
 
-  QueryBuilder<DailyFoodLogEntry, DailyFoodLogEntry, QAfterFilterCondition>
+  QueryBuilder<TrackedFoodEntry, TrackedFoodEntry, QAfterFilterCondition>
       foodIdLessThan(
     String value, {
     bool include = false,
@@ -1266,7 +1266,7 @@ extension DailyFoodLogEntryQueryFilter
     });
   }
 
-  QueryBuilder<DailyFoodLogEntry, DailyFoodLogEntry, QAfterFilterCondition>
+  QueryBuilder<TrackedFoodEntry, TrackedFoodEntry, QAfterFilterCondition>
       foodIdBetween(
     String lower,
     String upper, {
@@ -1286,7 +1286,7 @@ extension DailyFoodLogEntryQueryFilter
     });
   }
 
-  QueryBuilder<DailyFoodLogEntry, DailyFoodLogEntry, QAfterFilterCondition>
+  QueryBuilder<TrackedFoodEntry, TrackedFoodEntry, QAfterFilterCondition>
       foodIdStartsWith(
     String value, {
     bool caseSensitive = true,
@@ -1300,7 +1300,7 @@ extension DailyFoodLogEntryQueryFilter
     });
   }
 
-  QueryBuilder<DailyFoodLogEntry, DailyFoodLogEntry, QAfterFilterCondition>
+  QueryBuilder<TrackedFoodEntry, TrackedFoodEntry, QAfterFilterCondition>
       foodIdEndsWith(
     String value, {
     bool caseSensitive = true,
@@ -1314,7 +1314,7 @@ extension DailyFoodLogEntryQueryFilter
     });
   }
 
-  QueryBuilder<DailyFoodLogEntry, DailyFoodLogEntry, QAfterFilterCondition>
+  QueryBuilder<TrackedFoodEntry, TrackedFoodEntry, QAfterFilterCondition>
       foodIdContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
@@ -1325,7 +1325,7 @@ extension DailyFoodLogEntryQueryFilter
     });
   }
 
-  QueryBuilder<DailyFoodLogEntry, DailyFoodLogEntry, QAfterFilterCondition>
+  QueryBuilder<TrackedFoodEntry, TrackedFoodEntry, QAfterFilterCondition>
       foodIdMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
@@ -1336,7 +1336,7 @@ extension DailyFoodLogEntryQueryFilter
     });
   }
 
-  QueryBuilder<DailyFoodLogEntry, DailyFoodLogEntry, QAfterFilterCondition>
+  QueryBuilder<TrackedFoodEntry, TrackedFoodEntry, QAfterFilterCondition>
       foodIdIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -1346,7 +1346,7 @@ extension DailyFoodLogEntryQueryFilter
     });
   }
 
-  QueryBuilder<DailyFoodLogEntry, DailyFoodLogEntry, QAfterFilterCondition>
+  QueryBuilder<TrackedFoodEntry, TrackedFoodEntry, QAfterFilterCondition>
       foodIdIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
@@ -1356,7 +1356,7 @@ extension DailyFoodLogEntryQueryFilter
     });
   }
 
-  QueryBuilder<DailyFoodLogEntry, DailyFoodLogEntry, QAfterFilterCondition>
+  QueryBuilder<TrackedFoodEntry, TrackedFoodEntry, QAfterFilterCondition>
       foodTitleEqualTo(
     String value, {
     bool caseSensitive = true,
@@ -1370,7 +1370,7 @@ extension DailyFoodLogEntryQueryFilter
     });
   }
 
-  QueryBuilder<DailyFoodLogEntry, DailyFoodLogEntry, QAfterFilterCondition>
+  QueryBuilder<TrackedFoodEntry, TrackedFoodEntry, QAfterFilterCondition>
       foodTitleGreaterThan(
     String value, {
     bool include = false,
@@ -1386,7 +1386,7 @@ extension DailyFoodLogEntryQueryFilter
     });
   }
 
-  QueryBuilder<DailyFoodLogEntry, DailyFoodLogEntry, QAfterFilterCondition>
+  QueryBuilder<TrackedFoodEntry, TrackedFoodEntry, QAfterFilterCondition>
       foodTitleLessThan(
     String value, {
     bool include = false,
@@ -1402,7 +1402,7 @@ extension DailyFoodLogEntryQueryFilter
     });
   }
 
-  QueryBuilder<DailyFoodLogEntry, DailyFoodLogEntry, QAfterFilterCondition>
+  QueryBuilder<TrackedFoodEntry, TrackedFoodEntry, QAfterFilterCondition>
       foodTitleBetween(
     String lower,
     String upper, {
@@ -1422,7 +1422,7 @@ extension DailyFoodLogEntryQueryFilter
     });
   }
 
-  QueryBuilder<DailyFoodLogEntry, DailyFoodLogEntry, QAfterFilterCondition>
+  QueryBuilder<TrackedFoodEntry, TrackedFoodEntry, QAfterFilterCondition>
       foodTitleStartsWith(
     String value, {
     bool caseSensitive = true,
@@ -1436,7 +1436,7 @@ extension DailyFoodLogEntryQueryFilter
     });
   }
 
-  QueryBuilder<DailyFoodLogEntry, DailyFoodLogEntry, QAfterFilterCondition>
+  QueryBuilder<TrackedFoodEntry, TrackedFoodEntry, QAfterFilterCondition>
       foodTitleEndsWith(
     String value, {
     bool caseSensitive = true,
@@ -1450,7 +1450,7 @@ extension DailyFoodLogEntryQueryFilter
     });
   }
 
-  QueryBuilder<DailyFoodLogEntry, DailyFoodLogEntry, QAfterFilterCondition>
+  QueryBuilder<TrackedFoodEntry, TrackedFoodEntry, QAfterFilterCondition>
       foodTitleContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.contains(
@@ -1461,7 +1461,7 @@ extension DailyFoodLogEntryQueryFilter
     });
   }
 
-  QueryBuilder<DailyFoodLogEntry, DailyFoodLogEntry, QAfterFilterCondition>
+  QueryBuilder<TrackedFoodEntry, TrackedFoodEntry, QAfterFilterCondition>
       foodTitleMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.matches(
@@ -1472,7 +1472,7 @@ extension DailyFoodLogEntryQueryFilter
     });
   }
 
-  QueryBuilder<DailyFoodLogEntry, DailyFoodLogEntry, QAfterFilterCondition>
+  QueryBuilder<TrackedFoodEntry, TrackedFoodEntry, QAfterFilterCondition>
       foodTitleIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -1482,7 +1482,7 @@ extension DailyFoodLogEntryQueryFilter
     });
   }
 
-  QueryBuilder<DailyFoodLogEntry, DailyFoodLogEntry, QAfterFilterCondition>
+  QueryBuilder<TrackedFoodEntry, TrackedFoodEntry, QAfterFilterCondition>
       foodTitleIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
@@ -1492,7 +1492,7 @@ extension DailyFoodLogEntryQueryFilter
     });
   }
 
-  QueryBuilder<DailyFoodLogEntry, DailyFoodLogEntry, QAfterFilterCondition>
+  QueryBuilder<TrackedFoodEntry, TrackedFoodEntry, QAfterFilterCondition>
       isFromRoutineEqualTo(bool value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -1502,7 +1502,7 @@ extension DailyFoodLogEntryQueryFilter
     });
   }
 
-  QueryBuilder<DailyFoodLogEntry, DailyFoodLogEntry, QAfterFilterCondition>
+  QueryBuilder<TrackedFoodEntry, TrackedFoodEntry, QAfterFilterCondition>
       loggedAtEqualTo(DateTime value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -1512,7 +1512,7 @@ extension DailyFoodLogEntryQueryFilter
     });
   }
 
-  QueryBuilder<DailyFoodLogEntry, DailyFoodLogEntry, QAfterFilterCondition>
+  QueryBuilder<TrackedFoodEntry, TrackedFoodEntry, QAfterFilterCondition>
       loggedAtGreaterThan(
     DateTime value, {
     bool include = false,
@@ -1526,7 +1526,7 @@ extension DailyFoodLogEntryQueryFilter
     });
   }
 
-  QueryBuilder<DailyFoodLogEntry, DailyFoodLogEntry, QAfterFilterCondition>
+  QueryBuilder<TrackedFoodEntry, TrackedFoodEntry, QAfterFilterCondition>
       loggedAtLessThan(
     DateTime value, {
     bool include = false,
@@ -1540,7 +1540,7 @@ extension DailyFoodLogEntryQueryFilter
     });
   }
 
-  QueryBuilder<DailyFoodLogEntry, DailyFoodLogEntry, QAfterFilterCondition>
+  QueryBuilder<TrackedFoodEntry, TrackedFoodEntry, QAfterFilterCondition>
       loggedAtBetween(
     DateTime lower,
     DateTime upper, {
@@ -1558,7 +1558,7 @@ extension DailyFoodLogEntryQueryFilter
     });
   }
 
-  QueryBuilder<DailyFoodLogEntry, DailyFoodLogEntry, QAfterFilterCondition>
+  QueryBuilder<TrackedFoodEntry, TrackedFoodEntry, QAfterFilterCondition>
       plannedGramsEqualTo(
     double value, {
     double epsilon = Query.epsilon,
@@ -1572,7 +1572,7 @@ extension DailyFoodLogEntryQueryFilter
     });
   }
 
-  QueryBuilder<DailyFoodLogEntry, DailyFoodLogEntry, QAfterFilterCondition>
+  QueryBuilder<TrackedFoodEntry, TrackedFoodEntry, QAfterFilterCondition>
       plannedGramsGreaterThan(
     double value, {
     bool include = false,
@@ -1588,7 +1588,7 @@ extension DailyFoodLogEntryQueryFilter
     });
   }
 
-  QueryBuilder<DailyFoodLogEntry, DailyFoodLogEntry, QAfterFilterCondition>
+  QueryBuilder<TrackedFoodEntry, TrackedFoodEntry, QAfterFilterCondition>
       plannedGramsLessThan(
     double value, {
     bool include = false,
@@ -1604,7 +1604,7 @@ extension DailyFoodLogEntryQueryFilter
     });
   }
 
-  QueryBuilder<DailyFoodLogEntry, DailyFoodLogEntry, QAfterFilterCondition>
+  QueryBuilder<TrackedFoodEntry, TrackedFoodEntry, QAfterFilterCondition>
       plannedGramsBetween(
     double lower,
     double upper, {
@@ -1625,15 +1625,15 @@ extension DailyFoodLogEntryQueryFilter
   }
 }
 
-extension DailyFoodLogEntryQueryObject
-    on QueryBuilder<DailyFoodLogEntry, DailyFoodLogEntry, QFilterCondition> {}
+extension TrackedFoodEntryQueryObject
+    on QueryBuilder<TrackedFoodEntry, TrackedFoodEntry, QFilterCondition> {}
 
 // coverage:ignore-file
 // ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
 
-const DailyNutrientSummarySchema = Schema(
-  name: r'DailyNutrientSummary',
-  id: -3848451425748980531,
+const TrackNutrientSummarySchema = Schema(
+  name: r'TrackNutrientSummary',
+  id: 1271499436745330573,
   properties: {
     r'amountConsumed': PropertySchema(
       id: 0,
@@ -1656,14 +1656,14 @@ const DailyNutrientSummarySchema = Schema(
       type: IsarType.double,
     )
   },
-  estimateSize: _dailyNutrientSummaryEstimateSize,
-  serialize: _dailyNutrientSummarySerialize,
-  deserialize: _dailyNutrientSummaryDeserialize,
-  deserializeProp: _dailyNutrientSummaryDeserializeProp,
+  estimateSize: _trackNutrientSummaryEstimateSize,
+  serialize: _trackNutrientSummarySerialize,
+  deserialize: _trackNutrientSummaryDeserialize,
+  deserializeProp: _trackNutrientSummaryDeserializeProp,
 );
 
-int _dailyNutrientSummaryEstimateSize(
-  DailyNutrientSummary object,
+int _trackNutrientSummaryEstimateSize(
+  TrackNutrientSummary object,
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
@@ -1672,8 +1672,8 @@ int _dailyNutrientSummaryEstimateSize(
   return bytesCount;
 }
 
-void _dailyNutrientSummarySerialize(
-  DailyNutrientSummary object,
+void _trackNutrientSummarySerialize(
+  TrackNutrientSummary object,
   IsarWriter writer,
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
@@ -1684,13 +1684,13 @@ void _dailyNutrientSummarySerialize(
   writer.writeDouble(offsets[3], object.targetAmount);
 }
 
-DailyNutrientSummary _dailyNutrientSummaryDeserialize(
+TrackNutrientSummary _trackNutrientSummaryDeserialize(
   Id id,
   IsarReader reader,
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  final object = DailyNutrientSummary();
+  final object = TrackNutrientSummary();
   object.amountConsumed = reader.readDouble(offsets[0]);
   object.nutrientKey = reader.readString(offsets[1]);
   object.percentageMet = reader.readDouble(offsets[2]);
@@ -1698,7 +1698,7 @@ DailyNutrientSummary _dailyNutrientSummaryDeserialize(
   return object;
 }
 
-P _dailyNutrientSummaryDeserializeProp<P>(
+P _trackNutrientSummaryDeserializeProp<P>(
   IsarReader reader,
   int propertyId,
   int offset,
@@ -1718,9 +1718,9 @@ P _dailyNutrientSummaryDeserializeProp<P>(
   }
 }
 
-extension DailyNutrientSummaryQueryFilter on QueryBuilder<DailyNutrientSummary,
-    DailyNutrientSummary, QFilterCondition> {
-  QueryBuilder<DailyNutrientSummary, DailyNutrientSummary,
+extension TrackNutrientSummaryQueryFilter on QueryBuilder<TrackNutrientSummary,
+    TrackNutrientSummary, QFilterCondition> {
+  QueryBuilder<TrackNutrientSummary, TrackNutrientSummary,
       QAfterFilterCondition> amountConsumedEqualTo(
     double value, {
     double epsilon = Query.epsilon,
@@ -1734,7 +1734,7 @@ extension DailyNutrientSummaryQueryFilter on QueryBuilder<DailyNutrientSummary,
     });
   }
 
-  QueryBuilder<DailyNutrientSummary, DailyNutrientSummary,
+  QueryBuilder<TrackNutrientSummary, TrackNutrientSummary,
       QAfterFilterCondition> amountConsumedGreaterThan(
     double value, {
     bool include = false,
@@ -1750,7 +1750,7 @@ extension DailyNutrientSummaryQueryFilter on QueryBuilder<DailyNutrientSummary,
     });
   }
 
-  QueryBuilder<DailyNutrientSummary, DailyNutrientSummary,
+  QueryBuilder<TrackNutrientSummary, TrackNutrientSummary,
       QAfterFilterCondition> amountConsumedLessThan(
     double value, {
     bool include = false,
@@ -1766,7 +1766,7 @@ extension DailyNutrientSummaryQueryFilter on QueryBuilder<DailyNutrientSummary,
     });
   }
 
-  QueryBuilder<DailyNutrientSummary, DailyNutrientSummary,
+  QueryBuilder<TrackNutrientSummary, TrackNutrientSummary,
       QAfterFilterCondition> amountConsumedBetween(
     double lower,
     double upper, {
@@ -1786,7 +1786,7 @@ extension DailyNutrientSummaryQueryFilter on QueryBuilder<DailyNutrientSummary,
     });
   }
 
-  QueryBuilder<DailyNutrientSummary, DailyNutrientSummary,
+  QueryBuilder<TrackNutrientSummary, TrackNutrientSummary,
       QAfterFilterCondition> nutrientKeyEqualTo(
     String value, {
     bool caseSensitive = true,
@@ -1800,7 +1800,7 @@ extension DailyNutrientSummaryQueryFilter on QueryBuilder<DailyNutrientSummary,
     });
   }
 
-  QueryBuilder<DailyNutrientSummary, DailyNutrientSummary,
+  QueryBuilder<TrackNutrientSummary, TrackNutrientSummary,
       QAfterFilterCondition> nutrientKeyGreaterThan(
     String value, {
     bool include = false,
@@ -1816,7 +1816,7 @@ extension DailyNutrientSummaryQueryFilter on QueryBuilder<DailyNutrientSummary,
     });
   }
 
-  QueryBuilder<DailyNutrientSummary, DailyNutrientSummary,
+  QueryBuilder<TrackNutrientSummary, TrackNutrientSummary,
       QAfterFilterCondition> nutrientKeyLessThan(
     String value, {
     bool include = false,
@@ -1832,7 +1832,7 @@ extension DailyNutrientSummaryQueryFilter on QueryBuilder<DailyNutrientSummary,
     });
   }
 
-  QueryBuilder<DailyNutrientSummary, DailyNutrientSummary,
+  QueryBuilder<TrackNutrientSummary, TrackNutrientSummary,
       QAfterFilterCondition> nutrientKeyBetween(
     String lower,
     String upper, {
@@ -1852,7 +1852,7 @@ extension DailyNutrientSummaryQueryFilter on QueryBuilder<DailyNutrientSummary,
     });
   }
 
-  QueryBuilder<DailyNutrientSummary, DailyNutrientSummary,
+  QueryBuilder<TrackNutrientSummary, TrackNutrientSummary,
       QAfterFilterCondition> nutrientKeyStartsWith(
     String value, {
     bool caseSensitive = true,
@@ -1866,7 +1866,7 @@ extension DailyNutrientSummaryQueryFilter on QueryBuilder<DailyNutrientSummary,
     });
   }
 
-  QueryBuilder<DailyNutrientSummary, DailyNutrientSummary,
+  QueryBuilder<TrackNutrientSummary, TrackNutrientSummary,
       QAfterFilterCondition> nutrientKeyEndsWith(
     String value, {
     bool caseSensitive = true,
@@ -1880,7 +1880,7 @@ extension DailyNutrientSummaryQueryFilter on QueryBuilder<DailyNutrientSummary,
     });
   }
 
-  QueryBuilder<DailyNutrientSummary, DailyNutrientSummary,
+  QueryBuilder<TrackNutrientSummary, TrackNutrientSummary,
           QAfterFilterCondition>
       nutrientKeyContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -1892,7 +1892,7 @@ extension DailyNutrientSummaryQueryFilter on QueryBuilder<DailyNutrientSummary,
     });
   }
 
-  QueryBuilder<DailyNutrientSummary, DailyNutrientSummary,
+  QueryBuilder<TrackNutrientSummary, TrackNutrientSummary,
           QAfterFilterCondition>
       nutrientKeyMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -1904,7 +1904,7 @@ extension DailyNutrientSummaryQueryFilter on QueryBuilder<DailyNutrientSummary,
     });
   }
 
-  QueryBuilder<DailyNutrientSummary, DailyNutrientSummary,
+  QueryBuilder<TrackNutrientSummary, TrackNutrientSummary,
       QAfterFilterCondition> nutrientKeyIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -1914,7 +1914,7 @@ extension DailyNutrientSummaryQueryFilter on QueryBuilder<DailyNutrientSummary,
     });
   }
 
-  QueryBuilder<DailyNutrientSummary, DailyNutrientSummary,
+  QueryBuilder<TrackNutrientSummary, TrackNutrientSummary,
       QAfterFilterCondition> nutrientKeyIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
@@ -1924,7 +1924,7 @@ extension DailyNutrientSummaryQueryFilter on QueryBuilder<DailyNutrientSummary,
     });
   }
 
-  QueryBuilder<DailyNutrientSummary, DailyNutrientSummary,
+  QueryBuilder<TrackNutrientSummary, TrackNutrientSummary,
       QAfterFilterCondition> percentageMetEqualTo(
     double value, {
     double epsilon = Query.epsilon,
@@ -1938,7 +1938,7 @@ extension DailyNutrientSummaryQueryFilter on QueryBuilder<DailyNutrientSummary,
     });
   }
 
-  QueryBuilder<DailyNutrientSummary, DailyNutrientSummary,
+  QueryBuilder<TrackNutrientSummary, TrackNutrientSummary,
       QAfterFilterCondition> percentageMetGreaterThan(
     double value, {
     bool include = false,
@@ -1954,7 +1954,7 @@ extension DailyNutrientSummaryQueryFilter on QueryBuilder<DailyNutrientSummary,
     });
   }
 
-  QueryBuilder<DailyNutrientSummary, DailyNutrientSummary,
+  QueryBuilder<TrackNutrientSummary, TrackNutrientSummary,
       QAfterFilterCondition> percentageMetLessThan(
     double value, {
     bool include = false,
@@ -1970,7 +1970,7 @@ extension DailyNutrientSummaryQueryFilter on QueryBuilder<DailyNutrientSummary,
     });
   }
 
-  QueryBuilder<DailyNutrientSummary, DailyNutrientSummary,
+  QueryBuilder<TrackNutrientSummary, TrackNutrientSummary,
       QAfterFilterCondition> percentageMetBetween(
     double lower,
     double upper, {
@@ -1990,7 +1990,7 @@ extension DailyNutrientSummaryQueryFilter on QueryBuilder<DailyNutrientSummary,
     });
   }
 
-  QueryBuilder<DailyNutrientSummary, DailyNutrientSummary,
+  QueryBuilder<TrackNutrientSummary, TrackNutrientSummary,
       QAfterFilterCondition> targetAmountEqualTo(
     double value, {
     double epsilon = Query.epsilon,
@@ -2004,7 +2004,7 @@ extension DailyNutrientSummaryQueryFilter on QueryBuilder<DailyNutrientSummary,
     });
   }
 
-  QueryBuilder<DailyNutrientSummary, DailyNutrientSummary,
+  QueryBuilder<TrackNutrientSummary, TrackNutrientSummary,
       QAfterFilterCondition> targetAmountGreaterThan(
     double value, {
     bool include = false,
@@ -2020,7 +2020,7 @@ extension DailyNutrientSummaryQueryFilter on QueryBuilder<DailyNutrientSummary,
     });
   }
 
-  QueryBuilder<DailyNutrientSummary, DailyNutrientSummary,
+  QueryBuilder<TrackNutrientSummary, TrackNutrientSummary,
       QAfterFilterCondition> targetAmountLessThan(
     double value, {
     bool include = false,
@@ -2036,7 +2036,7 @@ extension DailyNutrientSummaryQueryFilter on QueryBuilder<DailyNutrientSummary,
     });
   }
 
-  QueryBuilder<DailyNutrientSummary, DailyNutrientSummary,
+  QueryBuilder<TrackNutrientSummary, TrackNutrientSummary,
       QAfterFilterCondition> targetAmountBetween(
     double lower,
     double upper, {
@@ -2057,5 +2057,5 @@ extension DailyNutrientSummaryQueryFilter on QueryBuilder<DailyNutrientSummary,
   }
 }
 
-extension DailyNutrientSummaryQueryObject on QueryBuilder<DailyNutrientSummary,
-    DailyNutrientSummary, QFilterCondition> {}
+extension TrackNutrientSummaryQueryObject on QueryBuilder<TrackNutrientSummary,
+    TrackNutrientSummary, QFilterCondition> {}

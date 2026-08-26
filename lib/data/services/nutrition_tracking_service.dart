@@ -1,7 +1,7 @@
 import 'package:isar/isar.dart';
-import 'package:horizon/data/models/daily_record.dart';
 import 'package:horizon/data/models/food_source_item.dart';
 import 'package:horizon/data/models/nutrient_info.dart';
+import 'package:horizon/data/models/track_record.dart';
 import 'package:horizon/data/models/user_profile.dart';
 import 'package:horizon/data/services/isar_service.dart';
 
@@ -78,7 +78,7 @@ class NutritionTrackingService {
   // --------------------------------------------------------------------------
 
   /// Logs or updates food consumption for a specific date and recalculates daily totals.
-  Future<DailyRecord> logFoodIntake({
+  Future<TrackRecord> logFoodIntake({
     required DateTime date,
     required String foodId,
     required double amountConsumedGrams,
@@ -86,9 +86,9 @@ class NutritionTrackingService {
     final normalized = _normalizeDate(date);
 
     return await _isar.writeTxn(() async {
-      var record = await _isar.dailyRecords.getByDate(normalized);
+      var record = await _isar.trackRecords.getByDate(normalized);
       if (record == null) {
-        record = DailyRecord()
+        record = TrackRecord()
           ..date = normalized
           ..isSynced = false;
       }
@@ -107,7 +107,7 @@ class NutritionTrackingService {
         record.loggedFoods[existingIndex].loggedAt = DateTime.now();
       } else {
         record.loggedFoods.add(
-          DailyFoodLogEntry()
+          TrackedFoodEntry()
             ..foodId = food.foodId
             ..foodTitle = food.title
             ..amountConsumedGrams = amountConsumedGrams
@@ -120,14 +120,14 @@ class NutritionTrackingService {
       // Recalculate daily nutrient summaries
       await _recalculateDailySummaries(record);
 
-      await _isar.dailyRecords.put(record);
+      await _isar.trackRecords.put(record);
       return record;
     });
   }
 
   /// Recalculates nutrient amounts for a given daily record using the formula:
   /// amountConsumed = sum( (foodAmount / 100.0) * nutrientAmountPer100g )
-  Future<void> _recalculateDailySummaries(DailyRecord record) async {
+  Future<void> _recalculateDailySummaries(TrackRecord record) async {
     final profile = await _isar.userProfiles.get(1) ?? UserProfile();
     final allNutrients = await _isar.nutrientInfos.where().findAll();
 
@@ -156,14 +156,14 @@ class NutritionTrackingService {
     }
 
     // Build summaries list
-    final List<DailyNutrientSummary> summaries = [];
+    final List<TrackNutrientSummary> summaries = [];
     for (final nutrient in allNutrients) {
       final target = nutrient.calculateEffectiveTarget(profile.strictness);
       final consumed = aggregatedNutrients[nutrient.nutrientKey] ?? 0.0;
       final percent = target > 0 ? (consumed / target) * 100.0 : 0.0;
 
       summaries.add(
-        DailyNutrientSummary()
+        TrackNutrientSummary()
           ..nutrientKey = nutrient.nutrientKey
           ..amountConsumed = consumed
           ..targetAmount = target

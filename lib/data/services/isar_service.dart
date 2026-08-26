@@ -5,7 +5,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:horizon/data/models/user_profile.dart';
 import 'package:horizon/data/models/nutrient_info.dart';
 import 'package:horizon/data/models/food_source_item.dart';
-import 'package:horizon/data/models/daily_record.dart';
+import 'package:horizon/data/models/track_record.dart';
 import 'package:horizon/data/utils/demographic_lookup.dart';
 
 class IsarService {
@@ -31,7 +31,7 @@ class IsarService {
         UserProfileSchema,
         NutrientInfoSchema,
         FoodSourceItemSchema,
-        DailyRecordSchema,
+        TrackRecordSchema,
       ],
       directory: dir.path,
       name: 'horizon_db',

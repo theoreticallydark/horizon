@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../alter/alter.dart';
+import '../horizon/horizon_title_bar.dart';
 
 class StatsPage extends StatelessWidget {
   const StatsPage({super.key});
@@ -17,7 +18,20 @@ class StatsPage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         spacing: 16,
-        children: const [],
+        children: const [
+          HorizonTitleBar(
+            title: 'Statistics',
+            subtitle: 'Overview',
+          ),
+          HorizonTitleBar(
+            title: 'Nutrients',
+            subtitle: 'Daily & Weekly Goals',
+          ),
+          HorizonTitleBar(
+            title: 'Routine Adherence',
+            subtitle: 'Last 7 Days',
+          ),
+        ],
       ),
     );
   }

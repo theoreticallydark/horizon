@@ -1,17 +1,17 @@
 import 'package:isar/isar.dart';
 
-part 'daily_record.g.dart';
+part 'track_record.g.dart';
 
 @collection
-class DailyRecord {
+class TrackRecord {
   Id id = Isar.autoIncrement;
 
   @Index(unique: true, replace: true)
   late DateTime date; // Normalized to YYYY-MM-DD midnight
 
-  List<DailyFoodLogEntry> loggedFoods = [];
+  List<TrackedFoodEntry> loggedFoods = [];
 
-  List<DailyNutrientSummary> nutrientSummaries = [];
+  List<TrackNutrientSummary> nutrientSummaries = [];
 
   double routineAdherencePercent = 0.0;
 
@@ -20,7 +20,7 @@ class DailyRecord {
 }
 
 @embedded
-class DailyFoodLogEntry {
+class TrackedFoodEntry {
   late String foodId;
   late String foodTitle;
   late double amountConsumedGrams;
@@ -30,7 +30,7 @@ class DailyFoodLogEntry {
 }
 
 @embedded
-class DailyNutrientSummary {
+class TrackNutrientSummary {
   late String nutrientKey;
   late double amountConsumed;
   late double targetAmount;
