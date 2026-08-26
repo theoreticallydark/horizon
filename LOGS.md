@@ -99,4 +99,11 @@
   2. *Design Token Alignment*: Updated `TrackPage` section divider from hardcoded `AlterColors.colorsGray100` to `AlterSemanticTokens.stroke200` with 24px vertical padding, aligning with `RoutinePage`.
 - **2026-08-26 08:15 AM** - Standardized Section Dividers to `stroke100`: updated the `Divider` color token across both `TrackPage` and `RoutinePage` to `AlterSemanticTokens.stroke100` (`stroke/100`).
 - **2026-08-26 08:25 AM** - Configured `Pill` Horizontal Padding: set `horizontalPadding: 2.4` on all `Pill` instances rendered within `NutrientMap`.
+- **2026-08-26 08:30 AM** - Removed `Prot.` and `Cal` from `NutrientMap`: removed `energy` and `total_protein` from `primaryVisibleNutrients` in `IsarService.seedDriData()` so that `NutrientMap` exclusively displays the 20 micro-nutrients & essential lipids, while Calories and Protein remain tracked exclusively in the Application Header subtitle.
+- **2026-08-26 08:40 AM** - Implemented Dynamic `HorizonTitleBar` on Nutrient Filter: when filtering via a `Pill` in `NutrientMap`, both `TrackPage` and `RoutinePage` display a top `HorizonTitleBar` with `title: Nutrient.displayName` and `subtitle: Tracked Daily 🔁 • yield/target(Unit)` or `Tracked Weekly 📆 • yield/target(Unit)`, displaying real-time consumed/planned intake against targets.
+- **2026-08-26 08:45 AM** - Formatted Filter Metrics with Semantic Color Thresholds: updated `HorizonTitleBar` to `v1.2.0` (with `subtitleWidget` support), and formatted the `amount/target(Unit)` text using `AlterTypography.captionBold` styled with `textDanger` (<75%), `textCaution` (75%–99%), or `textSuccess` (>=100%).
+- **2026-08-26 08:50 AM** - Retained Weekly Goals & Targets Section Headers: ensured the `HorizonTitleBar` for 'Weekly targets' (RoutinePage) and 'Weekly goals' (TrackPage) remains visible when weekly items are present, even during an active nutrient pill filter.
+- **2026-08-26 08:55 AM** - Filter Header on Zero Matching Items & Unit Sanitization:
+  1. Removed the center placeholder message on filter so that selecting a nutrient with 0 routine foods cleanly renders the top `HorizonTitleBar` with `0/target` metric without clutter.
+  2. Sanitized unit labels (e.g. converting `µg RAE/day` to clean `µg`) across both `RoutinePage` and `TrackPage`.
 

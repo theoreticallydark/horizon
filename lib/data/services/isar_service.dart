@@ -81,19 +81,14 @@ class IsarService {
         ? demoMatch['nutrients'] as Map<String, dynamic>
         : <String, dynamic>{};
 
-    // Primary visible nutrients on app
+    // Primary visible nutrients on app (20 core micro-nutrients & lipids in NutrientMap)
     const primaryVisibleNutrients = {
-      'energy',
-      'total_protein',
       'vitamin_c',
       'collagen',
       'total_fiber',
       'magnesium',
       'calcium',
       'potassium',
-      'iodine',
-      'folate',
-      'linoleic_acid_omega_6',
       'creatine',
       'vitamin_a',
       'vitamin_e',
@@ -101,8 +96,11 @@ class IsarService {
       'selenium',
       'zinc',
       'iron',
+      'iodine',
       'vitamin_k',
+      'folate',
       'vitamin_d',
+      'linoleic_acid_omega_6',
       'alpha_linolenic_acid_omega_3',
       'omega_3_epa_dha',
     };

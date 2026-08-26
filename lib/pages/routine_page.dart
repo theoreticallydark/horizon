@@ -236,12 +236,10 @@ class _RoutinePageState extends State<RoutinePage> {
           final routineFoods = state.routineFoods;
           final filteredFoods = routineFoods.where(_foodProvidesSelectedNutrient).toList();
 
-          if (filteredFoods.isEmpty) {
-            return Center(
+          if (routineFoods.isEmpty && widget.selectedNutrientKey == null) {
+            return const Center(
               child: Text(
-                widget.selectedNutrientKey != null
-                    ? 'No foods in your routine provide the selected nutrient.'
-                    : 'No foods in your routine yet.\nAdd foods to build your daily & weekly routine.',
+                'No foods in your routine yet.\nAdd foods to build your daily & weekly routine.',
                 textAlign: TextAlign.center,
                 style: AlterTypography.caption,
               ),
@@ -257,14 +255,96 @@ class _RoutinePageState extends State<RoutinePage> {
 
           return ListView(
             children: [
+              // Filter Header if a nutrient pill is selected
+              if (widget.selectedNutrientKey != null &&
+                  state.nutrientMap.containsKey(widget.selectedNutrientKey)) ...[
+                Builder(
+                  builder: (context) {
+                    final nutrient = state.nutrientMap[widget.selectedNutrientKey]!;
+                    final isWeekly = nutrient.frequency == TrackingFrequency.weekly;
+                    final targetVal = state.targetMap[widget.selectedNutrientKey] ?? 0.0;
+
+                    // Calculate total planned contribution for this nutrient
+                    double plannedTotal = 0.0;
+                    for (final food in routineFoods) {
+                      if (nutrient.nutrientKey == 'total_protein' && food.proteinIndex != 1) continue;
+                      final foodNutr = food.nutrients
+                          .where((n) => n.nutrientKey == nutrient.nutrientKey)
+                          .firstOrNull;
+                      if (foodNutr != null) {
+                        plannedTotal += (food.plannedDailyGrams / 100.0) * foodNutr.amountPer100g;
+                      }
+                    }
+                    final plannedYield = isWeekly ? plannedTotal * 7.0 : plannedTotal;
+                    final rawUnit = nutrient.unit.isNotEmpty ? nutrient.unit.split('/').first.trim() : '';
+                    final unit = rawUnit.replaceAll('RAE', '').trim();
+
+                    final String formatYield = plannedYield >= 10
+                        ? plannedYield.round().toString()
+                        : plannedYield.toStringAsFixed(1);
+                    final String formatTarget = targetVal >= 10
+                        ? targetVal.round().toString()
+                        : targetVal.toStringAsFixed(1);
+
+                    final percent = targetVal > 0 ? (plannedYield / targetVal) * 100.0 : 0.0;
+                    final Color amountColor;
+                    if (percent < 75.0) {
+                      amountColor = AlterSemanticTokens.textDanger;
+                    } else if (percent < 100.0) {
+                      amountColor = AlterSemanticTokens.textCaution;
+                    } else {
+                      amountColor = AlterSemanticTokens.textSuccess;
+                    }
+
+                    final title = nutrient.displayName;
+                    final prefixText = isWeekly ? 'Tracked Weekly 📆 • ' : 'Tracked Daily 🔁 • ';
+                    final amountText = '$formatYield/$formatTarget$unit';
+
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        HorizonTitleBar(
+                          title: title,
+                          subtitleWidget: Text.rich(
+                            TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: prefixText,
+                                  style: AlterTypography.caption.copyWith(
+                                    color: AlterSemanticTokens.textSecondary,
+                                    height: 16.0 / 12.0,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: amountText,
+                                  style: AlterTypography.captionBold.copyWith(
+                                    color: amountColor,
+                                    height: 16.0 / 12.0,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                      ],
+                    );
+                  },
+                ),
+              ],
+
               // Daily Targets Section
               if (dailyFoods.isNotEmpty) ...[
-                const HorizonTitleBar(
-                  title: 'Daily targets',
-                  subtitle:
-                      'Supports nutrients requiring continuous daily supply.',
-                ),
-                const SizedBox(height: 16),
+                if (widget.selectedNutrientKey == null) ...[
+                  const HorizonTitleBar(
+                    title: 'Daily targets',
+                    subtitle:
+                        'Supports nutrients requiring continuous daily supply.',
+                  ),
+                  const SizedBox(height: 16),
+                ],
                 for (int i = 0; i < dailyFoods.length; i++) ...[
                   if (i > 0) const SizedBox(height: 8),
                   _buildRoutineItem(

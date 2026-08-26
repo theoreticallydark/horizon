@@ -14,15 +14,18 @@ import '../alter/alter.dart';
 ///   - Color: `AlterColors.colorsGray600` (VariableID:103:9008 / `AlterSemanticTokens.textSecondary`)
 class HorizonTitleBar extends StatelessWidget {
   /// Version tracking for Alter / Horizon component lifecycle
-  static const String version = '1.1.0'; // Changed layout to vertical (Column) with 2px gap
+  /// v1.2.0: Added optional `subtitleWidget` support for rich formatted subtitles (e.g. colored percentage/yield metrics).
+  static const String version = '1.2.0';
 
   final String title;
   final String? subtitle;
+  final Widget? subtitleWidget;
 
   const HorizonTitleBar({
     super.key,
     this.title = 'Title',
     this.subtitle = 'Subtitle',
+    this.subtitleWidget,
   });
 
   @override
@@ -44,7 +47,10 @@ class HorizonTitleBar extends StatelessWidget {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
-        if (subtitle != null && subtitle!.isNotEmpty) ...[
+        if (subtitleWidget != null) ...[
+          const SizedBox(height: 2.0),
+          subtitleWidget!,
+        ] else if (subtitle != null && subtitle!.isNotEmpty) ...[
           const SizedBox(height: 2.0),
           Text(
             subtitle!,

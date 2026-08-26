@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../alter/alter.dart';
 import '../data/models/food_source_item.dart';
+import '../data/models/nutrient_info.dart';
 import '../data/models/track_record.dart';
 import '../data/services/nutrition_tracking_service.dart';
 import '../horizon/horizon_list_item.dart';
@@ -64,72 +65,171 @@ class TrackPage extends StatelessWidget {
               .where((f) => _foodProvidesSelectedNutrient(f, foodMap))
               .toList();
 
-          if (filteredDaily.isEmpty && filteredWeekly.isEmpty) {
-            return Center(
+          if (dailyFoods.isEmpty && weeklyFoods.isEmpty && selectedNutrientKey == null) {
+            return const Center(
               child: Text(
-                selectedNutrientKey != null
-                    ? 'No logged foods provide the selected nutrient.'
-                    : 'No foods in your routine yet.\nAdd foods in the Routine tab to track them here.',
+                'No foods in your routine yet.\nAdd foods in the Routine tab to track them here.',
                 textAlign: TextAlign.center,
                 style: AlterTypography.caption,
               ),
             );
           }
 
-                  return ListView(
-                    children: [
-                      // Daily Foods Section
-                      if (filteredDaily.isNotEmpty) ...[
-                        for (int i = 0; i < filteredDaily.length; i++) ...[
-                          if (i > 0) const SizedBox(height: 8),
-                          Builder(
-                            builder: (context) {
-                              final item = filteredDaily[i];
-                              final isChecked = item.amountConsumedGrams > 0;
-                              final targetLabel = '${item.plannedGrams.round()}g';
-                              final itemTitle = '${item.foodTitle}, $targetLabel';
+          return ListView(
+            children: [
+              // Filter Header if a nutrient pill is selected
+              if (selectedNutrientKey != null &&
+                  state.nutrientMap.containsKey(selectedNutrientKey)) ...[
+                Builder(
+                  builder: (context) {
+                    final nutrient = state.nutrientMap[selectedNutrientKey]!;
+                    final isWeekly = nutrient.frequency == TrackingFrequency.weekly;
+                    final targetVal = state.targetMap[selectedNutrientKey] ?? 0.0;
 
-                          return HorizonListItem(
-                            title: itemTitle,
-                            host: HorizonListItemHost.trackDaily,
-                            isChecked: isChecked,
-                            onCheckboxChanged: (state) {
-                              final willCheck = state == CheckboxState.checked;
-                              trackingService.toggleDailyFoodChecked(
-                                foodId: item.foodId,
-                                isChecked: willCheck,
-                              );
-                            },
-                            onTap: () {
-                              trackingService.toggleDailyFoodChecked(
-                                foodId: item.foodId,
-                                isChecked: !isChecked,
-                              );
-                            },
+                    // Calculate total consumed contribution for this nutrient
+                    double consumedTotal = 0.0;
+                    if (isWeekly) {
+                      if (state.weeklyRecord != null) {
+                        for (final entry in state.weeklyRecord!.loggedFoods) {
+                          if (entry.amountConsumedGrams <= 0) continue;
+                          final food = foodMap[entry.foodId];
+                          if (food == null) continue;
+                          if (nutrient.nutrientKey == 'total_protein' && food.proteinIndex != 1) continue;
+                          final foodNutr = food.nutrients
+                              .where((n) => n.nutrientKey == nutrient.nutrientKey)
+                              .firstOrNull;
+                          if (foodNutr != null) {
+                            consumedTotal += (entry.amountConsumedGrams / 100.0) * foodNutr.amountPer100g;
+                          }
+                        }
+                      }
+                    } else {
+                      if (state.dailyRecord != null) {
+                        for (final entry in state.dailyRecord!.loggedFoods) {
+                          if (entry.amountConsumedGrams <= 0) continue;
+                          final food = foodMap[entry.foodId];
+                          if (food == null) continue;
+                          if (nutrient.nutrientKey == 'total_protein' && food.proteinIndex != 1) continue;
+                          final foodNutr = food.nutrients
+                              .where((n) => n.nutrientKey == nutrient.nutrientKey)
+                              .firstOrNull;
+                          if (foodNutr != null) {
+                            consumedTotal += (entry.amountConsumedGrams / 100.0) * foodNutr.amountPer100g;
+                          }
+                        }
+                      }
+                    }
+
+                    final rawUnit = nutrient.unit.isNotEmpty ? nutrient.unit.split('/').first.trim() : '';
+                    final unit = rawUnit.replaceAll('RAE', '').trim();
+                    final String formatConsumed = consumedTotal >= 10
+                        ? consumedTotal.round().toString()
+                        : consumedTotal.toStringAsFixed(1);
+                    final String formatTarget = targetVal >= 10
+                        ? targetVal.round().toString()
+                        : targetVal.toStringAsFixed(1);
+
+                    final percent = targetVal > 0 ? (consumedTotal / targetVal) * 100.0 : 0.0;
+                    final Color amountColor;
+                    if (percent < 75.0) {
+                      amountColor = AlterSemanticTokens.textDanger;
+                    } else if (percent < 100.0) {
+                      amountColor = AlterSemanticTokens.textCaution;
+                    } else {
+                      amountColor = AlterSemanticTokens.textSuccess;
+                    }
+
+                    final title = nutrient.displayName;
+                    final prefixText = isWeekly ? 'Tracked Weekly 📆 • ' : 'Tracked Daily 🔁 • ';
+                    final amountText = '$formatConsumed/$formatTarget$unit';
+
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        HorizonTitleBar(
+                          title: title,
+                          subtitleWidget: Text.rich(
+                            TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: prefixText,
+                                  style: AlterTypography.caption.copyWith(
+                                    color: AlterSemanticTokens.textSecondary,
+                                    height: 16.0 / 12.0,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: amountText,
+                                  style: AlterTypography.captionBold.copyWith(
+                                    color: amountColor,
+                                    height: 16.0 / 12.0,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                      ],
+                    );
+                  },
+                ),
+              ],
+
+              // Daily Foods Section
+              if (filteredDaily.isNotEmpty) ...[
+                for (int i = 0; i < filteredDaily.length; i++) ...[
+                  if (i > 0) const SizedBox(height: 8),
+                  Builder(
+                    builder: (context) {
+                      final item = filteredDaily[i];
+                      final isChecked = item.amountConsumedGrams > 0;
+                      final targetLabel = '${item.plannedGrams.round()}g';
+                      final itemTitle = '${item.foodTitle}, $targetLabel';
+
+                      return HorizonListItem(
+                        title: itemTitle,
+                        host: HorizonListItemHost.trackDaily,
+                        isChecked: isChecked,
+                        onCheckboxChanged: (state) {
+                          final willCheck = state == CheckboxState.checked;
+                          trackingService.toggleDailyFoodChecked(
+                            foodId: item.foodId,
+                            isChecked: willCheck,
                           );
                         },
-                      ),
-                    ],
-                  ],
+                        onTap: () {
+                          trackingService.toggleDailyFoodChecked(
+                            foodId: item.foodId,
+                            isChecked: !isChecked,
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ],
+              ],
 
-                  // Divider and Weekly Goals Section
-                  if (weeklyFoods.isNotEmpty) ...[
-                    if (dailyFoods.isNotEmpty) ...[
-                      const SizedBox(height: 24),
-                      const Divider(
-                        height: 1,
-                        thickness: 1,
-                        color: AlterSemanticTokens.stroke100,
-                      ),
-                      const SizedBox(height: 24),
-                    ],
-                    const HorizonTitleBar(
-                      title: 'Weekly goals',
-                      subtitle:
-                          'Supports nutrients that can be stored longer by the body.',
-                    ),
-                    const SizedBox(height: 16),
-                    for (int i = 0; i < weeklyFoods.length; i++) ...[
+              // Divider and Weekly Goals Section
+              if (filteredWeekly.isNotEmpty) ...[
+                if (filteredDaily.isNotEmpty) ...[
+                  const SizedBox(height: 24),
+                  const Divider(
+                    height: 1,
+                    thickness: 1,
+                    color: AlterSemanticTokens.stroke100,
+                  ),
+                  const SizedBox(height: 24),
+                ],
+                const HorizonTitleBar(
+                  title: 'Weekly goals',
+                  subtitle:
+                      'Supports nutrients that can be stored longer by the body.',
+                ),
+                const SizedBox(height: 16),
+                for (int i = 0; i < filteredWeekly.length; i++) ...[
                       if (i > 0) const SizedBox(height: 8),
                       Builder(
                         builder: (context) {

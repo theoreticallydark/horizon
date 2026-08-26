@@ -538,6 +538,9 @@ class NutritionTrackingService {
     );
 
     return controller.stream.asyncMap((_) async {
+      final profile = await _isar.userProfiles.get(1) ?? UserProfile();
+      final allNutrients = await _isar.nutrientInfos.where().findAll();
+
       final routineFoods = await _isar.foodSourceItems
           .filter()
           .isVisibleOnAppEqualTo(true)
@@ -555,12 +558,21 @@ class NutritionTrackingService {
           .findFirst();
 
       final foodMap = {for (var f in routineFoods) f.foodId: f};
+      final targetMap = <String, double>{};
+      final nutrientMap = <String, NutrientInfo>{};
+      for (final n in allNutrients) {
+        nutrientMap[n.nutrientKey] = n;
+        targetMap[n.nutrientKey] = n.calculateEffectiveTarget(profile);
+      }
 
       return TrackPageState(
         routineFoods: routineFoods,
         foodMap: foodMap,
         dailyRecord: dailyRecord,
         weeklyRecord: weeklyRecord,
+        allNutrients: allNutrients,
+        targetMap: targetMap,
+        nutrientMap: nutrientMap,
       );
     });
   }
@@ -1039,12 +1051,18 @@ class TrackPageState {
   final Map<String, FoodSourceItem> foodMap;
   final TrackRecordDaily? dailyRecord;
   final TrackRecordWeekly? weeklyRecord;
+  final List<NutrientInfo> allNutrients;
+  final Map<String, double> targetMap;
+  final Map<String, NutrientInfo> nutrientMap;
 
   const TrackPageState({
     required this.routineFoods,
     required this.foodMap,
     this.dailyRecord,
     this.weeklyRecord,
+    required this.allNutrients,
+    required this.targetMap,
+    required this.nutrientMap,
   });
 }
 
