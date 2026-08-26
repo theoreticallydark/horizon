@@ -242,6 +242,10 @@ class NutritionTrackingService {
           entry.plannedGrams = food.plannedDailyGrams;
           modified = true;
         }
+        if (entry.foodTitle != food.title) {
+          entry.foodTitle = food.title;
+          modified = true;
+        }
       }
     }
 
@@ -297,6 +301,10 @@ class NutritionTrackingService {
         final entry = existingMap[food.foodId]!;
         if (entry.plannedGrams != food.plannedWeeklyGrams) {
           entry.plannedGrams = food.plannedWeeklyGrams;
+          modified = true;
+        }
+        if (entry.foodTitle != food.title) {
+          entry.foodTitle = food.title;
           modified = true;
         }
       }

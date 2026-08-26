@@ -1,0 +1,250 @@
+ID: fdc_167927
+ORIGINAL NAME: Toaster Pastries, fruit, frosted (include apples, blueberry, cherry, strawberry)
+CURRENT TITLE: Apple Pastries
+PARTS: ['Toaster Pastries', 'fruit', 'frosted']
+---
+ID: fdc_175035
+ORIGINAL NAME: Toaster pastries, fruit (includes apple, blueberry, cherry, strawberry)
+CURRENT TITLE: Apple Toaster
+PARTS: ['Toaster pastries', 'fruit']
+---
+ID: fdc_171844
+ORIGINAL NAME: Bread, chapati or roti, plain, commercially prepared
+CURRENT TITLE: Roti
+PARTS: ['Bread', 'chapati or roti', 'plain', 'commercially prepared']
+---
+ID: fdc_174075
+ORIGINAL NAME: Bread, chapati or roti, whole wheat, commercially prepared, frozen
+CURRENT TITLE: Roti Whole
+PARTS: ['Bread', 'chapati or roti', 'whole wheat', 'commercially prepared', 'frozen']
+---
+ID: fdc_167526
+ORIGINAL NAME: Bread, salvadoran sweet cheese (quesadilla salvadorena)
+CURRENT TITLE: Cheese
+PARTS: ['Bread', 'salvadoran sweet cheese (quesadilla salvadorena)']
+---
+ID: fdc_167939
+ORIGINAL NAME: Garlic bread, frozen
+CURRENT TITLE: Garlic
+PARTS: ['Garlic bread', 'frozen']
+---
+ID: fdc_171845
+ORIGINAL NAME: Bread, naan, plain, commercially prepared, refrigerated
+CURRENT TITLE: Naan
+PARTS: ['Bread', 'naan', 'plain', 'commercially prepared', 'refrigerated']
+---
+ID: fdc_174077
+ORIGINAL NAME: Bread, naan, whole wheat, commercially prepared, refrigerated
+CURRENT TITLE: Naan Whole
+PARTS: ['Bread', 'naan', 'whole wheat', 'commercially prepared', 'refrigerated']
+---
+ID: fdc_174899
+ORIGINAL NAME: Bagels, plain, enriched, with calcium propionate (includes onion, poppy, sesame)
+CURRENT TITLE: Onion
+PARTS: ['Bagels', 'plain', 'enriched', 'with calcium propionate']
+---
+ID: fdc_174076
+ORIGINAL NAME: Bread, paratha, whole wheat, commercially prepared, frozen
+CURRENT TITLE: Paratha
+PARTS: ['Bread', 'paratha', 'whole wheat', 'commercially prepared', 'frozen']
+---
+ID: fdc_172727
+ORIGINAL NAME: Cookies, peanut butter, commercially prepared, regular
+CURRENT TITLE: Peanuts
+PARTS: ['Cookies', 'peanut butter', 'commercially prepared', 'regular']
+---
+ID: fdc_172686
+ORIGINAL NAME: Bread, wheat
+CURRENT TITLE: wheat
+PARTS: ['Bread', 'wheat']
+---
+ID: fdc_167532
+ORIGINAL NAME: Bread, white wheat
+CURRENT TITLE: white wheat
+PARTS: ['Bread', 'white wheat']
+---
+ID: fdc_2257045
+ORIGINAL NAME: Almond milk, unsweetened, plain, refrigerated
+CURRENT TITLE: Almond Milk
+PARTS: ['Almond milk', 'unsweetened', 'plain', 'refrigerated']
+---
+ID: fdc_1999631
+ORIGINAL NAME: Almond milk, unsweetened, plain, shelf stable
+CURRENT TITLE: Almond Milk plain
+PARTS: ['Almond milk', 'unsweetened', 'plain', 'shelf stable']
+---
+ID: fdc_174820
+ORIGINAL NAME: Beverages, almond milk, chocolate, ready-to-drink
+CURRENT TITLE: Almond Milk ready
+PARTS: ['Beverages', 'almond milk', 'chocolate', 'ready-to-drink']
+---
+ID: fdc_174832
+ORIGINAL NAME: Beverages, almond milk, unsweetened, shelf stable
+CURRENT TITLE: Almond Milk shelf
+PARTS: ['Beverages', 'almond milk', 'unsweetened', 'shelf stable']
+---
+ID: fdc_174140
+ORIGINAL NAME: Beverages, cranberry-apple juice drink, bottled
+CURRENT TITLE: Apple Beverages
+PARTS: ['Beverages', 'cranberry-apple juice drink', 'bottled']
+---
+ID: fdc_2257046
+ORIGINAL NAME: Oat milk, unsweetened, plain, refrigerated
+CURRENT TITLE: Oat Milk
+PARTS: ['Oat milk', 'unsweetened', 'plain', 'refrigerated']
+---
+ID: fdc_173223
+ORIGINAL NAME: Beverages, orange and apricot juice drink, canned
+CURRENT TITLE: Orange
+PARTS: ['Beverages', 'orange and apricot juice drink', 'canned']
+---
+ID: fdc_173225
+ORIGINAL NAME: Beverages, pineapple and orange juice drink, canned
+CURRENT TITLE: Orange Canned
+PARTS: ['Beverages', 'pineapple and orange juice drink', 'canned']
+---
+ID: fdc_173224
+ORIGINAL NAME: Beverages, pineapple and grapefruit juice drink, canned
+CURRENT TITLE: pineapple and
+PARTS: ['Beverages', 'pineapple and grapefruit juice drink', 'canned']
+---
+ID: fdc_174654
+ORIGINAL NAME: Cereals ready-to-eat, NATURE'S PATH, Organic FLAX PLUS, Pumpkin Granola
+CURRENT TITLE: Cereals ready 74654
+PARTS: ['Cereals ready-to-eat', "NATURE'S PATH", 'Organic FLAX PLUS', 'Pumpkin Granola']
+---
+ID: fdc_168138
+ORIGINAL NAME: Cereals ready-to-eat, POST, HONEY BUNCHES OF OATS, honey roasted
+CURRENT TITLE: Oats
+PARTS: ['Cereals ready-to-eat', 'POST', 'HONEY BUNCHES OF OATS', 'honey roasted']
+---
+ID: fdc_173920
+ORIGINAL NAME: Cereals, oats, instant, fortified, maple and brown sugar, dry
+CURRENT TITLE: Oats Brown
+PARTS: ['Cereals', 'oats', 'instant', 'fortified', 'maple and brown sugar', 'dry']
+---
+ID: fdc_171661
+ORIGINAL NAME: Cereals, oats, instant, fortified, plain, dry
+CURRENT TITLE: Oats Cereals
+PARTS: ['Cereals', 'oats', 'instant', 'fortified', 'plain', 'dry']
+---
+ID: fdc_173905
+ORIGINAL NAME: Cereals, oats, regular and quick, unenriched, cooked with water (includes boiling and microwaving), without salt
+CURRENT TITLE: Oats Cooked
+PARTS: ['Cereals', 'oats', 'regular and quick', 'unenriched', 'cooked with water', 'without salt']
+---
+ID: fdc_170285
+ORIGINAL NAME: Barley, pearled, cooked
+CURRENT TITLE: Barley
+PARTS: ['Barley', 'pearled', 'cooked']
+---
+ID: fdc_2512376
+ORIGINAL NAME: Flour, barley
+CURRENT TITLE: Barley Flour
+PARTS: ['Flour', 'barley']
+---
+ID: fdc_170284
+ORIGINAL NAME: Barley, pearled, raw
+CURRENT TITLE: Barley Raw
+PARTS: ['Barley', 'pearled', 'raw']
+---
+ID: fdc_172026
+ORIGINAL NAME: Pasta, gluten-free, brown rice flour, cooked, TINKYADA
+CURRENT TITLE: Brown Rice
+PARTS: ['Pasta', 'gluten-free', 'brown rice flour', 'cooked', 'TINKYADA']
+---
+ID: fdc_2512378
+ORIGINAL NAME: Buckwheat, whole grain
+CURRENT TITLE: Buckwheat whole
+PARTS: ['Buckwheat', 'whole grain']
+---
+ID: fdc_2710819
+ORIGINAL NAME: Chia seeds, dry, raw
+CURRENT TITLE: Chia Seeds
+PARTS: ['Chia seeds', 'dry', 'raw']
+---
+ID: fdc_173265
+ORIGINAL NAME: Pasta, gluten-free, corn and rice flour, cooked
+CURRENT TITLE: Corn Cooked
+PARTS: ['Pasta', 'gluten-free', 'corn and rice flour', 'cooked']
+---
+ID: fdc_790276
+ORIGINAL NAME: Flour, corn, yellow, fine meal, enriched
+CURRENT TITLE: Corn Flour
+PARTS: ['Flour', 'corn', 'yellow', 'fine meal', 'enriched']
+---
+ID: fdc_2710835
+ORIGINAL NAME: Corn flour, masa harina, white or yellow, dry, raw
+CURRENT TITLE: Corn Raw
+PARTS: ['Corn flour', 'masa harina', 'white or yellow', 'dry', 'raw']
+---
+ID: fdc_169732
+ORIGINAL NAME: Noodles, egg, enriched, cooked
+CURRENT TITLE: Egg Noodles
+PARTS: ['Noodles', 'egg', 'enriched', 'cooked']
+---
+ID: fdc_2710828
+ORIGINAL NAME: Farro, pearled, dry, raw
+CURRENT TITLE: Farro pearled dry
+PARTS: ['Farro', 'pearled', 'dry', 'raw']
+---
+ID: fdc_790146
+ORIGINAL NAME: Flour, bread, white, enriched, unbleached
+CURRENT TITLE: Flour bread white
+PARTS: ['Flour', 'bread', 'white', 'enriched', 'unbleached']
+---
+ID: fdc_2512374
+ORIGINAL NAME: Flour, buckwheat
+CURRENT TITLE: Flour buckwheat
+PARTS: ['Flour', 'buckwheat']
+---
+ID: fdc_1104812
+ORIGINAL NAME: Flour, rice, brown
+CURRENT TITLE: Flour rice brown
+PARTS: ['Flour', 'rice', 'brown']
+---
+ID: fdc_1104867
+ORIGINAL NAME: Flour, rice, glutinous
+CURRENT TITLE: Flour rice glutinous
+PARTS: ['Flour', 'rice', 'glutinous']
+---
+ID: fdc_790214
+ORIGINAL NAME: Flour, rice, white, unenriched
+CURRENT TITLE: Flour rice white
+PARTS: ['Flour', 'rice', 'white', 'unenriched']
+---
+ID: fdc_789951
+ORIGINAL NAME: Flour, wheat, all-purpose, enriched, unbleached
+CURRENT TITLE: Flour wheat al 89951
+PARTS: ['Flour', 'wheat', 'all-purpose', 'enriched', 'unbleached']
+---
+ID: fdc_790018
+ORIGINAL NAME: Flour, wheat, all-purpose, unenriched, unbleached
+CURRENT TITLE: Flour wheat al 90018
+PARTS: ['Flour', 'wheat', 'all-purpose', 'unenriched', 'unbleached']
+---
+ID: fdc_789890
+ORIGINAL NAME: Flour, wheat, all-purpose, enriched, bleached
+CURRENT TITLE: Flour wheat all
+PARTS: ['Flour', 'wheat', 'all-purpose', 'enriched', 'bleached']
+---
+ID: fdc_790085
+ORIGINAL NAME: Flour, whole wheat, unenriched
+CURRENT TITLE: Flour whole wheat
+PARTS: ['Flour', 'whole wheat', 'unenriched']
+---
+ID: fdc_168871
+ORIGINAL NAME: Millet, cooked
+CURRENT TITLE: Millet
+PARTS: ['Millet', 'cooked']
+---
+ID: fdc_169702
+ORIGINAL NAME: Millet, raw
+CURRENT TITLE: Millet Raw
+PARTS: ['Millet', 'raw']
+---
+ID: fdc_2512379
+ORIGINAL NAME: Millet, whole grain
+CURRENT TITLE: Millet whole
+PARTS: ['Millet', 'whole grain']
+---

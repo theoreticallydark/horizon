@@ -1,0 +1,1804 @@
+None	Apple Pastries
+None	Apple Toaster
+None	Roti
+None	Roti Whole
+None	Cheese
+None	Garlic
+None	Naan
+None	Naan Whole
+None	Onion
+None	Paratha
+None	Peanuts
+None	wheat
+None	white wheat
+None	Almond Milk
+None	Almond Milk plain
+None	Almond Milk ready
+None	Almond Milk shelf
+None	Apple Beverages
+None	Oat Milk
+None	Orange
+None	Orange Canned
+None	pineapple and
+None	Cereals ready 74654
+None	Oats
+None	Oats Brown
+None	Oats Cereals
+None	Oats Cooked
+None	Barley
+None	Barley Flour
+None	Barley Raw
+None	Brown Rice
+None	Buckwheat whole
+None	Chia Seeds
+None	Corn Cooked
+None	Corn Flour
+None	Corn Raw
+None	Egg Noodles
+None	Farro pearled dry
+None	Flour bread white
+None	Flour buckwheat
+None	Flour rice brown
+None	Flour rice glutinous
+None	Flour rice white
+None	Flour wheat al 89951
+None	Flour wheat al 90018
+None	Flour wheat all
+None	Flour whole wheat
+None	Millet
+None	Millet Raw
+None	Millet whole
+None	Oats Flour
+None	Oats grain
+None	Oats Raw
+None	Oats whole
+None	Pasta whole wheat
+None	Quinoa
+None	Quinoa Cooked
+None	Quinoa uncooked
+None	Rice black
+None	Rice brown long
+None	Rice brown long for
+None	Rice brown long Raw
+None	Rice red unenriched
+None	Rice white lon 68878
+None	Rice white lon 69756
+None	Rice white long
+None	Rice white long Raw
+None	Sorghum
+None	Sorghum White
+None	Wild Rice
+None	Wild Rice Raw
+None	Buttermilk low
+None	Buttermilk Low-Fat
+None	Cheese American
+None	Cheese cheddar
+None	Cheese cotija
+None	Cheese cottage
+None	Cheese cream
+None	Cheese fat
+None	Cheese food
+None	Cheese fortified
+None	Cheese fresh
+None	Cottage Cheese
+None	Cheese grated
+None	Cheese Includes
+None	Cheese low
+None	Cheese Low-Fat
+None	Cheese lowfat
+None	Cheese Mexican
+None	Cheese moisture
+None	Cheese monterey
+None	Cheese mozzarella
+None	Cheese Nonfat
+None	Cheese oaxaca
+None	Cheese parmesan
+None	Cheese pasteurized
+None	Cheese process
+None	Cheese product
+None	Cheese provolone
+None	Cheese queso
+None	Cheese reduced
+None	Cheese sharp
+None	Cheese sodium
+None	Cheese spread
+None	Cheese swiss
+None	Cheese vitamin
+None	Cheese White
+None	Cheese without
+None	Egg
+None	Egg 29490
+None	Egg 29596
+None	Egg 71287
+None	Egg 72184
+None	Egg 73436
+None	Egg Boiled
+None	Egg Cooked
+None	Egg Dried
+None	Egg fresh
+None	Egg Frozen
+None	Egg Includes
+None	Egg pasteurized
+None	Egg poached
+None	Egg quail
+None	Egg Raw
+None	Egg salted
+None	Egg scrambled
+None	Egg sugared
+None	Egg White
+None	Egg whole
+None	Egg yolk
+None	Eggnog
+None	Milk added
+None	Milk Cheese
+None	Milk chocolate
+None	Milk fat
+None	Milk fluid
+None	Milk Low-Fat
+None	Milk lowfat
+None	Milk milkfat
+None	Milk Nonfat
+None	Milk reduced
+None	Milk Whole
+None	Milk with
+None	Milk without
+None	Yogurt
+None	Yogurt 47437
+None	Yogurt 59793
+None	Yogurt 70902
+None	Yogurt fat
+None	Yogurt fruit
+None	Yogurt Greek
+None	Yogurt low
+None	Yogurt Low-Fat
+None	Yogurt milk
+None	Yogurt Nonfat
+None	Yogurt plain
+None	Yogurt Raw
+None	Yogurt skim
+None	Yogurt strawberry
+None	Yogurt vanilla
+None	Yogurt Whole
+None	Peanuts 2
+None	Soybeans
+None	Soybeans Oil
+None	Soybeans salad
+None	Crustaceans sh 71970
+None	Salmon
+None	Salmon 73691
+None	Salmon Canned
+None	Salmon caught
+None	Salmon Fish
+None	Salmon pink
+None	Salmon Raw
+None	Salmon sockeye
+None	Salmon Wild
+None	Tuna
+None	Tuna Canned
+None	Tuna Cooked
+None	Tuna Fish
+None	Tuna Frozen
+None	Tuna light
+None	Tuna Raw
+None	Apple
+None	Apple Apples
+None	Apple Cooked
+None	Apple granny
+None	Apple honeycrisp
+None	Apple juice
+None	Apple Raw
+None	Apple red
+None	Apple skin
+None	Apple with
+None	Apple without
+None	Applesauce
+None	Avocado
+None	Avocado Avocados
+None	Avocado Florida
+None	Avocado Raw
+None	Banana
+None	Banana Bananas
+None	Banana Fruit
+None	Banana juice
+None	Banana Raw
+None	Breadfruit
+None	Grapes red or green
+None	Guava
+None	Mango
+None	Mango Mangos
+None	Mango Raw
+None	Orange concentrate
+None	Orange Florida
+None	Orange juice
+None	Orange navels
+None	Orange not
+None	Orange Oranges
+None	Orange pulp
+None	Orange Raw
+None	Orange Tangerines
+None	Orange unsweetened
+None	Papaya
+None	Peaches yellow
+None	Pear Anjou green
+None	Pear nectar
+None	Pears
+None	Pears asian
+None	Pears Raw
+None	Pineapple
+None	Pineapple all
+None	Pineapple Raw
+None	Pomegranate
+None	Pomegranate Raw
+None	Beans
+None	Beans black
+None	Beans black ma 73734
+None	Beans black mature
+None	Beans black tu 75186
+None	Beans black turtle
+None	Beans cannellini
+None	Beans cannellini dry
+None	Beans Dry Black
+None	Beans Dry Brown
+None	Beans Dry Carioca
+None	Beans Dry Cranberry
+None	Beans Dry Dark Red
+None	Beans Dry Flor de
+None	Beans Dry Great
+None	Beans Dry Light Red
+None	Beans Dry Light Tan
+None	Beans Dry Medium Red
+None	Beans Dry Navy
+None	Beans Dry Pink
+None	Beans Dry Pinto
+None	Beans Dry Red
+None	Beans Dry Small
+None	Beans Dry Small Red
+None	Beans Dry Tan
+None	Beans great no 75190
+None	Beans great northern
+None	Beans kidney all
+None	Beans kidney dark
+None	Beans kidney light
+None	Beans kidney red
+None	Beans navy
+None	Beans navy mat 73745
+None	Beans navy mature
+None	Beans pink mature
+None	Beans pinto
+None	Beans pinto ma 75199
+None	Beans pinto mature
+None	Beans white mature
+None	Blackeye pea
+None	Blackeye pea dry
+None	Broadbeans mature
+None	Chickpeas
+None	Chickpeas garbanzo
+None	Chickpeas Raw
+None	Black-eyed Peas
+None	Flour soy defatted
+None	Flour soy full fat
+None	Lentils
+None	Lentils Raw
+None	Lima beans large
+None	Lima beans large Raw
+None	Mung Beans
+None	Mung Beans Raw
+None	Peanuts 3
+None	Peanuts 4
+None	Peanuts 5
+None	Peanuts 6
+None	Peanuts Raw
+None	Peanuts Roasted
+None	Peanuts Raw Raw
+None	Peanuts Roasted 2
+None	Peas green split
+None	Pigeon Peas
+None	Pigeon Peas Raw
+None	Pork
+None	Pork Canned
+None	Refried beans
+None	Refried beans Canned
+None	Refried beans sodium
+None	Soy flour full fat
+None	Soy Milk
+None	Soy Milk unsweetened
+None	Almonds
+None	Almonds dry
+None	Almonds Flour
+None	Almonds Nuts
+None	Almonds Raw
+None	Almonds Roasted
+None	Cashews
+None	Cashews Raw
+None	Coconut Milk
+None	Flaxseed ground
+None	Peanuts Roasted 3
+None	Peanuts Roasted 4
+None	Peanuts Roasted 5
+None	Pumpkin Seeds
+None	Sunflower Seeds
+None	Sunflower Seeds oil
+None	Sunflower Seeds Raw
+None	Sunflower Seeds salt
+None	Walnuts
+None	Walnuts Raw
+None	Chapati / Roti 71520
+None	Chapati / Roti back
+None	Chapati / Roti BBQ
+None	Chapati / Roti meat
+None	Chapati / Roti only
+None	Chapati / Roti skin
+None	Chapati / Roti thigh
+None	Chapati / Roti wing
+None	Chicken 71052
+None	Chicken 71447
+None	Chicken 71450
+None	Chicken 72378
+None	Chicken 72380
+None	Chicken 72385
+None	Chicken 72388
+None	Chicken 72390
+None	Chicken 73619
+None	Chicken 73625
+None	Chicken 73627
+None	Chicken 73632
+None	Chicken and
+None	Chicken braised
+None	Chicken broilers
+None	Chicken cornish
+None	Chicken dark
+None	Chicken drumstick
+None	Chicken flour
+None	Chicken fried
+None	Chicken giblets
+None	Chicken leg
+None	Chicken meat
+None	Chicken only
+None	Chicken Roasted
+None	Chicken separable
+None	Chicken skin
+None	Chicken skinless
+None	Chicken thigh
+None	Chicken wing
+None	Beef 72936
+None	Beef Beerwurst
+None	Beef dry
+None	Beef fresh
+None	Beef Pepperoni
+None	Beef pork
+None	Cheese Cheesefurter
+None	Chicken
+None	Chicken Bologna
+None	Chicken Breast deli
+None	Turkey Sausage
+None	Almonds Snacks
+None	Brown Rice Snacks
+None	Corn based
+None	Oats Formulated
+None	Peanuts 7
+None	potato chips
+None	potato chips Snacks
+None	Potatoes chips
+None	Potatoes Dried
+None	Potatoes Snacks
+None	Barley Soup
+None	Orange Frozen
+None	Puddings rice ready
+None	Bitter Melon
+None	Bitter Melon Cooked
+None	Banana Pepper
+None	Banana Peppers
+None	Beans snap green
+None	Beans snap green Raw
+None	Broccoli
+None	Broccoli 47447
+None	Broccoli Cooked
+None	Broccoli Raw
+None	Cabbage
+None	Cabbage 69975
+None	Cabbage Boiled
+None	Cabbage chinese
+None	Cabbage Cooked
+None	Cabbage green
+None	Cabbage japanese
+None	Cabbage napa
+None	Cabbage Raw
+None	Cabbage red
+None	Cabbage savoy
+None	Carrot
+None	Carrot Boiled
+None	Carrot Carrots
+None	Carrot Cooked
+None	Carrot Frozen
+None	Carrot Raw
+None	Cauliflower
+None	Cauliflower 85573
+None	Cauliflower Raw
+None	Corn 69998
+None	Corn Canned
+None	Corn Frozen
+None	Corn salt
+None	Corn sweet
+None	Corn White
+None	Corn yellow
+None	Eggplant
+None	Flour potato
+None	Garlic 69230
+None	Garlic Raw
+None	Hyacinth beans
+None	Lima beans imm 68396
+None	Lima beans immature
+None	Mung Beans Raw Raw
+None	Onion Frozen
+None	Onion Onions
+None	Onion Raw
+None	Onion red
+None	Onion spring
+None	Onion White
+None	Onion yellow
+None	Onion young
+None	Orange Peppers
+None	Orange Sweet
+None	Peas edible podded
+None	Peas green
+None	Peas green sweet
+None	Pigeonpeas immature
+None	Potato pancakes
+None	Potato puffs
+None	Potato puffs Frozen
+None	Potatoes
+None	Potatoes 46401
+None	Potatoes Brown
+None	Potatoes Cooked
+None	Potatoes flesh
+None	Potatoes Frozen
+None	Potatoes gold
+None	Potatoes hash
+None	Potatoes home
+None	Potatoes mashed
+None	Potatoes Raw
+None	Potatoes ready
+None	Potatoes red
+None	Potatoes Russet
+None	Potatoes skin
+None	Potatoes Sweet
+None	Potatoes White
+None	Potatoes Whole
+None	Potatoes without
+None	Spinach
+None	Spinach baby
+None	Spinach Cooked
+None	Spinach mature
+None	Spinach Raw
+None	Squash winter acorn
+None	Sweet Potato
+None	Sweet Potato Raw
+None	Tomato juice
+None	Tomato juice Canned
+None	Tomato juice with
+None	Tomato paste
+None	Tomato puree
+None	Tomato roma
+None	Tomato sauce
+None	Tomatoes
+None	Tomatoes Canned
+None	Tomatoes green
+None	Tomatoes Raw
+None	Tomatoes red
+None	Tomatoes ripe
+None	Tomatoes whole
+None	Tomatoes year
+None	Yambean
+None	Bagels wheat
+None	Butter Frozen
+None	Buttermilk
+None	Buttermilk Biscuits
+None	Buttermilk Frozen
+None	Cheese Crackers
+None	Cinnamon buns
+None	Cookies graham
+None	Cookies oatmeal soft
+None	Cookies shortbread
+None	Cookies sugar
+None	Cookies sugar wafers
+None	Cookies vanilla
+None	Crackers gluten free
+None	Crackers salti 75056
+None	Crackers saltines
+None	Crackers standard
+None	Crackers wheat
+None	Crackers wheat 74985
+None	Crackers whole 67933
+None	Crackers whole wheat
+None	Doughnuts cake type
+None	Doughnuts yeast
+None	french or vienna
+None	Italian
+None	Muffins blueberry
+None	pan dulce
+None	roll
+None	Rolls dinner sweet
+None	Rolls hamburge 72796
+None	Rolls hamburge 74090
+None	Rolls hamburger or
+None	rye
+None	stuffing
+None	Taco shells
+None	Tortillas read 67535
+None	Tortillas ready to
+None	Waffles gluten free
+None	white
+None	whole wheat
+None	Beef
+None	Beef 14743
+None	Beef 14744
+None	Beef 27573
+None	Beef 46173
+None	Beef 46174
+None	Beef 46758
+None	Beef 46759
+None	Beef 46760
+None	Beef 46761
+None	Beef 46762
+None	Beef 46763
+None	Beef 68609
+None	Beef 68618
+None	Beef 68619
+None	Beef 68631
+None	Beef 68632
+None	Beef 68637
+None	Beef 68642
+None	Beef 68643
+None	Beef 68645
+None	Beef 68649
+None	Beef 68653
+None	Beef 68654
+None	Beef 68655
+None	Beef 68659
+None	Beef 68662
+None	Beef 68692
+None	Beef 68693
+None	Beef 68707
+None	Beef 68715
+None	Beef 68716
+None	Beef 68717
+None	Beef 68727
+None	Beef 68731
+None	Beef 68732
+None	Beef 68740
+None	Beef 68741
+None	Beef 68742
+None	Beef 69433
+None	Beef 69443
+None	Beef 69444
+None	Beef 69445
+None	Beef 69446
+None	Beef 69451
+None	Beef 69455
+None	Beef 69456
+None	Beef 69462
+None	Beef 69467
+None	Beef 69471
+None	Beef 69472
+None	Beef 69475
+None	Beef 69476
+None	Beef 69477
+None	Beef 69478
+None	Beef 69479
+None	Beef 69480
+None	Beef 69481
+None	Beef 69482
+None	Beef 69483
+None	Beef 69484
+None	Beef 69485
+None	Beef 69486
+None	Beef 69487
+None	Beef 69492
+None	Beef 69496
+None	Beef 69497
+None	Beef 69524
+None	Beef 69530
+None	Beef 69531
+None	Beef 69536
+None	Beef 69537
+None	Beef 69539
+None	Beef 69543
+None	Beef 69560
+None	Beef 69566
+None	Beef 69567
+None	Beef 69568
+None	Beef 69569
+None	Beef 70201
+None	Beef 70203
+None	Beef 70205
+None	Beef 70207
+None	Beef 70209
+None	Beef 70214
+None	Beef 70216
+None	Beef 70217
+None	Beef 70228
+None	Beef 70229
+None	Beef 70237
+None	Beef 70238
+None	Beef 70603
+None	Beef 70605
+None	Beef 70608
+None	Beef 70610
+None	Beef 70618
+None	Beef 70632
+None	Beef 70633
+None	Beef 70634
+None	Beef 70635
+None	Beef 70640
+None	Beef 70641
+None	Beef 70642
+None	Beef 70643
+None	Beef 70783
+None	Beef 70796
+None	Beef 70801
+None	Beef 70802
+None	Beef 70803
+None	Beef 70804
+None	Beef 70805
+None	Beef 70806
+None	Beef 70807
+None	Beef 70808
+None	Beef 70809
+None	Beef 70810
+None	Beef 70811
+None	Beef 70812
+None	Beef 70813
+None	Beef 70814
+None	Beef 70815
+None	Beef 70817
+None	Beef 70818
+None	Beef 70819
+None	Beef 70822
+None	Beef 70823
+None	Beef 70825
+None	Beef 70826
+None	Beef 70827
+None	Beef 70828
+None	Beef 70834
+None	Beef 70835
+None	Beef 70836
+None	Beef 70837
+None	Beef 70838
+None	Beef 70839
+None	Beef 70840
+None	Beef 70841
+None	Beef 70842
+None	Beef 71193
+None	Beef 71194
+None	Beef 71196
+None	Beef 71197
+None	Beef 71198
+None	Beef 71199
+None	Beef 71200
+None	Beef 71201
+None	Beef 71202
+None	Beef 71204
+None	Beef 71207
+None	Beef 71208
+None	Beef 71209
+None	Beef 71210
+None	Beef 71212
+None	Beef 71216
+None	Beef 71217
+None	Beef 71218
+None	Beef 71219
+None	Beef 71220
+None	Beef 71221
+None	Beef 71223
+None	Beef 71224
+None	Beef 71225
+None	Beef 71226
+None	Beef 71230
+None	Beef 71231
+None	Beef 71232
+None	Beef 71233
+None	Beef 71234
+None	Beef 71235
+None	Beef 71236
+None	Beef 71237
+None	Beef 71238
+None	Beef 71239
+None	Beef 71743
+None	Beef 71744
+None	Beef 71745
+None	Beef 71746
+None	Beef 71747
+None	Beef 71748
+None	Beef 71749
+None	Beef 71751
+None	Beef 71752
+None	Beef 71753
+None	Beef 71754
+None	Beef 71755
+None	Beef 71756
+None	Beef 71757
+None	Beef 71758
+None	Beef 71759
+None	Beef 71760
+None	Beef 71762
+None	Beef 71763
+None	Beef 71764
+None	Beef 71765
+None	Beef 71766
+None	Beef 71767
+None	Beef 71768
+None	Beef 71769
+None	Beef 71770
+None	Beef 71771
+None	Beef 71772
+None	Beef 71773
+None	Beef 71774
+None	Beef 71775
+None	Beef 71776
+None	Beef 71777
+None	Beef 71778
+None	Beef 71779
+None	Beef 71781
+None	Beef 71785
+None	Beef 71786
+None	Beef 71789
+None	Beef 71790
+None	Beef 71791
+None	Beef 71804
+None	Beef 71819
+None	Beef 71820
+None	Beef 72116
+None	Beef 72117
+None	Beef 72118
+None	Beef 72137
+None	Beef 72138
+None	Beef 72139
+None	Beef 72140
+None	Beef 72141
+None	Beef 72142
+None	Beef 72143
+None	Beef 72144
+None	Beef 72149
+None	Beef 72151
+None	Beef 72152
+None	Beef 72153
+None	Beef 72154
+None	Beef 72155
+None	Beef 72156
+None	Beef 72157
+None	Beef 72159
+None	Beef 72160
+None	Beef 72162
+None	Beef 72163
+None	Beef 73069
+None	Beef 73070
+None	Beef 73071
+None	Beef 73072
+None	Beef 73110
+None	Beef 73111
+None	Beef 73112
+None	Beef 73350
+None	Beef 73352
+None	Beef 73353
+None	Beef 73372
+None	Beef 73373
+None	Beef 73374
+None	Beef 73375
+None	Beef 73376
+None	Beef 73377
+None	Beef 73378
+None	Beef 73379
+None	Beef 73380
+None	Beef 73381
+None	Beef 73382
+None	Beef 73385
+None	Beef 73386
+None	Beef 73387
+None	Beef 73389
+None	Beef 73390
+None	Beef 73391
+None	Beef 73392
+None	Beef 73393
+None	Beef 73394
+None	Beef 73398
+None	Beef 73399
+None	Beef 73400
+None	Beef 73980
+None	Beef 73981
+None	Beef 73982
+None	Beef 73983
+None	Beef 73984
+None	Beef 73985
+None	Beef 73986
+None	Beef 73988
+None	Beef 73989
+None	Beef 73990
+None	Beef 73992
+None	Beef 73993
+None	Beef 73994
+None	Beef 73995
+None	Beef 73996
+None	Beef 73998
+None	Beef 73999
+None	Beef 74000
+None	Beef 74001
+None	Beef 74002
+None	Beef 74003
+None	Beef 74004
+None	Beef 74005
+None	Beef 74007
+None	Beef 74008
+None	Beef 74009
+None	Beef 74011
+None	Beef 74012
+None	Beef 74014
+None	Beef 74015
+None	Beef 74031
+None	Beef 74032
+None	Beef 74037
+None	Beef 74055
+None	Beef 74056
+None	Beef 74712
+None	Beef 74713
+None	Beef 74714
+None	Beef 74752
+None	Beef 74758
+None	Beef 74759
+None	Beef 74760
+None	Beef 74763
+None	Beef 74765
+None	Beef all
+None	Beef America
+None	Beef and
+None	Beef arm
+None	Beef blade
+None	Beef bone
+None	Beef boneless
+None	Beef bottom
+None	Beef braised
+None	Beef brisket
+None	Beef broiled
+None	Beef Brown
+None	Beef center
+None	Beef choice
+None	Beef chuck
+None	Beef composite
+None	Beef Cooked
+None	Beef Country
+None	Beef Cut
+None	Beef cuts
+None	Beef Denver
+None	Beef eye
+None	Beef fat
+None	Beef fed
+None	Beef flank
+None	Beef flat
+None	Beef for
+None	Beef fried
+None	Beef Frozen
+None	Beef full
+None	Beef grades
+None	Beef grass
+None	Beef grilled
+None	Beef ground
+None	Beef half
+None	Beef Includes
+None	Beef inside
+None	Beef kidneys
+None	Beef large
+None	Beef lean
+None	Beef lip
+None	Beef liver
+None	Beef loaf
+None	Beef loin
+None	Beef meat
+None	Beef meats
+None	Beef mock
+None	Beef off
+None	Beef only
+None	Beef outside
+None	Beef pan
+None	Beef patty
+None	Beef plate
+None	Beef porterhouse
+None	Beef pot
+None	Beef products
+None	Beef Raw
+None	Beef retail
+None	Beef rib
+None	Beef ribeye
+None	Beef ribs
+None	Beef roast
+None	Beef Roasted
+None	Beef round
+None	Beef sandwich
+None	Beef select
+None	Beef separable
+None	Beef short
+None	Beef shortribs
+None	Beef shoulder
+None	Beef sirloin
+None	Beef skirt
+None	Beef small
+None	Beef steak
+None	Beef stew
+None	Beef strip
+None	Beef Style
+None	Beef tender
+None	Beef tenderloin
+None	Beef tip
+None	Beef tongue
+None	Beef top
+None	Beef trimmed
+None	Beef tripe
+None	Beef under
+None	Beef unspecified
+None	Beef variety
+None	Beef whole
+None	Alcoholic beve 68746
+None	Alcoholic beve 73185
+None	Alcoholic beve 73190
+None	Alcoholic beve 74837
+None	Alcoholic beverage
+None	AMBER
+None	carbonated
+None	Carbonated beverage
+None	carbonated Beverages
+None	carbonated tonic
+None	Cocktail mix
+None	coffee
+None	coffee Beverages
+None	Cranberry juice
+None	Energy drink
+None	fruit punch drink
+None	grape juice drink
+None	Propel Zero
+None	Shake fast food
+None	tea
+None	water
+None	water Beverages
+None	Cereals farina
+None	Cereals farina with
+None	Cereals ready to eat
+None	Corn
+None	Bulgur dry
+None	Einkorn grain dry
+None	Flour 00
+None	Flour amaranth
+None	Flour pastry
+None	Flour rye
+None	Flour semolina
+None	Flour semolina fine
+None	Sorghum 2
+None	Flour spelt whole
+None	Fonio grain dry
+None	Khorasan grain dry
+None	Pasta
+None	Pasta Cooked
+None	Pasta dry enriched
+None	Sorghum White Raw
+None	Sorghum White Raw
+None	Butter
+None	Butter stick
+None	Butter unsalted
+None	Butter whipped
+None	Butter without
+None	Cream fluid half and
+None	Cream fluid heavy
+None	Cream fluid li 70858
+None	Cream fluid light
+None	Cream half and half
+None	Cream heavy
+None	Cream sour cultured
+None	Cream sour full fat
+None	Cream substitu 71263
+None	Cream substitu 72214
+None	Cream substitute
+None	Cream whipped cream
+None	Dulce de Leche
+None	Egg Eggs
+None	Egg White White
+None	Egg Yolk Eggs
+None	Kefir lowfat
+None	Kefir lowfat plain
+None	Light ice cream
+None	Buttermilk Salad
+None	Cheese Salad
+None	Corn Oil
+None	Margarine like
+None	Margarine spread 35
+None	Oil canola
+None	Oil coconut
+None	Oil olive extr 48608
+None	Oil olive extra
+None	Oil safflower
+None	Oil safflower salad
+None	Oil sunflower
+None	Salad dressing
+None	Salad dressing 71009
+None	Salad dressing 71019
+None	Salad dressing 71405
+None	Salad dressing 73592
+None	Salad dressing fat
+None	Salad dressing light
+None	Salad dressing ranch
+None	Shortening vegetable
+None	Anchovies
+None	carp
+None	catfish
+None	catfish Raw
+None	cod
+None	cod Frozen
+None	Cod Pacific or
+None	cod Raw
+None	croaker
+None	Crustaceans cr 71966
+None	Crustaceans cr 74205
+None	Crustaceans cr 84446
+None	Crustaceans crab
+None	Crustaceans crayfish
+None	Crustaceans lo 74208
+None	Crustaceans lobster
+None	Crustaceans sh 71972
+None	Crustaceans sh 74210
+None	Crustaceans shrimp
+None	eel
+None	fish sticks
+None	flatfish
+None	haddock
+None	halibut
+None	Halibut Frozen
+None	halibut Raw
+None	herring
+None	Lobster tail only
+None	mackerel
+None	mackerel Fish
+None	mackerel Raw
+None	Mahi mahi
+None	Mollusks abalone
+None	Mollusks clam mixed
+None	Mollusks mussel blue
+None	Mollusks octopus
+None	Mollusks oyster
+None	Mollusks oyster Raw
+None	Mollusks oyster Wild
+None	Mollusks scallop
+None	Mollusks squid mixed
+None	Mollusks whelk
+None	mullet
+None	ocean perch
+None	perch
+None	pike
+None	pollock
+None	pollock Fish
+None	pollock Raw
+None	pompano
+None	rockfish
+None	roe
+None	Scallops bay
+None	Scallops sea
+None	scup
+None	sea bass
+None	Sea bass Chilean
+None	shad
+None	shark
+None	smelt
+None	snapper
+None	Snapper Frozen
+None	Snow crab legs only
+None	Squid
+None	sturgeon
+None	swordfish
+None	Swordfish Frozen
+None	tilapia
+None	tilapia Fish
+None	tilapia Raw
+None	trout
+None	trout Raw
+None	whitefish
+None	whiting
+None	Apricot with skin
+None	Apricots
+None	Blackberries
+None	Blueberries
+None	Carambola
+None	Cherries sour red
+None	Cherries sweet
+None	Cherries sweet dark
+None	Cranberries
+None	Cranberry juice not
+None	Currants red and
+None	Figs
+None	Figs dried uncooked
+None	Grape juice
+None	Grape juice purple
+None	Grape juice white
+None	Grapefruit
+None	Grapefruit juice
+None	Grapefruit juice Raw
+None	Grapefruit juice red
+None	Grapefruit Raw
+None	Grapefruit White
+None	Grapes american type
+None	Grapes green
+None	Grapes red seedless
+None	Juice prune shelf
+None	Juice tart cherry
+None	Kiwifruit green
+None	Kiwifruit green Raw
+None	Kiwifruit ZESPRI
+None	Kumquats
+None	Lemon juice
+None	Lemons
+None	Lime juice
+None	Limes
+None	Mandarin seedless
+None	Melons cantaloupe
+None	Melons casaba
+None	Melons honeydew
+None	Nectarines
+None	Olives green
+None	Pawpaw peeled seeded
+None	Plantains overripe
+None	Plantains ripe
+None	Plantains underripe
+None	Plantains yellow
+None	Plantains yellow Raw
+None	Plum black with skin
+None	Plums
+None	Plums dried uncooked
+None	Prune juice
+None	Raisins dark
+None	Raspberries
+None	Rhubarb
+None	Strawberries
+None	Tangerine juice
+None	Watermelon
+None	Watermelon Raw
+None	Watermelon seedless
+None	Bison ground
+None	external fat o 74882
+None	external fat only
+None	foreshank
+None	Game meat deer
+None	ground
+None	ground Raw
+None	Lamb
+None	Lamb Australian
+None	Lamb bone
+None	Lamb chop
+None	Lamb Cooked
+None	Lamb denuded
+None	Lamb frenched
+None	Lamb fresh
+None	Lamb imported
+None	Lamb New
+None	Lamb rack
+None	Lamb Raw
+None	Lamb rib
+None	Lamb roast
+None	Lamb Roasted
+None	Lamb shoulder
+None	Lamb tenderloin
+None	Lamb whole
+None	Lamb Zealand
+None	leg
+None	leg Cooked
+None	leg Raw
+None	leg Veal
+None	loin
+None	loin Raw
+None	loin Veal
+None	seam fat only
+None	seam fat only Raw
+None	shank
+None	shank Raw
+None	shoulder
+None	shoulder Cooked
+None	shoulder Raw
+None	shoulder Veal
+None	shoulder whole
+None	sirloin
+None	variety meats 72534
+None	variety meats 72543
+None	variety meats 74358
+None	variety meats and by
+None	Hummus commercial
+None	Papad
+None	brazilnuts
+None	brazilnuts Raw
+None	Butter Sesame
+None	coconut meat
+None	coconut meat Raw
+None	Flour chestnut
+None	Flour coconut
+None	hazelnuts or
+None	macadamia nuts
+None	pecans
+None	pecans Raw
+None	pine nuts
+None	pistachio nuts
+None	pistachio nuts dry
+None	pistachio nuts Raw
+None	pumpkin and sq 69415
+None	pumpkin and sq 70557
+None	pumpkin and squash
+None	Canadian bacon
+None	Canadian bacon 67869
+None	Pork 14745
+None	Pork 46168
+None	Pork 46169
+None	Pork 67813
+None	Pork 67814
+None	Pork 67817
+None	Pork 67818
+None	Pork 67819
+None	Pork 67820
+None	Pork 67821
+None	Pork 67825
+None	Pork 67826
+None	Pork 67827
+None	Pork 67828
+None	Pork 67829
+None	Pork 67830
+None	Pork 67831
+None	Pork 67832
+None	Pork 67833
+None	Pork 67834
+None	Pork 67835
+None	Pork 67836
+None	Pork 67837
+None	Pork 67838
+None	Pork 67839
+None	Pork 67841
+None	Pork 67842
+None	Pork 67843
+None	Pork 67844
+None	Pork 67846
+None	Pork 67847
+None	Pork 67851
+None	Pork 67852
+None	Pork 67853
+None	Pork 67868
+None	Pork 67882
+None	Pork 67883
+None	Pork 67887
+None	Pork 67892
+None	Pork 67893
+None	Pork 67895
+None	Pork 67896
+None	Pork 67898
+None	Pork 67899
+None	Pork 67900
+None	Pork 67901
+None	Pork 67912
+None	Pork 68221
+None	Pork 68223
+None	Pork 68224
+None	Pork 68225
+None	Pork 68226
+None	Pork 68227
+None	Pork 68228
+None	Pork 68229
+None	Pork 68230
+None	Pork 68231
+None	Pork 68232
+None	Pork 68233
+None	Pork 68235
+None	Pork 68236
+None	Pork 68237
+None	Pork 68238
+None	Pork 68239
+None	Pork 68240
+None	Pork 68241
+None	Pork 68243
+None	Pork 68244
+None	Pork 68245
+None	Pork 68247
+None	Pork 68248
+None	Pork 68249
+None	Pork 68250
+None	Pork 68251
+None	Pork 68252
+None	Pork 68253
+None	Pork 68254
+None	Pork 68258
+None	Pork 68259
+None	Pork 68260
+None	Pork 68261
+None	Pork 68262
+None	Pork 68263
+None	Pork 68277
+None	Pork 68285
+None	Pork 68286
+None	Pork 68292
+None	Pork 68293
+None	Pork 68294
+None	Pork 68298
+None	Pork 68299
+None	Pork 68303
+None	Pork 68305
+None	Pork 68306
+None	Pork 68307
+None	Pork 68308
+None	Pork 68309
+None	Pork 68310
+None	Pork 68311
+None	Pork 68312
+None	Pork 68314
+None	Pork 68315
+None	Pork 68327
+None	Pork 68328
+None	Pork 68334
+None	Pork 68362
+None	Pork 68363
+None	Pork 68364
+None	Pork 68365
+None	Pork 68372
+None	Pork 68373
+None	Pork 68374
+None	Pork 68375
+None	Pork 68378
+None	Pork 68379
+None	Pork 68381
+None	Pork 69156
+None	Pork 69178
+None	Pork 69180
+None	Pork 69181
+None	Pork 69182
+None	Pork 69183
+None	Pork 69184
+None	Pork 69185
+None	Pork 69187
+None	Pork 69190
+None	Pork 69192
+None	Pork 69193
+None	Pork 69194
+None	Pork 69195
+None	Pork 69196
+None	Pork 69197
+None	Pork 69198
+None	Pork 69201
+None	Pork added
+None	Pork and
+None	Pork arm
+None	Pork backribs
+None	Pork bacon
+None	Pork belly
+None	Pork blade
+None	Pork bone
+None	Pork boneless
+None	Pork Boston
+None	Pork braised
+None	Pork breast
+None	Pork broil
+None	Pork broiled
+None	Pork butt
+None	Pork Cap
+None	Pork center
+None	Pork chop
+None	Pork chops
+None	Pork composite
+None	Pork country
+None	Pork crumbles
+None	Pork cured
+None	Pork cuts
+None	Pork enhanced
+None	Pork fat
+None	Pork feet
+None	Pork fresh
+None	Pork fried
+None	Pork ground
+None	Pork half
+None	Pork ham
+None	Pork heated
+None	Pork Includes
+None	Pork juices
+None	Pork lean
+None	Pork leg
+None	Pork loin
+None	Pork Loin Cooked
+None	Pork Loin Raw
+None	Pork meats
+None	Pork natural
+None	Pork only
+None	Pork pan
+None	Pork petite
+None	Pork picnic
+None	Pork pre
+None	Pork product
+None	Pork products
+None	Pork retail
+None	Pork rib
+None	Pork ribs
+None	Pork roast
+None	Pork Roasted
+None	Pork roasts
+None	Pork rump
+None	Pork salt
+None	Pork separable
+None	Pork shank
+None	Pork shoulder
+None	Pork sirloin
+None	Pork slice
+None	Pork solution
+None	Pork spareribs
+None	Pork steak
+None	Pork steaks
+None	Pork stomach
+None	Pork style
+None	Pork tender
+None	Pork tenderloin
+None	Pork tip
+None	Pork top
+None	Pork trimmed
+None	Pork unheated
+None	Pork variety
+None	Pork water
+None	Pork whole
+None	Pork with
+None	Chicken 27566
+None	Chicken 27567
+None	Chicken 27568
+None	Chicken 72855
+None	Chicken 72859
+None	Chicken 72863
+None	Chicken 74499
+None	Chicken 74500
+None	Chicken 74502
+None	Chicken added
+None	Chicken additives
+None	Chicken all
+None	Chicken boneless
+None	Chicken breast
+None	Chicken broiler
+None	Chicken Brown
+None	Chicken classes
+None	Chicken Cooked
+None	Chicken drumsticks
+None	Chicken fryers
+None	Chicken gizzard
+None	Chicken ground
+None	Chicken liver
+None	Chicken Raw
+None	Chicken solution
+None	Chicken thighs
+None	Chicken with
+None	Duck domestica 72410
+None	Duck domesticated
+None	Turkey 14747
+None	Turkey 71081
+None	Turkey 71082
+None	Turkey 71083
+None	Turkey 71088
+None	Turkey 71089
+None	Turkey 71090
+None	Turkey 71091
+None	Turkey 71097
+None	Turkey 71098
+None	Turkey 71128
+None	Turkey 71129
+None	Turkey 71131
+None	Turkey 71132
+None	Turkey 71134
+None	Turkey 71479
+None	Turkey 71480
+None	Turkey 71481
+None	Turkey 71482
+None	Turkey 71486
+None	Turkey 71489
+None	Turkey 71490
+None	Turkey 71496
+None	Turkey 71497
+None	Turkey 71498
+None	Turkey 71505
+None	Turkey 71506
+None	Turkey 71525
+None	Turkey 71526
+None	Turkey 71527
+None	Turkey 71530
+None	Turkey 71532
+None	Turkey 72847
+None	Turkey 72850
+None	Turkey 72866
+None	Turkey 72867
+None	Turkey 72868
+None	Turkey 72869
+None	Turkey 72870
+None	Turkey 72871
+None	Turkey 72872
+None	Turkey 72873
+None	Turkey 72874
+None	Turkey 72875
+None	Turkey 72877
+None	Turkey 72878
+None	Turkey 74508
+None	Turkey 74513
+None	Turkey 74514
+None	Turkey 74515
+None	Turkey 74516
+None	Turkey 74517
+None	Turkey 74518
+None	Turkey added
+None	Turkey all
+None	Turkey and
+None	Turkey back
+None	Turkey bird
+None	Turkey breast
+None	Turkey broiled
+None	Turkey classes
+None	Turkey dark
+None	Turkey drumstick
+None	Turkey fat
+None	Turkey free
+None	Turkey from
+None	Turkey fryer
+None	Turkey giblets
+None	Turkey gizzard
+None	Turkey ground
+None	Turkey heart
+None	Turkey lean
+None	Turkey light
+None	Turkey liver
+None	Turkey meat
+None	Turkey neck
+None	Turkey only
+None	Turkey pan
+None	Turkey parts
+None	Turkey patties
+None	Turkey retail
+None	Turkey Roasted
+None	Turkey skin
+None	Turkey solution
+None	Turkey thigh
+None	Turkey whole
+None	Turkey wing
+None	Turkey with
+None	Beef Bologna
+None	Beef breakfast
+None	Beef cured
+None	Beef deli
+None	Beef Dried
+None	Beef Frankfurter
+None	Beef Salami
+None	Beef Sausage
+None	Bologna meat and
+None	Chicken Frankfurter
+None	Chicken Sausage
+None	Frankfurter me 71634
+None	Frankfurter me 73875
+None	Frankfurter meat and
+None	Ham sliced pre
+None	Ham smoked extra
+None	Kielbasa fully
+None	Kielbasa fully 73879
+None	Kielbasa fully pan
+None	Meatballs
+None	Pork 73859
+None	Pork Bologna
+None	Pork chorizo
+None	Pork Cooked
+None	Pork Italian
+None	Pork link
+None	Pork patty
+None	Pork Pickle
+None	Pork Raw
+None	Pork reduced
+None	Pork sausage
+None	Pork smoked
+None	Pork unprepared
+None	Turkey
+None	Turkey Bologna
+None	Turkey Breast sliced
+None	Turkey Cooked
+None	Turkey Frankfurter
+None	Turkey fresh
+None	Turkey Raw
+None	bagel chips
+None	Brown Rice Brown
+None	Butter Popcorn
+None	Butter Snacks
+None	Cheese Snacks
+None	Corn Snacks
+None	Corn tortilla
+None	Formulated bar 74786
+None	Formulated bar LUNA
+None	Formulated bar MARS
+None	Formulated bar POWER
+None	Formulated Bar SOUTH
+None	granola bar
+None	granola bar crunchy
+None	granola bar KASHI
+None	granola bar Snacks
+None	granola bar TLC
+None	granola bites
+None	NUTRI GRAIN FRUIT
+None	peas
+None	pita chips
+None	plantain chips
+None	pretzels
+None	Rice crackers
+None	shrimp cracker
+None	Snack BALANCE
+None	Snack Mixed Berry
+None	Snack Pretzel hard
+None	soy chips or crisps
+None	Tortilla chips
+None	vegetable chips
+None	vegetable chips made
+None	Beef broth
+None	Beef Canned
+None	Beef Soup
+None	Cheese Dip
+None	Chicken Canned
+None	Chicken chunky
+None	Chicken noodle
+None	Chicken Soup
+None	cream of mushroom
+None	Sauce pasta
+None	Sauce salsa ready to
+None	vegetable broth
+None	Wasabi
+None	Basil fresh
+None	Mustard prepared
+None	Salt table
+None	Salt table iodized
+None	Spices cloves ground
+None	Spices parsley dried
+None	Spices pepper black
+None	Baking chocolate
+None	Candies caramels
+None	Candies chocolate
+None	Candies coconut bar
+None	Candies HERSHEY S
+None	Candies HERSHEYS
+None	Candies M M MARS
+None	Candies M M MARS 3
+None	Candies MARS
+None	Candies Tamarind
+None	Chewing gum
+None	Frozen novelties ice
+None	Frozen novelties No
+None	Honey
+None	Ice creams chocolate
+None	Ice creams van 67572
+None	Ice creams vanilla
+None	Jams and preserves
+None	Jams preserves
+None	Jellies
+None	Milk
+None	Milk Candies
+None	Milk SCHIFF
+None	Pie fillings
+None	Sugars granulated
+None	Topping SMUCKER S
+None	Toppings
+None	Alfalfa seeds
+None	Artichokes
+None	Artichokes Cooked
+None	Artichokes Raw
+None	Arugula
+None	Arugula baby
+None	Asparagus
+None	Asparagus Boiled
+None	Asparagus Cooked
+None	Asparagus green
+None	Asparagus Raw
+None	Bamboo shoots
+None	Beet greens
+None	Beets
+None	Beets Canned
+None	Beets Raw
+None	Brussels sprouts
+None	Burdock root
+None	Cassava
+None	Catsup
+None	Celeriac
+None	Celery
+None	Chard swiss
+None	Chayote fruit
+None	Chicory greens
+None	Chives
+None	Collards
+None	Coriander
+None	Cress garden
+None	Cucumber peeled
+None	Cucumber with peel
+None	Dandelion greens
+None	Edamame
+None	Endive
+None	Escarole
+None	Fennel bulb
+None	Flour cassava
+None	Ginger
+None	Grape leaves
+None	Jerusalem artichokes
+None	Kale
+None	Kale Raw
+None	Kohlrabi
+None	Leeks
+None	Leeks bulb and
+None	Lettuce butterhead
+None	Lettuce cos or
+None	Lettuce green leaf
+None	Lettuce iceberg
+None	Lettuce iceberg Raw
+None	Lettuce leaf green
+None	Lettuce leaf red
+None	Lettuce red leaf
+None	Lettuce romaine
+None	mixed
+None	Mushroom beech
+None	Mushroom crimini
+None	Mushroom enoki
+None	Mushroom king oyster
+None	Mushroom lion s mane
+None	Mushroom maitake
+None	Mushroom oyster
+None	Mushroom pioppini
+None	Mushroom portabella
+None	Mushrooms brown
+None	Mushrooms brown Raw
+None	Mushrooms maitake
+None	Mushrooms oyster
+None	Mushrooms port 69243
+None	Mushrooms portabella
+None	Mushrooms shiitake
+None	Mushrooms white
+None	Mushrooms white Raw
+None	Nopales
+None	Okra
+None	Parsley fresh
+None	Parsnips
+None	Peppers bell green
+None	Peppers bell red
+None	Peppers bell yellow
+None	Peppers hot ch 70106
+None	Peppers hot chili
+None	Peppers hot pickled
+None	Peppers hungarian
+None	Peppers jalapeno
+None	Peppers jalapeno Raw
+None	Peppers poblano
+None	Peppers serrano
+None	Peppers serrano Raw
+None	Peppers sweet green
+None	Peppers sweet red
+None	Pickles cucumb 68563
+None	Pickles cucumber
+None	Pumpkin
+None	Radicchio
+None	Radishes
+None	Radishes oriental
+None	Radishes red
+None	Rutabaga peeled
+None	Rutabagas
+None	Sauerkraut
+None	Seaweed agar
+None	Seaweed irishmoss
+None	Seaweed kelp
+None	Seaweed laver
+None	Seaweed wakame
+None	Shallots
+None	Shallots bulb peeled
+None	Squash pie pumpkin
+None	Squash spaghetti
+None	Squash summer
+None	Squash summer all
+None	Squash summer green
+None	Squash summer Raw
+None	Squash summer skin
+None	Squash summer yellow
+None	Squash winter
+None	Squash winter all
+None	Squash winter Raw
+None	Taro
+None	Taro leaves
+None	Tomatillos
+None	Tomatillos dehusked
+None	Turnips
+None	Vegetable juice
+None	Vegetable juice low
+None	Waterchestnuts
+None	Watercress
+None	Yam

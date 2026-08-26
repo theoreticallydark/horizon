@@ -106,4 +106,9 @@
 - **2026-08-26 08:55 AM** - Filter Header on Zero Matching Items & Unit Sanitization:
   1. Removed the center placeholder message on filter so that selecting a nutrient with 0 routine foods cleanly renders the top `HorizonTitleBar` with `0/target` metric without clutter.
   2. Sanitized unit labels (e.g. converting `µg RAE/day` to clean `µg`) across both `RoutinePage` and `TrackPage`.
+- **2026-08-26 09:05 AM** - Semantic Human-Friendly Food Titles Transformation:
+  1. Audited all 1,804 food items in `sources/dri_and_foods.json` and replaced robotic/truncated USDA titles (e.g. `Cheese reduced`, `Egg 71287`, `Flour wheat al 89951`, `Salmon pink`) with semantically accurate, consumer-grade food titles (e.g. `Reduced Fat Cheddar Cheese`, `Whole Egg (Raw)`, `All-Purpose Flour`, `Pink Salmon (Raw)`).
+  2. Updated `IsarService.seedDriData()` to synchronize updated titles, energies, and protein indices directly to existing database records on startup.
+- **2026-08-26 09:10 AM** - Constrained Food Titles to Maximum 24 Characters: audited and formatted all 1,804 food titles in `sources/dri_and_foods.json` to strictly fit within a 24-character limit for clean single-line UI rendering without clipping or awkward line wraps.
+- **2026-08-26 09:15 AM** - Cascaded Food Titles to Active Track Records: updated `IsarService.seedDriData()` and `NutritionTrackingService._syncDateRecordDaily()` / `_syncWeekRecordWeekly()` so that previously created daily and weekly tracking log records (`TrackRecordDaily` and `TrackRecordWeekly`) automatically have their embedded `TrackedFoodEntry.foodTitle` updated to the new titles without requiring a database wipe.
 

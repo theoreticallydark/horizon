@@ -177,7 +177,7 @@ class IsarService {
       });
     }
 
-    // 2. Prepare FoodSourceItem items (insert if empty or refresh existing)
+    // 2. Prepare FoodSourceItem items (insert if empty or refresh existing titles & metadata)
     if (foodCount == 0) {
       final List<FoodSourceItem> foodEntities = [];
       for (final item in foodsList) {
@@ -227,6 +227,95 @@ class IsarService {
           await isar.foodSourceItems.putAll(foodEntities.sublist(i, end));
         }
       });
+    } else {
+      // Sync updated titles, energy, and proteinIndex to existing items
+      final existingFoods = await isar.foodSourceItems.where().findAll();
+      final foodJsonMap = {
+        for (var f in foodsList) (f as Map<String, dynamic>)['food_id']?.toString(): f
+      };
+      final List<FoodSourceItem> toUpdate = [];
+      for (final ef in existingFoods) {
+        final jsonFood = foodJsonMap[ef.foodId];
+        if (jsonFood != null) {
+          final newTitle = jsonFood['title']?.toString();
+          bool changed = false;
+          if (newTitle != null && ef.title != newTitle) {
+            ef.title = newTitle;
+            changed = true;
+          }
+          final newEnergy = (jsonFood['energy'] as num?)?.toDouble() ?? 0.0;
+          if (ef.energy != newEnergy) {
+            ef.energy = newEnergy;
+            changed = true;
+          }
+          final newProteinIndex = (jsonFood['protein_index'] as num?)?.toInt() ?? 0;
+          if (ef.proteinIndex != newProteinIndex) {
+            ef.proteinIndex = newProteinIndex;
+            changed = true;
+          }
+          if (changed) {
+            toUpdate.add(ef);
+          }
+        }
+      }
+      if (toUpdate.isNotEmpty) {
+        await isar.writeTxn(() async {
+          const chunkSize = 500;
+          for (var i = 0; i < toUpdate.length; i += chunkSize) {
+            final end = (i + chunkSize < toUpdate.length) ? i + chunkSize : toUpdate.length;
+            await isar.foodSourceItems.putAll(toUpdate.sublist(i, end));
+          }
+        });
+      }
+
+      // Also cascade updated food titles into existing TrackRecordDaily and TrackRecordWeekly
+      final dailyRecords = await isar.trackRecordDailys.where().findAll();
+      final List<TrackRecordDaily> dailyToUpdate = [];
+      for (final dr in dailyRecords) {
+        bool drChanged = false;
+        final updatedList = <TrackedFoodEntry>[];
+        for (final entry in dr.loggedFoods) {
+          final jsonFood = foodJsonMap[entry.foodId];
+          if (jsonFood != null && jsonFood['title'] != null && entry.foodTitle != jsonFood['title']) {
+            entry.foodTitle = jsonFood['title'].toString();
+            drChanged = true;
+          }
+          updatedList.add(entry);
+        }
+        if (drChanged) {
+          dr.loggedFoods = updatedList;
+          dailyToUpdate.add(dr);
+        }
+      }
+      if (dailyToUpdate.isNotEmpty) {
+        await isar.writeTxn(() async {
+          await isar.trackRecordDailys.putAll(dailyToUpdate);
+        });
+      }
+
+      final weeklyRecords = await isar.trackRecordWeeklys.where().findAll();
+      final List<TrackRecordWeekly> weeklyToUpdate = [];
+      for (final wr in weeklyRecords) {
+        bool wrChanged = false;
+        final updatedList = <TrackedFoodEntry>[];
+        for (final entry in wr.loggedFoods) {
+          final jsonFood = foodJsonMap[entry.foodId];
+          if (jsonFood != null && jsonFood['title'] != null && entry.foodTitle != jsonFood['title']) {
+            entry.foodTitle = jsonFood['title'].toString();
+            wrChanged = true;
+          }
+          updatedList.add(entry);
+        }
+        if (wrChanged) {
+          wr.loggedFoods = updatedList;
+          weeklyToUpdate.add(wr);
+        }
+      }
+      if (weeklyToUpdate.isNotEmpty) {
+        await isar.writeTxn(() async {
+          await isar.trackRecordWeeklys.putAll(weeklyToUpdate);
+        });
+      }
     }
   }
 
