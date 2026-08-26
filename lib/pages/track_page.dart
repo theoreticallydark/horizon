@@ -87,37 +87,44 @@ class TrackPage extends StatelessWidget {
                     final targetVal = state.targetMap[selectedNutrientKey] ?? 0.0;
 
                     // Calculate total consumed contribution for this nutrient
-                    double consumedTotal = 0.0;
+                    double dailyConsumedTotal = 0.0;
+                    double weeklyConsumedTotal = 0.0;
+
+                    if (state.dailyRecord != null) {
+                      for (final entry in state.dailyRecord!.loggedFoods) {
+                        if (entry.amountConsumedGrams <= 0) continue;
+                        final food = foodMap[entry.foodId];
+                        if (food == null) continue;
+                        if (nutrient.nutrientKey == 'total_protein' && food.proteinIndex != 1) continue;
+                        final foodNutr = food.nutrients
+                            .where((n) => n.nutrientKey == nutrient.nutrientKey)
+                            .firstOrNull;
+                        if (foodNutr != null) {
+                          dailyConsumedTotal += (entry.amountConsumedGrams / 100.0) * foodNutr.amountPer100g;
+                        }
+                      }
+                    }
+
+                    if (state.weeklyRecord != null) {
+                      for (final entry in state.weeklyRecord!.loggedFoods) {
+                        if (entry.amountConsumedGrams <= 0) continue;
+                        final food = foodMap[entry.foodId];
+                        if (food == null) continue;
+                        if (nutrient.nutrientKey == 'total_protein' && food.proteinIndex != 1) continue;
+                        final foodNutr = food.nutrients
+                            .where((n) => n.nutrientKey == nutrient.nutrientKey)
+                            .firstOrNull;
+                        if (foodNutr != null) {
+                          weeklyConsumedTotal += (entry.amountConsumedGrams / 100.0) * foodNutr.amountPer100g;
+                        }
+                      }
+                    }
+
+                    final double consumedTotal;
                     if (isWeekly) {
-                      if (state.weeklyRecord != null) {
-                        for (final entry in state.weeklyRecord!.loggedFoods) {
-                          if (entry.amountConsumedGrams <= 0) continue;
-                          final food = foodMap[entry.foodId];
-                          if (food == null) continue;
-                          if (nutrient.nutrientKey == 'total_protein' && food.proteinIndex != 1) continue;
-                          final foodNutr = food.nutrients
-                              .where((n) => n.nutrientKey == nutrient.nutrientKey)
-                              .firstOrNull;
-                          if (foodNutr != null) {
-                            consumedTotal += (entry.amountConsumedGrams / 100.0) * foodNutr.amountPer100g;
-                          }
-                        }
-                      }
+                      consumedTotal = (dailyConsumedTotal * 7.0) + weeklyConsumedTotal;
                     } else {
-                      if (state.dailyRecord != null) {
-                        for (final entry in state.dailyRecord!.loggedFoods) {
-                          if (entry.amountConsumedGrams <= 0) continue;
-                          final food = foodMap[entry.foodId];
-                          if (food == null) continue;
-                          if (nutrient.nutrientKey == 'total_protein' && food.proteinIndex != 1) continue;
-                          final foodNutr = food.nutrients
-                              .where((n) => n.nutrientKey == nutrient.nutrientKey)
-                              .firstOrNull;
-                          if (foodNutr != null) {
-                            consumedTotal += (entry.amountConsumedGrams / 100.0) * foodNutr.amountPer100g;
-                          }
-                        }
-                      }
+                      consumedTotal = dailyConsumedTotal;
                     }
 
                     final rawUnit = nutrient.unit.isNotEmpty ? nutrient.unit.split('/').first.trim() : '';
