@@ -23,11 +23,13 @@ class HorizonApplicationHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final trackingService = NutritionTrackingService();
 
-    return StreamBuilder<({double calories, double protein})>(
-      stream: trackingService.watchPlannedRoutineEnergyAndProtein(),
+    return StreamBuilder<({double consumedCalories, double plannedCalories, double consumedProtein, double plannedProtein})>(
+      stream: trackingService.watchTodayTrackHeaderEnergyAndProtein(),
       builder: (context, snapshot) {
-        final plannedCal = snapshot.data?.calories.round() ?? 0;
-        final plannedProt = snapshot.data?.protein.round() ?? 0;
+        final consumedCal = snapshot.data?.consumedCalories.round() ?? 0;
+        final plannedCal = snapshot.data?.plannedCalories.round() ?? 0;
+        final consumedProt = snapshot.data?.consumedProtein.round() ?? 0;
+        final plannedProt = snapshot.data?.plannedProtein.round() ?? 0;
 
         String title;
         String subtitle;
@@ -38,7 +40,7 @@ class HorizonApplicationHeader extends StatelessWidget {
         switch (currentIndex) {
           case 0:
             title = 'Today';
-            subtitle = '0/$plannedCal calories • 0/${plannedProt}g protein';
+            subtitle = '$consumedCal/$plannedCal calories • $consumedProt/${plannedProt}g protein';
             hasStyleButton = true;
             hasProfileAction = false;
             slotWidget = NutrientMap(

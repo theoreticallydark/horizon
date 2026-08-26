@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:isar/isar.dart';
 import 'package:horizon/data/models/food_source_item.dart';
 import 'package:horizon/data/models/nutrient_info.dart';
@@ -97,10 +98,39 @@ class NutritionTrackingService {
     return coverageResults;
   }
 
-  /// Watch stream of routine coverage map whenever tracked foods change
+  /// Watch stream of routine coverage map whenever tracked foods change.
+  /// Computed 100% in-memory from emitted stream objects without triggering redundant disk queries.
   Stream<Map<String, double>> watchPlannedRoutineCoverage() {
-    return watchTrackedRoutineFoods().asyncMap((_) async {
-      return await calculatePlannedRoutineCoverage();
+    return watchTrackedRoutineFoods().asyncMap((routineFoods) async {
+      final profile = await _isar.userProfiles.get(1) ?? UserProfile();
+      final trackedNutrients = await _isar.nutrientInfos
+          .filter()
+          .isTrackedEqualTo(true)
+          .findAll();
+
+      final Map<String, double> plannedTotals = {};
+      for (final food in routineFoods) {
+        final portionGrams = food.plannedDailyGrams;
+        for (final nutrient in food.nutrients) {
+          if (nutrient.nutrientKey == 'total_protein' && food.proteinIndex != 1) continue;
+          final contribution = (portionGrams / 100.0) * nutrient.amountPer100g;
+          plannedTotals[nutrient.nutrientKey] =
+              (plannedTotals[nutrient.nutrientKey] ?? 0.0) + contribution;
+        }
+      }
+
+      final Map<String, double> coverageResults = {};
+      for (final nutrient in trackedNutrients) {
+        final target = nutrient.calculateEffectiveTarget(profile);
+        final dailyConsumed = plannedTotals[nutrient.nutrientKey] ?? 0.0;
+        final plannedYield = nutrient.frequency == TrackingFrequency.weekly
+            ? dailyConsumed * 7.0
+            : dailyConsumed;
+        final percent = target > 0 ? (plannedYield / target) * 100.0 : 0.0;
+        coverageResults[nutrient.nutrientKey] = percent;
+      }
+
+      return coverageResults;
     });
   }
 
@@ -481,12 +511,33 @@ class NutritionTrackingService {
     final today = _normalizeDate(DateTime.now());
     final thisWeekMonday = _normalizeWeekMonday(today);
 
-    // Watch both daily and weekly records so toggling checkboxes or steppers updates immediately
-    return _isar.trackRecordDailys
+    // Watch both daily and weekly records simultaneously so checkboxes & steppers react immediately
+    final dailyStream = _isar.trackRecordDailys
         .filter()
         .dateEqualTo(today)
-        .watch(fireImmediately: true)
-        .asyncMap((_) async {
+        .watch(fireImmediately: true);
+
+    final weeklyStream = _isar.trackRecordWeeklys
+        .filter()
+        .weekStartDateEqualTo(thisWeekMonday)
+        .watch(fireImmediately: true);
+
+    late StreamController<void> controller;
+    StreamSubscription? dailySub;
+    StreamSubscription? weeklySub;
+
+    controller = StreamController<void>(
+      onListen: () {
+        dailySub = dailyStream.listen((_) => controller.add(null));
+        weeklySub = weeklyStream.listen((_) => controller.add(null));
+      },
+      onCancel: () {
+        dailySub?.cancel();
+        weeklySub?.cancel();
+      },
+    );
+
+    return controller.stream.asyncMap((_) async {
       final routineFoods = await _isar.foodSourceItems
           .filter()
           .isVisibleOnAppEqualTo(true)
@@ -553,6 +604,81 @@ class NutritionTrackingService {
       }
 
       return (calories: totalEnergy, protein: totalCompleteProtein);
+    });
+  }
+
+  /// Watch stream for Track Page header: computes live consumed calories & complete protein vs planned routine targets
+  Stream<({double consumedCalories, double plannedCalories, double consumedProtein, double plannedProtein})>
+      watchTodayTrackHeaderEnergyAndProtein() {
+    final today = _normalizeDate(DateTime.now());
+
+    return _isar.trackRecordDailys
+        .filter()
+        .dateEqualTo(today)
+        .watch(fireImmediately: true)
+        .asyncMap((dailyList) async {
+      final routineFoods = await _isar.foodSourceItems
+          .filter()
+          .isVisibleOnAppEqualTo(true)
+          .and()
+          .isTrackedEqualTo(true)
+          .findAll();
+
+      final foodMap = {for (var f in routineFoods) f.foodId: f};
+
+      double plannedCal = 0.0;
+      double plannedProt = 0.0;
+      for (final food in routineFoods) {
+        final portionGrams = food.plannedDailyGrams;
+        double energyPer100g = food.energy;
+        if (energyPer100g <= 0) {
+          final energyNutr = food.nutrients.where((n) => n.nutrientKey == 'energy').firstOrNull;
+          energyPer100g = energyNutr?.amountPer100g ?? 0.0;
+        }
+        plannedCal += (portionGrams / 100.0) * energyPer100g;
+
+        if (food.proteinIndex == 1) {
+          final proteinNutrient = food.nutrients
+              .where((n) => n.nutrientKey == 'total_protein')
+              .firstOrNull;
+          if (proteinNutrient != null) {
+            plannedProt += (portionGrams / 100.0) * proteinNutrient.amountPer100g;
+          }
+        }
+      }
+
+      double consumedCal = 0.0;
+      double consumedProt = 0.0;
+      if (dailyList.isNotEmpty) {
+        for (final logged in dailyList.first.loggedFoods) {
+          if (logged.amountConsumedGrams <= 0) continue;
+          final food = foodMap[logged.foodId];
+          if (food == null) continue;
+
+          double energyPer100g = food.energy;
+          if (energyPer100g <= 0) {
+            final energyNutr = food.nutrients.where((n) => n.nutrientKey == 'energy').firstOrNull;
+            energyPer100g = energyNutr?.amountPer100g ?? 0.0;
+          }
+          consumedCal += (logged.amountConsumedGrams / 100.0) * energyPer100g;
+
+          if (food.proteinIndex == 1) {
+            final proteinNutrient = food.nutrients
+                .where((n) => n.nutrientKey == 'total_protein')
+                .firstOrNull;
+            if (proteinNutrient != null) {
+              consumedProt += (logged.amountConsumedGrams / 100.0) * proteinNutrient.amountPer100g;
+            }
+          }
+        }
+      }
+
+      return (
+        consumedCalories: consumedCal,
+        plannedCalories: plannedCal,
+        consumedProtein: consumedProt,
+        plannedProtein: plannedProt,
+      );
     });
   }
 
@@ -652,6 +778,87 @@ class NutritionTrackingService {
     await _isar.writeTxn(() async {
       await _isar.trackRecordWeeklys.put(record);
     });
+  }
+
+  /// Consolidated NutrientMap State Model stream
+  Stream<NutrientMapState> watchNutrientMapState(bool isTrackView) {
+    if (isTrackView) {
+      final today = _normalizeDate(DateTime.now());
+      final thisWeekMonday = _normalizeWeekMonday(today);
+
+      return _isar.trackRecordDailys
+          .filter()
+          .dateEqualTo(today)
+          .watch(fireImmediately: true)
+          .asyncMap((dailyList) async {
+        final nutrients = await _isar.nutrientInfos
+            .filter()
+            .isVisibleOnAppEqualTo(true)
+            .and()
+            .isTrackedEqualTo(true)
+            .findAll();
+
+        final weekList = await _isar.trackRecordWeeklys
+            .filter()
+            .weekStartDateEqualTo(thisWeekMonday)
+            .findAll();
+
+        final Map<String, double> coverage = {};
+        if (dailyList.isNotEmpty) {
+          for (final s in dailyList.first.nutrientSummaries) {
+            coverage[s.nutrientKey] = s.percentageMet;
+          }
+        }
+        if (weekList.isNotEmpty) {
+          for (final s in weekList.first.nutrientSummaries) {
+            coverage[s.nutrientKey] =
+                (coverage[s.nutrientKey] ?? 0.0) + (s.percentageMet / 7.0);
+          }
+        }
+
+        return NutrientMapState(
+          nutrients: nutrients,
+          coverageMap: coverage,
+        );
+      });
+    } else {
+      return watchTrackedRoutineFoods().asyncMap((routineFoods) async {
+        final profile = await _isar.userProfiles.get(1) ?? UserProfile();
+        final nutrients = await _isar.nutrientInfos
+            .filter()
+            .isVisibleOnAppEqualTo(true)
+            .and()
+            .isTrackedEqualTo(true)
+            .findAll();
+
+        final Map<String, double> plannedTotals = {};
+        for (final food in routineFoods) {
+          final portionGrams = food.plannedDailyGrams;
+          for (final nutrient in food.nutrients) {
+            if (nutrient.nutrientKey == 'total_protein' && food.proteinIndex != 1) continue;
+            final contribution = (portionGrams / 100.0) * nutrient.amountPer100g;
+            plannedTotals[nutrient.nutrientKey] =
+                (plannedTotals[nutrient.nutrientKey] ?? 0.0) + contribution;
+          }
+        }
+
+        final Map<String, double> coverageResults = {};
+        for (final nutrient in nutrients) {
+          final target = nutrient.calculateEffectiveTarget(profile);
+          final dailyConsumed = plannedTotals[nutrient.nutrientKey] ?? 0.0;
+          final plannedYield = nutrient.frequency == TrackingFrequency.weekly
+              ? dailyConsumed * 7.0
+              : dailyConsumed;
+          final percent = target > 0 ? (plannedYield / target) * 100.0 : 0.0;
+          coverageResults[nutrient.nutrientKey] = percent;
+        }
+
+        return NutrientMapState(
+          nutrients: nutrients,
+          coverageMap: coverageResults,
+        );
+      });
+    }
   }
 
   /// Watch consumed nutrient coverage map for today (Daily consumed + Weekly consumed/7)
@@ -838,5 +1045,16 @@ class TrackPageState {
     required this.foodMap,
     this.dailyRecord,
     this.weeklyRecord,
+  });
+}
+
+/// Consolidated state model for NutrientMap
+class NutrientMapState {
+  final List<NutrientInfo> nutrients;
+  final Map<String, double> coverageMap;
+
+  const NutrientMapState({
+    required this.nutrients,
+    required this.coverageMap,
   });
 }

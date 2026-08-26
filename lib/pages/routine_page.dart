@@ -281,7 +281,7 @@ class _RoutinePageState extends State<RoutinePage> {
                 const Divider(
                   height: 1,
                   thickness: 1,
-                  color: AlterSemanticTokens.stroke200,
+                  color: AlterSemanticTokens.stroke100,
                 ),
                 const SizedBox(height: 24),
               ],

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../alter/alter.dart';
 import '../data/models/nutrient_info.dart';
-import '../data/services/isar_service.dart';
 import '../data/services/nutrition_tracking_service.dart';
 
 enum NutrientMapVariant {
@@ -203,26 +202,17 @@ class NutrientMap extends StatelessWidget {
     final trackingService = NutritionTrackingService();
     final isTrackView = variant != NutrientMapVariant.routine;
 
-    // Dynamically watch Isar database for tracked nutrients and live coverage
-    return StreamBuilder<List<NutrientInfo>>(
-      stream: IsarService.instance.watchTrackedNutrientsForMap(),
-      builder: (context, nutrientSnapshot) {
-        final nutrientList = nutrientSnapshot.data ?? [];
+    // Single consolidated watcher stream for nutrients + live coverage
+    return StreamBuilder<NutrientMapState>(
+      stream: trackingService.watchNutrientMapState(isTrackView),
+      builder: (context, snapshot) {
+        final state = snapshot.data;
+        if (state == null) {
+          return _buildGrid(defaultNutrients);
+        }
 
-        // For Track FullView / Track DailyView -> watch today's actual consumed coverage
-        // For Routine -> watch planned routine coverage
-        final coverageStream = isTrackView
-            ? trackingService.watchTodayConsumedCoverage()
-            : trackingService.watchPlannedRoutineCoverage();
-
-        return StreamBuilder<Map<String, double>>(
-          stream: coverageStream,
-          builder: (context, coverageSnapshot) {
-            final coverageMap = coverageSnapshot.data ?? {};
-            final items = _mapFromEntities(nutrientList, coverageMap);
-            return _buildGrid(items);
-          },
-        );
+        final items = _mapFromEntities(state.nutrients, state.coverageMap);
+        return _buildGrid(items);
       },
     );
   }

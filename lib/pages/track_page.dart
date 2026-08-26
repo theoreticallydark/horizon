@@ -115,13 +115,13 @@ class TrackPage extends StatelessWidget {
                   // Divider and Weekly Goals Section
                   if (weeklyFoods.isNotEmpty) ...[
                     if (dailyFoods.isNotEmpty) ...[
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 24),
                       const Divider(
                         height: 1,
                         thickness: 1,
-                        color: AlterColors.colorsGray100,
+                        color: AlterSemanticTokens.stroke100,
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 24),
                     ],
                     const HorizonTitleBar(
                       title: 'Weekly goals',

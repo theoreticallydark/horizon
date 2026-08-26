@@ -2,19 +2,20 @@ import 'package:flutter/material.dart' hide Checkbox;
 import '../alter/alter.dart';
 
 /// HorizonListItemHost represents the host variants from Figma node `130:4671` (.HorizonListItem)
-/// Note: trackDaily and trackWeekly checked states are handled dynamically via isChecked.
+/// Note: trackDaily/trackWeekly checked states are handled dynamically via isChecked,
+/// and add favorite state is handled dynamically via isFavorite.
 enum HorizonListItemHost {
   trackDaily,
   trackWeekly,
   routine,
   routineRemove,
   add,
-  addIsFavorite,
 }
 
 class HorizonListItem extends StatelessWidget {
   /// Component version for reference.
-  static const String version = '1.6.0'; // Added gesture callbacks to HorizonListItem for tap-and-hold interactions on left & right actions
+  /// v1.7.0: Unified add/addIsFavorite into a single `add` host variant driven dynamically by `isFavorite`.
+  static const String version = '1.7.0';
 
   final HorizonListItemHost host;
   final String title;
@@ -152,7 +153,7 @@ class HorizonListItem extends StatelessWidget {
           onTap: onTap,
         );
 
-      // 6. Host = Add (hasSubtitle: true, leftSlot: ToggleIcon unchecked, rightSlotOne: add_box)
+      // 5. Host = Add (hasSubtitle: true, leftSlot: ToggleIcon driven by isFavorite, rightSlotOne: add_box)
       case HorizonListItemHost.add:
         return ListItem(
           title: title,
@@ -161,27 +162,6 @@ class HorizonListItem extends StatelessWidget {
           hasLeftSlot: true,
           leftSlot: ToggleIcon(
             state: isFavorite ? ToggleIconState.checked : ToggleIconState.unchecked,
-            onChanged: onFavoriteChanged,
-          ),
-          hasRightSlotTwo: false,
-          hasRightSlotOne: true,
-          rightSlotOne: ButtonIconGhost(
-            icon: Icons.add_box_outlined,
-            type: ButtonIconGhostType.primary,
-            onTap: onRightActionTap,
-          ),
-          onTap: onTap,
-        );
-
-      // 7. Host = Add Is Favorite (hasSubtitle: true, leftSlot: ToggleIcon checked, rightSlotOne: add_box)
-      case HorizonListItemHost.addIsFavorite:
-        return ListItem(
-          title: title,
-          subtitle: subtitle ?? '',
-          hasSubtitle: true,
-          hasLeftSlot: true,
-          leftSlot: ToggleIcon(
-            state: ToggleIconState.checked,
             onChanged: onFavoriteChanged,
           ),
           hasRightSlotTwo: false,
