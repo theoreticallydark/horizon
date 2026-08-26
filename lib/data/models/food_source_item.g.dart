@@ -47,54 +47,60 @@ const FoodSourceItemSchema = CollectionSchema(
       name: r'foodState',
       type: IsarType.string,
     ),
-    r'isFavorite': PropertySchema(
+    r'frequency': PropertySchema(
       id: 6,
+      name: r'frequency',
+      type: IsarType.string,
+      enumMap: _FoodSourceItemfrequencyEnumValueMap,
+    ),
+    r'isFavorite': PropertySchema(
+      id: 7,
       name: r'isFavorite',
       type: IsarType.bool,
     ),
     r'isTracked': PropertySchema(
-      id: 7,
+      id: 8,
       name: r'isTracked',
       type: IsarType.bool,
     ),
     r'isVisibleOnApp': PropertySchema(
-      id: 8,
+      id: 9,
       name: r'isVisibleOnApp',
       type: IsarType.bool,
     ),
     r'name': PropertySchema(
-      id: 9,
+      id: 10,
       name: r'name',
       type: IsarType.string,
     ),
     r'nutrients': PropertySchema(
-      id: 10,
+      id: 11,
       name: r'nutrients',
       type: IsarType.objectList,
       target: r'FoodNutrientValue',
     ),
     r'plannedDailyGrams': PropertySchema(
-      id: 11,
+      id: 12,
       name: r'plannedDailyGrams',
       type: IsarType.double,
     ),
     r'plannedWeeklyGrams': PropertySchema(
-      id: 12,
+      id: 13,
       name: r'plannedWeeklyGrams',
       type: IsarType.double,
     ),
     r'proteinIndex': PropertySchema(
-      id: 13,
+      id: 14,
       name: r'proteinIndex',
       type: IsarType.long,
     ),
     r'title': PropertySchema(
-      id: 14,
+      id: 15,
       name: r'title',
       type: IsarType.string,
     ),
     r'trackingFrequencyOverride': PropertySchema(
-      id: 15,
+      id: 16,
       name: r'trackingFrequencyOverride',
       type: IsarType.string,
       enumMap: _FoodSourceItemtrackingFrequencyOverrideEnumValueMap,
@@ -184,6 +190,19 @@ const FoodSourceItemSchema = CollectionSchema(
         )
       ],
     ),
+    r'frequency': IndexSchema(
+      id: 3490570014255270311,
+      name: r'frequency',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'frequency',
+          type: IndexType.hash,
+          caseSensitive: true,
+        )
+      ],
+    ),
     r'isFavorite': IndexSchema(
       id: 5742774614603939776,
       name: r'isFavorite',
@@ -226,6 +245,7 @@ int _foodSourceItemEstimateSize(
       bytesCount += 3 + value.length * 3;
     }
   }
+  bytesCount += 3 + object.frequency.name.length * 3;
   bytesCount += 3 + object.name.length * 3;
   bytesCount += 3 + object.nutrients.length * 3;
   {
@@ -258,21 +278,22 @@ void _foodSourceItemSerialize(
   writer.writeDouble(offsets[3], object.energy);
   writer.writeString(offsets[4], object.foodId);
   writer.writeString(offsets[5], object.foodState);
-  writer.writeBool(offsets[6], object.isFavorite);
-  writer.writeBool(offsets[7], object.isTracked);
-  writer.writeBool(offsets[8], object.isVisibleOnApp);
-  writer.writeString(offsets[9], object.name);
+  writer.writeString(offsets[6], object.frequency.name);
+  writer.writeBool(offsets[7], object.isFavorite);
+  writer.writeBool(offsets[8], object.isTracked);
+  writer.writeBool(offsets[9], object.isVisibleOnApp);
+  writer.writeString(offsets[10], object.name);
   writer.writeObjectList<FoodNutrientValue>(
-    offsets[10],
+    offsets[11],
     allOffsets,
     FoodNutrientValueSchema.serialize,
     object.nutrients,
   );
-  writer.writeDouble(offsets[11], object.plannedDailyGrams);
-  writer.writeDouble(offsets[12], object.plannedWeeklyGrams);
-  writer.writeLong(offsets[13], object.proteinIndex);
-  writer.writeString(offsets[14], object.title);
-  writer.writeString(offsets[15], object.trackingFrequencyOverride?.name);
+  writer.writeDouble(offsets[12], object.plannedDailyGrams);
+  writer.writeDouble(offsets[13], object.plannedWeeklyGrams);
+  writer.writeLong(offsets[14], object.proteinIndex);
+  writer.writeString(offsets[15], object.title);
+  writer.writeString(offsets[16], object.trackingFrequencyOverride?.name);
 }
 
 FoodSourceItem _foodSourceItemDeserialize(
@@ -288,24 +309,27 @@ FoodSourceItem _foodSourceItemDeserialize(
   object.energy = reader.readDouble(offsets[3]);
   object.foodId = reader.readString(offsets[4]);
   object.foodState = reader.readStringOrNull(offsets[5]);
+  object.frequency = _FoodSourceItemfrequencyValueEnumMap[
+          reader.readStringOrNull(offsets[6])] ??
+      TrackingFrequency.daily;
   object.id = id;
-  object.isFavorite = reader.readBool(offsets[6]);
-  object.isTracked = reader.readBool(offsets[7]);
-  object.isVisibleOnApp = reader.readBool(offsets[8]);
-  object.name = reader.readString(offsets[9]);
+  object.isFavorite = reader.readBool(offsets[7]);
+  object.isTracked = reader.readBool(offsets[8]);
+  object.isVisibleOnApp = reader.readBool(offsets[9]);
+  object.name = reader.readString(offsets[10]);
   object.nutrients = reader.readObjectList<FoodNutrientValue>(
-        offsets[10],
+        offsets[11],
         FoodNutrientValueSchema.deserialize,
         allOffsets,
         FoodNutrientValue(),
       ) ??
       [];
-  object.plannedDailyGrams = reader.readDouble(offsets[11]);
-  object.proteinIndex = reader.readLong(offsets[13]);
-  object.title = reader.readString(offsets[14]);
+  object.plannedDailyGrams = reader.readDouble(offsets[12]);
+  object.proteinIndex = reader.readLong(offsets[14]);
+  object.title = reader.readString(offsets[15]);
   object.trackingFrequencyOverride =
       _FoodSourceItemtrackingFrequencyOverrideValueEnumMap[
-          reader.readStringOrNull(offsets[15])];
+          reader.readStringOrNull(offsets[16])];
   return object;
 }
 
@@ -329,14 +353,18 @@ P _foodSourceItemDeserializeProp<P>(
     case 5:
       return (reader.readStringOrNull(offset)) as P;
     case 6:
-      return (reader.readBool(offset)) as P;
+      return (_FoodSourceItemfrequencyValueEnumMap[
+              reader.readStringOrNull(offset)] ??
+          TrackingFrequency.daily) as P;
     case 7:
       return (reader.readBool(offset)) as P;
     case 8:
       return (reader.readBool(offset)) as P;
     case 9:
-      return (reader.readString(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 10:
+      return (reader.readString(offset)) as P;
+    case 11:
       return (reader.readObjectList<FoodNutrientValue>(
             offset,
             FoodNutrientValueSchema.deserialize,
@@ -344,15 +372,15 @@ P _foodSourceItemDeserializeProp<P>(
             FoodNutrientValue(),
           ) ??
           []) as P;
-    case 11:
-      return (reader.readDouble(offset)) as P;
     case 12:
       return (reader.readDouble(offset)) as P;
     case 13:
-      return (reader.readLong(offset)) as P;
+      return (reader.readDouble(offset)) as P;
     case 14:
-      return (reader.readString(offset)) as P;
+      return (reader.readLong(offset)) as P;
     case 15:
+      return (reader.readString(offset)) as P;
+    case 16:
       return (_FoodSourceItemtrackingFrequencyOverrideValueEnumMap[
           reader.readStringOrNull(offset)]) as P;
     default:
@@ -360,6 +388,14 @@ P _foodSourceItemDeserializeProp<P>(
   }
 }
 
+const _FoodSourceItemfrequencyEnumValueMap = {
+  r'daily': r'daily',
+  r'weekly': r'weekly',
+};
+const _FoodSourceItemfrequencyValueEnumMap = {
+  r'daily': TrackingFrequency.daily,
+  r'weekly': TrackingFrequency.weekly,
+};
 const _FoodSourceItemtrackingFrequencyOverrideEnumValueMap = {
   r'daily': r'daily',
   r'weekly': r'weekly',
@@ -1010,6 +1046,51 @@ extension FoodSourceItemQueryWhere
               indexName: r'isTracked',
               lower: [],
               upper: [isTracked],
+              includeUpper: false,
+            ));
+      }
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterWhereClause>
+      frequencyEqualTo(TrackingFrequency frequency) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'frequency',
+        value: [frequency],
+      ));
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterWhereClause>
+      frequencyNotEqualTo(TrackingFrequency frequency) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'frequency',
+              lower: [],
+              upper: [frequency],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'frequency',
+              lower: [frequency],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'frequency',
+              lower: [frequency],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'frequency',
+              lower: [],
+              upper: [frequency],
               includeUpper: false,
             ));
       }
@@ -1771,6 +1852,142 @@ extension FoodSourceItemQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'foodState',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterFilterCondition>
+      frequencyEqualTo(
+    TrackingFrequency value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'frequency',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterFilterCondition>
+      frequencyGreaterThan(
+    TrackingFrequency value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'frequency',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterFilterCondition>
+      frequencyLessThan(
+    TrackingFrequency value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'frequency',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterFilterCondition>
+      frequencyBetween(
+    TrackingFrequency lower,
+    TrackingFrequency upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'frequency',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterFilterCondition>
+      frequencyStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'frequency',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterFilterCondition>
+      frequencyEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'frequency',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterFilterCondition>
+      frequencyContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'frequency',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterFilterCondition>
+      frequencyMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'frequency',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterFilterCondition>
+      frequencyIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'frequency',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterFilterCondition>
+      frequencyIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'frequency',
         value: '',
       ));
     });
@@ -2662,6 +2879,19 @@ extension FoodSourceItemQuerySortBy
     });
   }
 
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterSortBy> sortByFrequency() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'frequency', Sort.asc);
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterSortBy>
+      sortByFrequencyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'frequency', Sort.desc);
+    });
+  }
+
   QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterSortBy>
       sortByIsFavorite() {
     return QueryBuilder.apply(this, (query) {
@@ -2866,6 +3096,19 @@ extension FoodSourceItemQuerySortThenBy
     });
   }
 
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterSortBy> thenByFrequency() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'frequency', Sort.asc);
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterSortBy>
+      thenByFrequencyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'frequency', Sort.desc);
+    });
+  }
+
   QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterSortBy> thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
@@ -3044,6 +3287,13 @@ extension FoodSourceItemQueryWhereDistinct
     });
   }
 
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QDistinct> distinctByFrequency(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'frequency', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<FoodSourceItem, FoodSourceItem, QDistinct>
       distinctByIsFavorite() {
     return QueryBuilder.apply(this, (query) {
@@ -3152,6 +3402,13 @@ extension FoodSourceItemQueryProperty
   QueryBuilder<FoodSourceItem, String?, QQueryOperations> foodStateProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'foodState');
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, TrackingFrequency, QQueryOperations>
+      frequencyProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'frequency');
     });
   }
 

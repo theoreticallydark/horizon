@@ -40,41 +40,13 @@ class NutritionTrackingService {
     'total_protein', // Protein
   };
 
-  /// Evaluates food frequency:
-  /// 1. If user set an explicit override while food is tracked, respects the override.
-  /// 2. Otherwise computes dynamically: returns daily if any 1 of the 8 trigger nutrients
-  ///    provides > 10.0% of the daily target for the given planned portion, else weekly.
+  /// Evaluates food frequency (reads directly from food.frequency, or computes if needed)
   TrackingFrequency determineFoodFrequency({
     required FoodSourceItem food,
     required UserProfile profile,
     required List<NutrientInfo> allNutrients,
   }) {
-    // Check for user manual override while tracked
-    if (food.isTracked && food.trackingFrequencyOverride != null) {
-      return food.trackingFrequencyOverride!;
-    }
-
-    final portionGrams = food.plannedDailyGrams;
-    final nutrientMap = {for (var n in allNutrients) n.nutrientKey: n};
-
-    for (final nutrientVal in food.nutrients) {
-      if (!triggerNutrientKeys.contains(nutrientVal.nutrientKey)) continue;
-
-      final nutrientInfo = nutrientMap[nutrientVal.nutrientKey];
-      if (nutrientInfo == null) continue;
-
-      final target = nutrientInfo.calculateEffectiveTarget(profile);
-      if (target <= 0) continue;
-
-      final yieldAmount = (portionGrams / 100.0) * nutrientVal.amountPer100g;
-      final coveragePercent = (yieldAmount / target) * 100.0;
-
-      if (coveragePercent > 10.0) {
-        return TrackingFrequency.daily;
-      }
-    }
-
-    return TrackingFrequency.weekly;
+    return food.calculateFrequency(profile: profile, allNutrients: allNutrients);
   }
 
   // --------------------------------------------------------------------------
@@ -84,14 +56,14 @@ class NutritionTrackingService {
   /// Computes the planned coverage of the user's active routine against their targets.
   Future<Map<String, double>> calculatePlannedRoutineCoverage() async {
     final profile = await _isar.userProfiles.get(1) ?? UserProfile();
-    final routineFoods = await _isar.foodSourceItems
+    final trackedNutrients = await _isar.nutrientInfos
         .filter()
         .isVisibleOnAppEqualTo(true)
         .and()
         .isTrackedEqualTo(true)
         .findAll();
 
-    final trackedNutrients = await _isar.nutrientInfos
+    final routineFoods = await _isar.foodSourceItems
         .filter()
         .isVisibleOnAppEqualTo(true)
         .and()
@@ -152,6 +124,21 @@ class NutritionTrackingService {
         .isTrackedEqualTo(true)
         .findAll();
 
+    // Ensure all routine foods have their frequency up to date in the DB
+    bool foodsUpdated = false;
+    for (final food in routineFoods) {
+      final computedFreq = food.calculateFrequency(profile: profile, allNutrients: allNutrients);
+      if (food.frequency != computedFreq) {
+        food.frequency = computedFreq;
+        foodsUpdated = true;
+      }
+    }
+    if (foodsUpdated) {
+      await _isar.writeTxn(() async {
+        await _isar.foodSourceItems.putAll(routineFoods);
+      });
+    }
+
     // 1. Backfill any missed past gap dates for Daily records
     final oldestRecord = await _isar.trackRecordDailys.where().sortByDate().findFirst();
     if (oldestRecord != null) {
@@ -196,11 +183,7 @@ class NutritionTrackingService {
     final existingMap = {for (var f in record.loggedFoods) f.foodId: f};
 
     for (final food in routineFoods) {
-      final freq = determineFoodFrequency(
-        food: food,
-        profile: profile,
-        allNutrients: allNutrients,
-      );
+      final freq = food.frequency;
 
       // Only daily foods go into TrackRecordDaily
       if (freq != TrackingFrequency.daily) {
@@ -256,11 +239,7 @@ class NutritionTrackingService {
     final existingMap = {for (var f in record.loggedFoods) f.foodId: f};
 
     for (final food in routineFoods) {
-      final freq = determineFoodFrequency(
-        food: food,
-        profile: profile,
-        allNutrients: allNutrients,
-      );
+      final freq = food.frequency;
 
       // Only weekly foods go into TrackRecordWeekly
       if (freq != TrackingFrequency.weekly) {
@@ -336,7 +315,12 @@ class NutritionTrackingService {
     final food = await _isar.foodSourceItems.getByFoodId(foodId);
     if (food == null) return;
 
+    final profile = await _isar.userProfiles.get(1) ?? UserProfile();
+    final allNutrients = await _isar.nutrientInfos.where().findAll();
+
     food.isTracked = true;
+    food.frequency = food.calculateFrequency(profile: profile, allNutrients: allNutrients);
+
     await _isar.writeTxn(() async {
       await _isar.foodSourceItems.put(food);
     });
@@ -348,8 +332,13 @@ class NutritionTrackingService {
     final food = await _isar.foodSourceItems.getByFoodId(foodId);
     if (food == null) return;
 
+    final profile = await _isar.userProfiles.get(1) ?? UserProfile();
+    final allNutrients = await _isar.nutrientInfos.where().findAll();
+
     food.isTracked = false;
     food.trackingFrequencyOverride = null; // Automatically reset override back to default math
+    food.frequency = food.calculateFrequency(profile: profile, allNutrients: allNutrients); // Reset frequency back to default math
+
     await _isar.writeTxn(() async {
       await _isar.foodSourceItems.put(food);
     });
@@ -399,6 +388,28 @@ class NutritionTrackingService {
     }
   }
 
+  /// Updates a food's planned portion/target in routine and re-syncs track records
+  Future<void> updateFoodPlannedTarget({
+    required String foodId,
+    required double newTargetGrams,
+  }) async {
+    final food = await _isar.foodSourceItems.getByFoodId(foodId);
+    if (food == null) return;
+
+    final clampedGrams = newTargetGrams.clamp(1.0, 99999.0);
+    food.plannedDailyGrams = clampedGrams;
+
+    final profile = await _isar.userProfiles.get(1) ?? UserProfile();
+    final allNutrients = await _isar.nutrientInfos.where().findAll();
+    food.frequency = food.calculateFrequency(profile: profile, allNutrients: allNutrients);
+
+    await _isar.writeTxn(() async {
+      await _isar.foodSourceItems.put(food);
+    });
+
+    await syncTrackRecordsWindow();
+  }
+
   /// Sets or updates a manual frequency override for an active routine food,
   /// and immediately re-syncs the daily and weekly tracking records.
   Future<void> setFoodFrequencyOverride({
@@ -409,6 +420,7 @@ class NutritionTrackingService {
     if (food == null || !food.isTracked) return;
 
     food.trackingFrequencyOverride = frequency;
+    food.frequency = frequency;
     await _isar.writeTxn(() async {
       await _isar.foodSourceItems.put(food);
     });
@@ -419,6 +431,29 @@ class NutritionTrackingService {
   // --------------------------------------------------------------------------
   // REACTIVE LOGGING & WATCHERS
   // --------------------------------------------------------------------------
+
+  /// Watch stream of UserProfile
+  Stream<UserProfile?> watchUserProfile() {
+    return _isar.userProfiles
+        .watchObject(1, fireImmediately: true);
+  }
+
+  /// Watch stream of all NutrientInfo entries
+  Stream<List<NutrientInfo>> watchNutrientInfos() {
+    return _isar.nutrientInfos
+        .where()
+        .watch(fireImmediately: true);
+  }
+
+  /// Watch stream of all active routine foods (isTracked == true) sorted by title
+  Stream<List<FoodSourceItem>> watchTrackedRoutineFoods() {
+    return _isar.foodSourceItems
+        .filter()
+        .isVisibleOnAppEqualTo(true)
+        .and()
+        .isTrackedEqualTo(true)
+        .watch(fireImmediately: true);
+  }
 
   Stream<TrackRecordDaily?> watchTodayDailyRecord() {
     final today = _normalizeDate(DateTime.now());

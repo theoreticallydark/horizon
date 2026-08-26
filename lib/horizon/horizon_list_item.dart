@@ -2,11 +2,10 @@ import 'package:flutter/material.dart' hide Checkbox;
 import '../alter/alter.dart';
 
 /// HorizonListItemHost represents the host variants from Figma node `130:4671` (.HorizonListItem)
-/// Note: trackDailyChecked is handled dynamically via isChecked on trackDaily.
+/// Note: trackDaily and trackWeekly checked states are handled dynamically via isChecked.
 enum HorizonListItemHost {
   trackDaily,
   trackWeekly,
-  trackWeeklyChecked,
   routine,
   routineRemove,
   add,
@@ -15,7 +14,7 @@ enum HorizonListItemHost {
 
 class HorizonListItem extends StatelessWidget {
   /// Component version for reference.
-  static const String version = '1.4.0'; // trackWeekly dynamically renders ButtonIconGhost (add_box) or Checkbox (checked) based on isChecked
+  static const String version = '1.6.0'; // Added gesture callbacks to HorizonListItem for tap-and-hold interactions on left & right actions
 
   final HorizonListItemHost host;
   final String title;
@@ -25,6 +24,12 @@ class HorizonListItem extends StatelessWidget {
   final VoidCallback? onTap;
   final VoidCallback? onLeftActionTap;
   final VoidCallback? onRightActionTap;
+  final GestureTapDownCallback? onLeftTapDown;
+  final GestureTapUpCallback? onLeftTapUp;
+  final GestureTapCancelCallback? onLeftTapCancel;
+  final GestureTapDownCallback? onRightTapDown;
+  final GestureTapUpCallback? onRightTapUp;
+  final GestureTapCancelCallback? onRightTapCancel;
   final ValueChanged<CheckboxState>? onCheckboxChanged;
   final ValueChanged<ToggleIconState>? onFavoriteChanged;
 
@@ -38,6 +43,12 @@ class HorizonListItem extends StatelessWidget {
     this.onTap,
     this.onLeftActionTap,
     this.onRightActionTap,
+    this.onLeftTapDown,
+    this.onLeftTapUp,
+    this.onLeftTapCancel,
+    this.onRightTapDown,
+    this.onRightTapUp,
+    this.onRightTapCancel,
     this.onCheckboxChanged,
     this.onFavoriteChanged,
   });
@@ -78,27 +89,14 @@ class HorizonListItem extends StatelessWidget {
                   icon: Icons.add_box_outlined,
                   type: ButtonIconGhostType.primary,
                   onTap: onRightActionTap,
+                  onTapDown: onRightTapDown,
+                  onTapUp: onRightTapUp,
+                  onTapCancel: onRightTapCancel,
                 ),
           onTap: onTap,
         );
 
-      // 3. Host = Track Weekly Checked (hasSubtitle: true, hasLeftSlot: false, rightSlotOne: Checkbox Checked)
-      case HorizonListItemHost.trackWeeklyChecked:
-        return ListItem(
-          title: title,
-          subtitle: subtitle ?? '',
-          hasSubtitle: true,
-          hasLeftSlot: false,
-          hasRightSlotTwo: false,
-          hasRightSlotOne: true,
-          rightSlotOne: Checkbox(
-            state: CheckboxState.checked,
-            onChanged: onCheckboxChanged,
-          ),
-          onTap: onTap,
-        );
-
-      // 4. Host = Routine (hasSubtitle: true, leftSlot: secondary remove_circle_outline, rightSlotOne: add_box)
+      // 3. Host = Routine (hasSubtitle: true, leftSlot: secondary remove_circle_outline, rightSlotOne: add_box)
       case HorizonListItemHost.routine:
         return ListItem(
           title: title,
@@ -109,6 +107,9 @@ class HorizonListItem extends StatelessWidget {
             icon: Icons.remove_circle_outline,
             type: ButtonIconGhostType.secondary,
             onTap: onLeftActionTap,
+            onTapDown: onLeftTapDown,
+            onTapUp: onLeftTapUp,
+            onTapCancel: onLeftTapCancel,
           ),
           hasRightSlotTwo: false,
           hasRightSlotOne: true,
@@ -116,11 +117,14 @@ class HorizonListItem extends StatelessWidget {
             icon: Icons.add_box_outlined,
             type: ButtonIconGhostType.primary,
             onTap: onRightActionTap,
+            onTapDown: onRightTapDown,
+            onTapUp: onRightTapUp,
+            onTapCancel: onRightTapCancel,
           ),
           onTap: onTap,
         );
 
-      // 5. Host = Routine Remove (hasSubtitle: true, leftSlot: RED remove_circle_outline, rightSlotOne: add_box)
+      // 4. Host = Routine Remove (hasSubtitle: true, leftSlot: RED remove_circle_outline, rightSlotOne: add_box)
       case HorizonListItemHost.routineRemove:
         return ListItem(
           title: title,
@@ -131,6 +135,9 @@ class HorizonListItem extends StatelessWidget {
             icon: Icons.remove_circle_outline,
             type: ButtonIconGhostType.red,
             onTap: onLeftActionTap,
+            onTapDown: onLeftTapDown,
+            onTapUp: onLeftTapUp,
+            onTapCancel: onLeftTapCancel,
           ),
           hasRightSlotTwo: false,
           hasRightSlotOne: true,
@@ -138,6 +145,9 @@ class HorizonListItem extends StatelessWidget {
             icon: Icons.add_box_outlined,
             type: ButtonIconGhostType.primary,
             onTap: onRightActionTap,
+            onTapDown: onRightTapDown,
+            onTapUp: onRightTapUp,
+            onTapCancel: onRightTapCancel,
           ),
           onTap: onTap,
         );

@@ -12,6 +12,7 @@ class StatsPage extends StatefulWidget {
 
 class _StatsPageState extends State<StatsPage> {
   bool _isDailyChecked = false;
+  bool _isWeeklyChecked = false;
   bool _isFavorite = false;
 
   @override
@@ -48,25 +49,25 @@ class _StatsPageState extends State<StatsPage> {
             ),
             const SizedBox(height: 8),
 
-            // 2. Track Weekly
+            // 2. Track Weekly (Interactive: toggle add_box vs checked)
             HorizonListItem(
-              title: 'Guava',
-              subtitle: 'Vitamin C • Magnesium',
+              title: 'Guava, 100g',
+              subtitle: 'Target (350g)',
               host: HorizonListItemHost.trackWeekly,
-              onRightActionTap: () {},
+              isChecked: _isWeeklyChecked,
+              onRightActionTap: () {
+                setState(() => _isWeeklyChecked = true);
+              },
+              onCheckboxChanged: (state) {
+                setState(() => _isWeeklyChecked = state == CheckboxState.checked);
+              },
+              onTap: () {
+                setState(() => _isWeeklyChecked = !_isWeeklyChecked);
+              },
             ),
             const SizedBox(height: 8),
 
-            // 4. Track Weekly Checked
-            const HorizonListItem(
-              title: 'Guava',
-              subtitle: 'Vitamin C • Magnesium',
-              host: HorizonListItemHost.trackWeeklyChecked,
-              isChecked: true,
-            ),
-            const SizedBox(height: 8),
-
-            // 5. Routine
+            // 3. Routine
             HorizonListItem(
               title: 'Guava',
               subtitle: 'Vitamin C • Magnesium',

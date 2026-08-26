@@ -49,3 +49,24 @@
 - **2026-08-18 03:06 PM** - Upgraded `Pill` (v1.0.2) and `ApplicationHeader` with smooth implicit transitions (`AnimatedContainer`, `AnimatedSize`, `AnimatedOpacity`, curve `Curves.easeInOutCubic`, duration `250ms`).
 - **2026-08-18 03:10 PM** - Updated `HorizonApplicationHeader`: set `hasProfileAction = false` and `hasStyleButton = true` on Track page (`Today`).
 - **2026-08-18 03:12 PM** - Updated `HorizonApplicationHeader`: set `hasStyleButton = false` and `hasProfileAction = true` on Routine page (`Plan Routine`).
+- **2026-08-25 07:45 PM** - Integrated Isar database with `UserProfile`, `NutrientInfo`, and `FoodSourceItem` collections and loaded `sources/dri_and_foods.json`.
+- **2026-08-25 08:30 PM** - Built `demographic_lookup.dart` matching DRI values to user age, sex, and pregnancy/lactation state.
+- **2026-08-25 09:15 PM** - Built `HorizonTitleBar` (v1.1.0) in `lib/horizon/horizon_title_bar.dart` from Figma node `130:4993`.
+- **2026-08-25 10:00 PM** - Added `ButtonIconGhost` (v1.0.0), `Checkbox` (v1.0.0), and `ToggleIcon` (v1.0.0) select/action primitives to Alter.
+- **2026-08-25 11:30 PM** - Built `ListItem` composite widget in `lib/alter/components/list_item.dart` (v1.0.0) from Figma node `130:4639`.
+- **2026-08-26 01:00 AM** - Split tracking database into `TrackRecordDaily` and `TrackRecordWeekly` collections for daily and weekly food intake tracking.
+- **2026-08-26 01:45 AM** - Implemented dynamic 10% trigger nutrient coverage rule (`determineFoodFrequency()`) checking `Vit C`, `Coll.`, `Fiber`, `Mg`, `Ca`, `K`, `Creat.`, `Protein`.
+- **2026-08-26 02:30 AM** - Added `trackingFrequencyOverride` to `FoodSourceItem` allowing manual frequency overrides with automatic reset to `null` on untracking.
+- **2026-08-26 03:45 AM** - Built `HorizonListItem` (v1.2.0) in `lib/horizon/horizon_list_item.dart` with 8 distinct host variants from Figma node `130:4671`.
+- **2026-08-26 04:00 AM** - Added comprehensive interactive component preview in `lib/pages/stats_page.dart`.
+- **2026-08-26 04:08 AM** - Upgraded `HorizonListItem` to v1.3.0 by consolidating `trackDailyChecked` dynamically into `trackDaily` via `isChecked`.
+- **2026-08-26 04:10 AM** - Removed redundant horizontal padding on `ListItem` to ensure exact 24px container edge alignment matching Figma.
+- **2026-08-26 04:28 AM** - Calibrated `UserProfile` with `weightKg: 70.0` and `heightCm: 175.0` for bodyweight-adjusted protein target calculation (`weightKg * 0.8 * strictness`).
+- **2026-08-26 04:52 AM** - Built Track page daily food checklist with `<title>, <dailyTarget>` format and checkbox logging.
+- **2026-08-26 04:55 AM** - Added Weekly goals section with gray/100 divider, `HorizonTitleBar`, and `trackWeekly` items (`<title>, <amountConsumed>` with `Target (<weeklyTarget>g)`).
+- **2026-08-26 04:56 AM** - Upgraded `HorizonListItem` to v1.4.0 with dynamic toggle between `ButtonIconGhost(add_box)` (incrementing by `target / 7`) and `Checkbox(checked)`.
+- **2026-08-26 04:58 AM** - Added 120px bottom spacer offset containers across `TrackPage`, `StatsPage`, and `RoutinePage` to prevent UI blockage by the bottom navigation bar.
+- **2026-08-26 05:05 AM** - Upgraded `HorizonListItem` to v1.5.0: removed `trackWeeklyChecked` variant (dynamic toggle handled via `isChecked` on `trackWeekly`) and updated `StatsPage` preview.
+- **2026-08-26 05:25 AM** - Implemented Routine page with `HorizonListItem` (`routine` and `routineRemove` variants): dynamic top 3 nutrient coverage subtitle format (`'Key' '%coverage' • ...`), single-tap & continuous tap-and-hold target increment/decrement with minimum boundary stop at 1g, red remove icon transition, and 120px bottom navigation offset.
+- **2026-08-26 05:30 AM** - Structured Routine page into `Daily targets` and `Weekly targets` sections using `HorizonTitleBar` with a `Divider(color: gray/100)` between sections.
+
