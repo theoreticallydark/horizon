@@ -191,15 +191,22 @@ class NutrientMap extends StatelessWidget {
     }
 
     final trackingService = NutritionTrackingService();
+    final isTrackView = variant != NutrientMapVariant.routine;
 
-    // Dynamically watch Isar database for tracked nutrients and live routine coverage
+    // Dynamically watch Isar database for tracked nutrients and live coverage
     return StreamBuilder<List<NutrientInfo>>(
       stream: IsarService.instance.watchTrackedNutrientsForMap(),
       builder: (context, nutrientSnapshot) {
         final nutrientList = nutrientSnapshot.data ?? [];
 
+        // For Track FullView / Track DailyView -> watch today's actual consumed coverage
+        // For Routine -> watch planned routine coverage
+        final coverageStream = isTrackView
+            ? trackingService.watchTodayConsumedCoverage()
+            : trackingService.watchPlannedRoutineCoverage();
+
         return StreamBuilder<Map<String, double>>(
-          stream: trackingService.watchPlannedRoutineCoverage(),
+          stream: coverageStream,
           builder: (context, coverageSnapshot) {
             final coverageMap = coverageSnapshot.data ?? {};
             final items = _mapFromEntities(nutrientList, coverageMap);

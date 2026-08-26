@@ -1,4 +1,5 @@
 import 'package:isar/isar.dart';
+import 'package:horizon/data/models/nutrient_info.dart';
 
 part 'food_source_item.g.dart';
 
@@ -27,6 +28,12 @@ class FoodSourceItem {
   @Index()
   bool isTracked = false; // Constraint: Must be false if isVisibleOnApp == false
 
+  /// User manual override for tracking frequency (daily or weekly).
+  /// Null indicates that default math-derived frequency should be used.
+  /// Automatically reset to null when isTracked is set to false.
+  @Enumerated(EnumType.name)
+  TrackingFrequency? trackingFrequencyOverride;
+
   @Index()
   bool isFavorite = false;
 
@@ -36,6 +43,9 @@ class FoodSourceItem {
 
   /// Planned Daily Grams in Routine (defaults to defaultPortionGrams when isTracked is toggled on)
   double plannedDailyGrams = 100.0;
+
+  /// Planned Weekly target (daily target * 7)
+  double get plannedWeeklyGrams => plannedDailyGrams * 7.0;
 
   /// Energy in kcal per 100g edible portion
   double energy = 0.0;

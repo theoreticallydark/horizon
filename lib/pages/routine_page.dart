@@ -14,10 +14,11 @@ class RoutinePage extends StatelessWidget {
         color: AlterSemanticTokens.baseWhite,
         borderRadius: BorderRadius.circular(24),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        spacing: 16,
-        children: const [],
+      child: ListView(
+        children: const [
+          // Bottom padding offset for bottom navigation bar
+          SizedBox(height: 120),
+        ],
       ),
     );
   }

@@ -9,13 +9,13 @@ part of 'track_record.dart';
 // coverage:ignore-file
 // ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
 
-extension GetTrackRecordCollection on Isar {
-  IsarCollection<TrackRecord> get trackRecords => this.collection();
+extension GetTrackRecordDailyCollection on Isar {
+  IsarCollection<TrackRecordDaily> get trackRecordDailys => this.collection();
 }
 
-const TrackRecordSchema = CollectionSchema(
-  name: r'TrackRecord',
-  id: 7443229866473957398,
+const TrackRecordDailySchema = CollectionSchema(
+  name: r'TrackRecordDaily',
+  id: 234478496957495765,
   properties: {
     r'date': PropertySchema(
       id: 0,
@@ -45,10 +45,10 @@ const TrackRecordSchema = CollectionSchema(
       type: IsarType.double,
     )
   },
-  estimateSize: _trackRecordEstimateSize,
-  serialize: _trackRecordSerialize,
-  deserialize: _trackRecordDeserialize,
-  deserializeProp: _trackRecordDeserializeProp,
+  estimateSize: _trackRecordDailyEstimateSize,
+  serialize: _trackRecordDailySerialize,
+  deserialize: _trackRecordDailyDeserialize,
+  deserializeProp: _trackRecordDailyDeserializeProp,
   idName: r'id',
   indexes: {
     r'date': IndexSchema(
@@ -83,14 +83,14 @@ const TrackRecordSchema = CollectionSchema(
     r'TrackedFoodEntry': TrackedFoodEntrySchema,
     r'TrackNutrientSummary': TrackNutrientSummarySchema
   },
-  getId: _trackRecordGetId,
-  getLinks: _trackRecordGetLinks,
-  attach: _trackRecordAttach,
+  getId: _trackRecordDailyGetId,
+  getLinks: _trackRecordDailyGetLinks,
+  attach: _trackRecordDailyAttach,
   version: '3.1.0+1',
 );
 
-int _trackRecordEstimateSize(
-  TrackRecord object,
+int _trackRecordDailyEstimateSize(
+  TrackRecordDaily object,
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
@@ -116,8 +116,8 @@ int _trackRecordEstimateSize(
   return bytesCount;
 }
 
-void _trackRecordSerialize(
-  TrackRecord object,
+void _trackRecordDailySerialize(
+  TrackRecordDaily object,
   IsarWriter writer,
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
@@ -139,13 +139,13 @@ void _trackRecordSerialize(
   writer.writeDouble(offsets[4], object.routineAdherencePercent);
 }
 
-TrackRecord _trackRecordDeserialize(
+TrackRecordDaily _trackRecordDailyDeserialize(
   Id id,
   IsarReader reader,
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  final object = TrackRecord();
+  final object = TrackRecordDaily();
   object.date = reader.readDateTime(offsets[0]);
   object.id = id;
   object.isSynced = reader.readBool(offsets[1]);
@@ -167,7 +167,7 @@ TrackRecord _trackRecordDeserialize(
   return object;
 }
 
-P _trackRecordDeserializeProp<P>(
+P _trackRecordDailyDeserializeProp<P>(
   IsarReader reader,
   int propertyId,
   int offset,
@@ -201,25 +201,25 @@ P _trackRecordDeserializeProp<P>(
   }
 }
 
-Id _trackRecordGetId(TrackRecord object) {
+Id _trackRecordDailyGetId(TrackRecordDaily object) {
   return object.id;
 }
 
-List<IsarLinkBase<dynamic>> _trackRecordGetLinks(TrackRecord object) {
+List<IsarLinkBase<dynamic>> _trackRecordDailyGetLinks(TrackRecordDaily object) {
   return [];
 }
 
-void _trackRecordAttach(
-    IsarCollection<dynamic> col, Id id, TrackRecord object) {
+void _trackRecordDailyAttach(
+    IsarCollection<dynamic> col, Id id, TrackRecordDaily object) {
   object.id = id;
 }
 
-extension TrackRecordByIndex on IsarCollection<TrackRecord> {
-  Future<TrackRecord?> getByDate(DateTime date) {
+extension TrackRecordDailyByIndex on IsarCollection<TrackRecordDaily> {
+  Future<TrackRecordDaily?> getByDate(DateTime date) {
     return getByIndex(r'date', [date]);
   }
 
-  TrackRecord? getByDateSync(DateTime date) {
+  TrackRecordDaily? getByDateSync(DateTime date) {
     return getByIndexSync(r'date', [date]);
   }
 
@@ -231,12 +231,12 @@ extension TrackRecordByIndex on IsarCollection<TrackRecord> {
     return deleteByIndexSync(r'date', [date]);
   }
 
-  Future<List<TrackRecord?>> getAllByDate(List<DateTime> dateValues) {
+  Future<List<TrackRecordDaily?>> getAllByDate(List<DateTime> dateValues) {
     final values = dateValues.map((e) => [e]).toList();
     return getAllByIndex(r'date', values);
   }
 
-  List<TrackRecord?> getAllByDateSync(List<DateTime> dateValues) {
+  List<TrackRecordDaily?> getAllByDateSync(List<DateTime> dateValues) {
     final values = dateValues.map((e) => [e]).toList();
     return getAllByIndexSync(r'date', values);
   }
@@ -251,33 +251,33 @@ extension TrackRecordByIndex on IsarCollection<TrackRecord> {
     return deleteAllByIndexSync(r'date', values);
   }
 
-  Future<Id> putByDate(TrackRecord object) {
+  Future<Id> putByDate(TrackRecordDaily object) {
     return putByIndex(r'date', object);
   }
 
-  Id putByDateSync(TrackRecord object, {bool saveLinks = true}) {
+  Id putByDateSync(TrackRecordDaily object, {bool saveLinks = true}) {
     return putByIndexSync(r'date', object, saveLinks: saveLinks);
   }
 
-  Future<List<Id>> putAllByDate(List<TrackRecord> objects) {
+  Future<List<Id>> putAllByDate(List<TrackRecordDaily> objects) {
     return putAllByIndex(r'date', objects);
   }
 
-  List<Id> putAllByDateSync(List<TrackRecord> objects,
+  List<Id> putAllByDateSync(List<TrackRecordDaily> objects,
       {bool saveLinks = true}) {
     return putAllByIndexSync(r'date', objects, saveLinks: saveLinks);
   }
 }
 
-extension TrackRecordQueryWhereSort
-    on QueryBuilder<TrackRecord, TrackRecord, QWhere> {
-  QueryBuilder<TrackRecord, TrackRecord, QAfterWhere> anyId() {
+extension TrackRecordDailyQueryWhereSort
+    on QueryBuilder<TrackRecordDaily, TrackRecordDaily, QWhere> {
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterWhere> anyId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
     });
   }
 
-  QueryBuilder<TrackRecord, TrackRecord, QAfterWhere> anyDate() {
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterWhere> anyDate() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         const IndexWhereClause.any(indexName: r'date'),
@@ -285,7 +285,7 @@ extension TrackRecordQueryWhereSort
     });
   }
 
-  QueryBuilder<TrackRecord, TrackRecord, QAfterWhere> anyIsSynced() {
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterWhere> anyIsSynced() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         const IndexWhereClause.any(indexName: r'isSynced'),
@@ -294,9 +294,10 @@ extension TrackRecordQueryWhereSort
   }
 }
 
-extension TrackRecordQueryWhere
-    on QueryBuilder<TrackRecord, TrackRecord, QWhereClause> {
-  QueryBuilder<TrackRecord, TrackRecord, QAfterWhereClause> idEqualTo(Id id) {
+extension TrackRecordDailyQueryWhere
+    on QueryBuilder<TrackRecordDaily, TrackRecordDaily, QWhereClause> {
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterWhereClause> idEqualTo(
+      Id id) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IdWhereClause.between(
         lower: id,
@@ -305,8 +306,8 @@ extension TrackRecordQueryWhere
     });
   }
 
-  QueryBuilder<TrackRecord, TrackRecord, QAfterWhereClause> idNotEqualTo(
-      Id id) {
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterWhereClause>
+      idNotEqualTo(Id id) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
@@ -328,8 +329,8 @@ extension TrackRecordQueryWhere
     });
   }
 
-  QueryBuilder<TrackRecord, TrackRecord, QAfterWhereClause> idGreaterThan(Id id,
-      {bool include = false}) {
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterWhereClause>
+      idGreaterThan(Id id, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.greaterThan(lower: id, includeLower: include),
@@ -337,8 +338,8 @@ extension TrackRecordQueryWhere
     });
   }
 
-  QueryBuilder<TrackRecord, TrackRecord, QAfterWhereClause> idLessThan(Id id,
-      {bool include = false}) {
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterWhereClause>
+      idLessThan(Id id, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.lessThan(upper: id, includeUpper: include),
@@ -346,7 +347,7 @@ extension TrackRecordQueryWhere
     });
   }
 
-  QueryBuilder<TrackRecord, TrackRecord, QAfterWhereClause> idBetween(
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterWhereClause> idBetween(
     Id lowerId,
     Id upperId, {
     bool includeLower = true,
@@ -362,8 +363,8 @@ extension TrackRecordQueryWhere
     });
   }
 
-  QueryBuilder<TrackRecord, TrackRecord, QAfterWhereClause> dateEqualTo(
-      DateTime date) {
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterWhereClause>
+      dateEqualTo(DateTime date) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IndexWhereClause.equalTo(
         indexName: r'date',
@@ -372,8 +373,8 @@ extension TrackRecordQueryWhere
     });
   }
 
-  QueryBuilder<TrackRecord, TrackRecord, QAfterWhereClause> dateNotEqualTo(
-      DateTime date) {
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterWhereClause>
+      dateNotEqualTo(DateTime date) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
@@ -407,7 +408,8 @@ extension TrackRecordQueryWhere
     });
   }
 
-  QueryBuilder<TrackRecord, TrackRecord, QAfterWhereClause> dateGreaterThan(
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterWhereClause>
+      dateGreaterThan(
     DateTime date, {
     bool include = false,
   }) {
@@ -421,7 +423,8 @@ extension TrackRecordQueryWhere
     });
   }
 
-  QueryBuilder<TrackRecord, TrackRecord, QAfterWhereClause> dateLessThan(
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterWhereClause>
+      dateLessThan(
     DateTime date, {
     bool include = false,
   }) {
@@ -435,7 +438,8 @@ extension TrackRecordQueryWhere
     });
   }
 
-  QueryBuilder<TrackRecord, TrackRecord, QAfterWhereClause> dateBetween(
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterWhereClause>
+      dateBetween(
     DateTime lowerDate,
     DateTime upperDate, {
     bool includeLower = true,
@@ -452,8 +456,8 @@ extension TrackRecordQueryWhere
     });
   }
 
-  QueryBuilder<TrackRecord, TrackRecord, QAfterWhereClause> isSyncedEqualTo(
-      bool isSynced) {
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterWhereClause>
+      isSyncedEqualTo(bool isSynced) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IndexWhereClause.equalTo(
         indexName: r'isSynced',
@@ -462,8 +466,8 @@ extension TrackRecordQueryWhere
     });
   }
 
-  QueryBuilder<TrackRecord, TrackRecord, QAfterWhereClause> isSyncedNotEqualTo(
-      bool isSynced) {
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterWhereClause>
+      isSyncedNotEqualTo(bool isSynced) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
@@ -498,10 +502,10 @@ extension TrackRecordQueryWhere
   }
 }
 
-extension TrackRecordQueryFilter
-    on QueryBuilder<TrackRecord, TrackRecord, QFilterCondition> {
-  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition> dateEqualTo(
-      DateTime value) {
+extension TrackRecordDailyQueryFilter
+    on QueryBuilder<TrackRecordDaily, TrackRecordDaily, QFilterCondition> {
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterFilterCondition>
+      dateEqualTo(DateTime value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'date',
@@ -510,7 +514,8 @@ extension TrackRecordQueryFilter
     });
   }
 
-  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition> dateGreaterThan(
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterFilterCondition>
+      dateGreaterThan(
     DateTime value, {
     bool include = false,
   }) {
@@ -523,7 +528,8 @@ extension TrackRecordQueryFilter
     });
   }
 
-  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition> dateLessThan(
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterFilterCondition>
+      dateLessThan(
     DateTime value, {
     bool include = false,
   }) {
@@ -536,7 +542,8 @@ extension TrackRecordQueryFilter
     });
   }
 
-  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition> dateBetween(
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterFilterCondition>
+      dateBetween(
     DateTime lower,
     DateTime upper, {
     bool includeLower = true,
@@ -553,8 +560,8 @@ extension TrackRecordQueryFilter
     });
   }
 
-  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition> idEqualTo(
-      Id value) {
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterFilterCondition>
+      idEqualTo(Id value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'id',
@@ -563,7 +570,8 @@ extension TrackRecordQueryFilter
     });
   }
 
-  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition> idGreaterThan(
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterFilterCondition>
+      idGreaterThan(
     Id value, {
     bool include = false,
   }) {
@@ -576,7 +584,8 @@ extension TrackRecordQueryFilter
     });
   }
 
-  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition> idLessThan(
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterFilterCondition>
+      idLessThan(
     Id value, {
     bool include = false,
   }) {
@@ -589,7 +598,8 @@ extension TrackRecordQueryFilter
     });
   }
 
-  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition> idBetween(
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterFilterCondition>
+      idBetween(
     Id lower,
     Id upper, {
     bool includeLower = true,
@@ -606,8 +616,8 @@ extension TrackRecordQueryFilter
     });
   }
 
-  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition> isSyncedEqualTo(
-      bool value) {
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterFilterCondition>
+      isSyncedEqualTo(bool value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'isSynced',
@@ -616,7 +626,7 @@ extension TrackRecordQueryFilter
     });
   }
 
-  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition>
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterFilterCondition>
       loggedFoodsLengthEqualTo(int length) {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
@@ -629,7 +639,7 @@ extension TrackRecordQueryFilter
     });
   }
 
-  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition>
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterFilterCondition>
       loggedFoodsIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
@@ -642,7 +652,7 @@ extension TrackRecordQueryFilter
     });
   }
 
-  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition>
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterFilterCondition>
       loggedFoodsIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
@@ -655,7 +665,7 @@ extension TrackRecordQueryFilter
     });
   }
 
-  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition>
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterFilterCondition>
       loggedFoodsLengthLessThan(
     int length, {
     bool include = false,
@@ -671,7 +681,7 @@ extension TrackRecordQueryFilter
     });
   }
 
-  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition>
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterFilterCondition>
       loggedFoodsLengthGreaterThan(
     int length, {
     bool include = false,
@@ -687,7 +697,7 @@ extension TrackRecordQueryFilter
     });
   }
 
-  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition>
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterFilterCondition>
       loggedFoodsLengthBetween(
     int lower,
     int upper, {
@@ -705,7 +715,7 @@ extension TrackRecordQueryFilter
     });
   }
 
-  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition>
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterFilterCondition>
       nutrientSummariesLengthEqualTo(int length) {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
@@ -718,7 +728,7 @@ extension TrackRecordQueryFilter
     });
   }
 
-  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition>
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterFilterCondition>
       nutrientSummariesIsEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
@@ -731,7 +741,7 @@ extension TrackRecordQueryFilter
     });
   }
 
-  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition>
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterFilterCondition>
       nutrientSummariesIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
       return query.listLength(
@@ -744,7 +754,7 @@ extension TrackRecordQueryFilter
     });
   }
 
-  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition>
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterFilterCondition>
       nutrientSummariesLengthLessThan(
     int length, {
     bool include = false,
@@ -760,7 +770,7 @@ extension TrackRecordQueryFilter
     });
   }
 
-  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition>
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterFilterCondition>
       nutrientSummariesLengthGreaterThan(
     int length, {
     bool include = false,
@@ -776,7 +786,7 @@ extension TrackRecordQueryFilter
     });
   }
 
-  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition>
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterFilterCondition>
       nutrientSummariesLengthBetween(
     int lower,
     int upper, {
@@ -794,7 +804,7 @@ extension TrackRecordQueryFilter
     });
   }
 
-  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition>
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterFilterCondition>
       routineAdherencePercentEqualTo(
     double value, {
     double epsilon = Query.epsilon,
@@ -808,7 +818,7 @@ extension TrackRecordQueryFilter
     });
   }
 
-  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition>
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterFilterCondition>
       routineAdherencePercentGreaterThan(
     double value, {
     bool include = false,
@@ -824,7 +834,7 @@ extension TrackRecordQueryFilter
     });
   }
 
-  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition>
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterFilterCondition>
       routineAdherencePercentLessThan(
     double value, {
     bool include = false,
@@ -840,7 +850,7 @@ extension TrackRecordQueryFilter
     });
   }
 
-  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition>
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterFilterCondition>
       routineAdherencePercentBetween(
     double lower,
     double upper, {
@@ -861,16 +871,16 @@ extension TrackRecordQueryFilter
   }
 }
 
-extension TrackRecordQueryObject
-    on QueryBuilder<TrackRecord, TrackRecord, QFilterCondition> {
-  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition>
+extension TrackRecordDailyQueryObject
+    on QueryBuilder<TrackRecordDaily, TrackRecordDaily, QFilterCondition> {
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterFilterCondition>
       loggedFoodsElement(FilterQuery<TrackedFoodEntry> q) {
     return QueryBuilder.apply(this, (query) {
       return query.object(q, r'loggedFoods');
     });
   }
 
-  QueryBuilder<TrackRecord, TrackRecord, QAfterFilterCondition>
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterFilterCondition>
       nutrientSummariesElement(FilterQuery<TrackNutrientSummary> q) {
     return QueryBuilder.apply(this, (query) {
       return query.object(q, r'nutrientSummaries');
@@ -878,43 +888,46 @@ extension TrackRecordQueryObject
   }
 }
 
-extension TrackRecordQueryLinks
-    on QueryBuilder<TrackRecord, TrackRecord, QFilterCondition> {}
+extension TrackRecordDailyQueryLinks
+    on QueryBuilder<TrackRecordDaily, TrackRecordDaily, QFilterCondition> {}
 
-extension TrackRecordQuerySortBy
-    on QueryBuilder<TrackRecord, TrackRecord, QSortBy> {
-  QueryBuilder<TrackRecord, TrackRecord, QAfterSortBy> sortByDate() {
+extension TrackRecordDailyQuerySortBy
+    on QueryBuilder<TrackRecordDaily, TrackRecordDaily, QSortBy> {
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterSortBy> sortByDate() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'date', Sort.asc);
     });
   }
 
-  QueryBuilder<TrackRecord, TrackRecord, QAfterSortBy> sortByDateDesc() {
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterSortBy>
+      sortByDateDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'date', Sort.desc);
     });
   }
 
-  QueryBuilder<TrackRecord, TrackRecord, QAfterSortBy> sortByIsSynced() {
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterSortBy>
+      sortByIsSynced() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isSynced', Sort.asc);
     });
   }
 
-  QueryBuilder<TrackRecord, TrackRecord, QAfterSortBy> sortByIsSyncedDesc() {
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterSortBy>
+      sortByIsSyncedDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isSynced', Sort.desc);
     });
   }
 
-  QueryBuilder<TrackRecord, TrackRecord, QAfterSortBy>
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterSortBy>
       sortByRoutineAdherencePercent() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'routineAdherencePercent', Sort.asc);
     });
   }
 
-  QueryBuilder<TrackRecord, TrackRecord, QAfterSortBy>
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterSortBy>
       sortByRoutineAdherencePercentDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'routineAdherencePercent', Sort.desc);
@@ -922,52 +935,56 @@ extension TrackRecordQuerySortBy
   }
 }
 
-extension TrackRecordQuerySortThenBy
-    on QueryBuilder<TrackRecord, TrackRecord, QSortThenBy> {
-  QueryBuilder<TrackRecord, TrackRecord, QAfterSortBy> thenByDate() {
+extension TrackRecordDailyQuerySortThenBy
+    on QueryBuilder<TrackRecordDaily, TrackRecordDaily, QSortThenBy> {
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterSortBy> thenByDate() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'date', Sort.asc);
     });
   }
 
-  QueryBuilder<TrackRecord, TrackRecord, QAfterSortBy> thenByDateDesc() {
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterSortBy>
+      thenByDateDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'date', Sort.desc);
     });
   }
 
-  QueryBuilder<TrackRecord, TrackRecord, QAfterSortBy> thenById() {
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterSortBy> thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
     });
   }
 
-  QueryBuilder<TrackRecord, TrackRecord, QAfterSortBy> thenByIdDesc() {
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterSortBy>
+      thenByIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.desc);
     });
   }
 
-  QueryBuilder<TrackRecord, TrackRecord, QAfterSortBy> thenByIsSynced() {
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterSortBy>
+      thenByIsSynced() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isSynced', Sort.asc);
     });
   }
 
-  QueryBuilder<TrackRecord, TrackRecord, QAfterSortBy> thenByIsSyncedDesc() {
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterSortBy>
+      thenByIsSyncedDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isSynced', Sort.desc);
     });
   }
 
-  QueryBuilder<TrackRecord, TrackRecord, QAfterSortBy>
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterSortBy>
       thenByRoutineAdherencePercent() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'routineAdherencePercent', Sort.asc);
     });
   }
 
-  QueryBuilder<TrackRecord, TrackRecord, QAfterSortBy>
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QAfterSortBy>
       thenByRoutineAdherencePercentDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'routineAdherencePercent', Sort.desc);
@@ -975,21 +992,22 @@ extension TrackRecordQuerySortThenBy
   }
 }
 
-extension TrackRecordQueryWhereDistinct
-    on QueryBuilder<TrackRecord, TrackRecord, QDistinct> {
-  QueryBuilder<TrackRecord, TrackRecord, QDistinct> distinctByDate() {
+extension TrackRecordDailyQueryWhereDistinct
+    on QueryBuilder<TrackRecordDaily, TrackRecordDaily, QDistinct> {
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QDistinct> distinctByDate() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'date');
     });
   }
 
-  QueryBuilder<TrackRecord, TrackRecord, QDistinct> distinctByIsSynced() {
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QDistinct>
+      distinctByIsSynced() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isSynced');
     });
   }
 
-  QueryBuilder<TrackRecord, TrackRecord, QDistinct>
+  QueryBuilder<TrackRecordDaily, TrackRecordDaily, QDistinct>
       distinctByRoutineAdherencePercent() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'routineAdherencePercent');
@@ -997,44 +1015,1350 @@ extension TrackRecordQueryWhereDistinct
   }
 }
 
-extension TrackRecordQueryProperty
-    on QueryBuilder<TrackRecord, TrackRecord, QQueryProperty> {
-  QueryBuilder<TrackRecord, int, QQueryOperations> idProperty() {
+extension TrackRecordDailyQueryProperty
+    on QueryBuilder<TrackRecordDaily, TrackRecordDaily, QQueryProperty> {
+  QueryBuilder<TrackRecordDaily, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
     });
   }
 
-  QueryBuilder<TrackRecord, DateTime, QQueryOperations> dateProperty() {
+  QueryBuilder<TrackRecordDaily, DateTime, QQueryOperations> dateProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'date');
     });
   }
 
-  QueryBuilder<TrackRecord, bool, QQueryOperations> isSyncedProperty() {
+  QueryBuilder<TrackRecordDaily, bool, QQueryOperations> isSyncedProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isSynced');
     });
   }
 
-  QueryBuilder<TrackRecord, List<TrackedFoodEntry>, QQueryOperations>
+  QueryBuilder<TrackRecordDaily, List<TrackedFoodEntry>, QQueryOperations>
       loggedFoodsProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'loggedFoods');
     });
   }
 
-  QueryBuilder<TrackRecord, List<TrackNutrientSummary>, QQueryOperations>
+  QueryBuilder<TrackRecordDaily, List<TrackNutrientSummary>, QQueryOperations>
       nutrientSummariesProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'nutrientSummaries');
     });
   }
 
-  QueryBuilder<TrackRecord, double, QQueryOperations>
+  QueryBuilder<TrackRecordDaily, double, QQueryOperations>
       routineAdherencePercentProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'routineAdherencePercent');
+    });
+  }
+}
+
+// coverage:ignore-file
+// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
+
+extension GetTrackRecordWeeklyCollection on Isar {
+  IsarCollection<TrackRecordWeekly> get trackRecordWeeklys => this.collection();
+}
+
+const TrackRecordWeeklySchema = CollectionSchema(
+  name: r'TrackRecordWeekly',
+  id: 1972696531631057949,
+  properties: {
+    r'isSynced': PropertySchema(
+      id: 0,
+      name: r'isSynced',
+      type: IsarType.bool,
+    ),
+    r'loggedFoods': PropertySchema(
+      id: 1,
+      name: r'loggedFoods',
+      type: IsarType.objectList,
+      target: r'TrackedFoodEntry',
+    ),
+    r'nutrientSummaries': PropertySchema(
+      id: 2,
+      name: r'nutrientSummaries',
+      type: IsarType.objectList,
+      target: r'TrackNutrientSummary',
+    ),
+    r'routineAdherencePercent': PropertySchema(
+      id: 3,
+      name: r'routineAdherencePercent',
+      type: IsarType.double,
+    ),
+    r'weekKey': PropertySchema(
+      id: 4,
+      name: r'weekKey',
+      type: IsarType.string,
+    ),
+    r'weekStartDate': PropertySchema(
+      id: 5,
+      name: r'weekStartDate',
+      type: IsarType.dateTime,
+    )
+  },
+  estimateSize: _trackRecordWeeklyEstimateSize,
+  serialize: _trackRecordWeeklySerialize,
+  deserialize: _trackRecordWeeklyDeserialize,
+  deserializeProp: _trackRecordWeeklyDeserializeProp,
+  idName: r'id',
+  indexes: {
+    r'weekStartDate': IndexSchema(
+      id: 7906057668223877157,
+      name: r'weekStartDate',
+      unique: true,
+      replace: true,
+      properties: [
+        IndexPropertySchema(
+          name: r'weekStartDate',
+          type: IndexType.value,
+          caseSensitive: false,
+        )
+      ],
+    ),
+    r'weekKey': IndexSchema(
+      id: 2886219582654836883,
+      name: r'weekKey',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'weekKey',
+          type: IndexType.hash,
+          caseSensitive: true,
+        )
+      ],
+    ),
+    r'isSynced': IndexSchema(
+      id: -39763503327887510,
+      name: r'isSynced',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'isSynced',
+          type: IndexType.value,
+          caseSensitive: false,
+        )
+      ],
+    )
+  },
+  links: {},
+  embeddedSchemas: {
+    r'TrackedFoodEntry': TrackedFoodEntrySchema,
+    r'TrackNutrientSummary': TrackNutrientSummarySchema
+  },
+  getId: _trackRecordWeeklyGetId,
+  getLinks: _trackRecordWeeklyGetLinks,
+  attach: _trackRecordWeeklyAttach,
+  version: '3.1.0+1',
+);
+
+int _trackRecordWeeklyEstimateSize(
+  TrackRecordWeekly object,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  var bytesCount = offsets.last;
+  bytesCount += 3 + object.loggedFoods.length * 3;
+  {
+    final offsets = allOffsets[TrackedFoodEntry]!;
+    for (var i = 0; i < object.loggedFoods.length; i++) {
+      final value = object.loggedFoods[i];
+      bytesCount +=
+          TrackedFoodEntrySchema.estimateSize(value, offsets, allOffsets);
+    }
+  }
+  bytesCount += 3 + object.nutrientSummaries.length * 3;
+  {
+    final offsets = allOffsets[TrackNutrientSummary]!;
+    for (var i = 0; i < object.nutrientSummaries.length; i++) {
+      final value = object.nutrientSummaries[i];
+      bytesCount +=
+          TrackNutrientSummarySchema.estimateSize(value, offsets, allOffsets);
+    }
+  }
+  bytesCount += 3 + object.weekKey.length * 3;
+  return bytesCount;
+}
+
+void _trackRecordWeeklySerialize(
+  TrackRecordWeekly object,
+  IsarWriter writer,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  writer.writeBool(offsets[0], object.isSynced);
+  writer.writeObjectList<TrackedFoodEntry>(
+    offsets[1],
+    allOffsets,
+    TrackedFoodEntrySchema.serialize,
+    object.loggedFoods,
+  );
+  writer.writeObjectList<TrackNutrientSummary>(
+    offsets[2],
+    allOffsets,
+    TrackNutrientSummarySchema.serialize,
+    object.nutrientSummaries,
+  );
+  writer.writeDouble(offsets[3], object.routineAdherencePercent);
+  writer.writeString(offsets[4], object.weekKey);
+  writer.writeDateTime(offsets[5], object.weekStartDate);
+}
+
+TrackRecordWeekly _trackRecordWeeklyDeserialize(
+  Id id,
+  IsarReader reader,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  final object = TrackRecordWeekly();
+  object.id = id;
+  object.isSynced = reader.readBool(offsets[0]);
+  object.loggedFoods = reader.readObjectList<TrackedFoodEntry>(
+        offsets[1],
+        TrackedFoodEntrySchema.deserialize,
+        allOffsets,
+        TrackedFoodEntry(),
+      ) ??
+      [];
+  object.nutrientSummaries = reader.readObjectList<TrackNutrientSummary>(
+        offsets[2],
+        TrackNutrientSummarySchema.deserialize,
+        allOffsets,
+        TrackNutrientSummary(),
+      ) ??
+      [];
+  object.routineAdherencePercent = reader.readDouble(offsets[3]);
+  object.weekKey = reader.readString(offsets[4]);
+  object.weekStartDate = reader.readDateTime(offsets[5]);
+  return object;
+}
+
+P _trackRecordWeeklyDeserializeProp<P>(
+  IsarReader reader,
+  int propertyId,
+  int offset,
+  Map<Type, List<int>> allOffsets,
+) {
+  switch (propertyId) {
+    case 0:
+      return (reader.readBool(offset)) as P;
+    case 1:
+      return (reader.readObjectList<TrackedFoodEntry>(
+            offset,
+            TrackedFoodEntrySchema.deserialize,
+            allOffsets,
+            TrackedFoodEntry(),
+          ) ??
+          []) as P;
+    case 2:
+      return (reader.readObjectList<TrackNutrientSummary>(
+            offset,
+            TrackNutrientSummarySchema.deserialize,
+            allOffsets,
+            TrackNutrientSummary(),
+          ) ??
+          []) as P;
+    case 3:
+      return (reader.readDouble(offset)) as P;
+    case 4:
+      return (reader.readString(offset)) as P;
+    case 5:
+      return (reader.readDateTime(offset)) as P;
+    default:
+      throw IsarError('Unknown property with id $propertyId');
+  }
+}
+
+Id _trackRecordWeeklyGetId(TrackRecordWeekly object) {
+  return object.id;
+}
+
+List<IsarLinkBase<dynamic>> _trackRecordWeeklyGetLinks(
+    TrackRecordWeekly object) {
+  return [];
+}
+
+void _trackRecordWeeklyAttach(
+    IsarCollection<dynamic> col, Id id, TrackRecordWeekly object) {
+  object.id = id;
+}
+
+extension TrackRecordWeeklyByIndex on IsarCollection<TrackRecordWeekly> {
+  Future<TrackRecordWeekly?> getByWeekStartDate(DateTime weekStartDate) {
+    return getByIndex(r'weekStartDate', [weekStartDate]);
+  }
+
+  TrackRecordWeekly? getByWeekStartDateSync(DateTime weekStartDate) {
+    return getByIndexSync(r'weekStartDate', [weekStartDate]);
+  }
+
+  Future<bool> deleteByWeekStartDate(DateTime weekStartDate) {
+    return deleteByIndex(r'weekStartDate', [weekStartDate]);
+  }
+
+  bool deleteByWeekStartDateSync(DateTime weekStartDate) {
+    return deleteByIndexSync(r'weekStartDate', [weekStartDate]);
+  }
+
+  Future<List<TrackRecordWeekly?>> getAllByWeekStartDate(
+      List<DateTime> weekStartDateValues) {
+    final values = weekStartDateValues.map((e) => [e]).toList();
+    return getAllByIndex(r'weekStartDate', values);
+  }
+
+  List<TrackRecordWeekly?> getAllByWeekStartDateSync(
+      List<DateTime> weekStartDateValues) {
+    final values = weekStartDateValues.map((e) => [e]).toList();
+    return getAllByIndexSync(r'weekStartDate', values);
+  }
+
+  Future<int> deleteAllByWeekStartDate(List<DateTime> weekStartDateValues) {
+    final values = weekStartDateValues.map((e) => [e]).toList();
+    return deleteAllByIndex(r'weekStartDate', values);
+  }
+
+  int deleteAllByWeekStartDateSync(List<DateTime> weekStartDateValues) {
+    final values = weekStartDateValues.map((e) => [e]).toList();
+    return deleteAllByIndexSync(r'weekStartDate', values);
+  }
+
+  Future<Id> putByWeekStartDate(TrackRecordWeekly object) {
+    return putByIndex(r'weekStartDate', object);
+  }
+
+  Id putByWeekStartDateSync(TrackRecordWeekly object, {bool saveLinks = true}) {
+    return putByIndexSync(r'weekStartDate', object, saveLinks: saveLinks);
+  }
+
+  Future<List<Id>> putAllByWeekStartDate(List<TrackRecordWeekly> objects) {
+    return putAllByIndex(r'weekStartDate', objects);
+  }
+
+  List<Id> putAllByWeekStartDateSync(List<TrackRecordWeekly> objects,
+      {bool saveLinks = true}) {
+    return putAllByIndexSync(r'weekStartDate', objects, saveLinks: saveLinks);
+  }
+}
+
+extension TrackRecordWeeklyQueryWhereSort
+    on QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QWhere> {
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterWhere> anyId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(const IdWhereClause.any());
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterWhere>
+      anyWeekStartDate() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'weekStartDate'),
+      );
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterWhere>
+      anyIsSynced() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'isSynced'),
+      );
+    });
+  }
+}
+
+extension TrackRecordWeeklyQueryWhere
+    on QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QWhereClause> {
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterWhereClause>
+      idEqualTo(Id id) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IdWhereClause.between(
+        lower: id,
+        upper: id,
+      ));
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterWhereClause>
+      idNotEqualTo(Id id) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(
+              IdWhereClause.lessThan(upper: id, includeUpper: false),
+            )
+            .addWhereClause(
+              IdWhereClause.greaterThan(lower: id, includeLower: false),
+            );
+      } else {
+        return query
+            .addWhereClause(
+              IdWhereClause.greaterThan(lower: id, includeLower: false),
+            )
+            .addWhereClause(
+              IdWhereClause.lessThan(upper: id, includeUpper: false),
+            );
+      }
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterWhereClause>
+      idGreaterThan(Id id, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IdWhereClause.greaterThan(lower: id, includeLower: include),
+      );
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterWhereClause>
+      idLessThan(Id id, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IdWhereClause.lessThan(upper: id, includeUpper: include),
+      );
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterWhereClause>
+      idBetween(
+    Id lowerId,
+    Id upperId, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IdWhereClause.between(
+        lower: lowerId,
+        includeLower: includeLower,
+        upper: upperId,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterWhereClause>
+      weekStartDateEqualTo(DateTime weekStartDate) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'weekStartDate',
+        value: [weekStartDate],
+      ));
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterWhereClause>
+      weekStartDateNotEqualTo(DateTime weekStartDate) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'weekStartDate',
+              lower: [],
+              upper: [weekStartDate],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'weekStartDate',
+              lower: [weekStartDate],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'weekStartDate',
+              lower: [weekStartDate],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'weekStartDate',
+              lower: [],
+              upper: [weekStartDate],
+              includeUpper: false,
+            ));
+      }
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterWhereClause>
+      weekStartDateGreaterThan(
+    DateTime weekStartDate, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'weekStartDate',
+        lower: [weekStartDate],
+        includeLower: include,
+        upper: [],
+      ));
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterWhereClause>
+      weekStartDateLessThan(
+    DateTime weekStartDate, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'weekStartDate',
+        lower: [],
+        upper: [weekStartDate],
+        includeUpper: include,
+      ));
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterWhereClause>
+      weekStartDateBetween(
+    DateTime lowerWeekStartDate,
+    DateTime upperWeekStartDate, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'weekStartDate',
+        lower: [lowerWeekStartDate],
+        includeLower: includeLower,
+        upper: [upperWeekStartDate],
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterWhereClause>
+      weekKeyEqualTo(String weekKey) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'weekKey',
+        value: [weekKey],
+      ));
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterWhereClause>
+      weekKeyNotEqualTo(String weekKey) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'weekKey',
+              lower: [],
+              upper: [weekKey],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'weekKey',
+              lower: [weekKey],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'weekKey',
+              lower: [weekKey],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'weekKey',
+              lower: [],
+              upper: [weekKey],
+              includeUpper: false,
+            ));
+      }
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterWhereClause>
+      isSyncedEqualTo(bool isSynced) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'isSynced',
+        value: [isSynced],
+      ));
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterWhereClause>
+      isSyncedNotEqualTo(bool isSynced) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'isSynced',
+              lower: [],
+              upper: [isSynced],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'isSynced',
+              lower: [isSynced],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'isSynced',
+              lower: [isSynced],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'isSynced',
+              lower: [],
+              upper: [isSynced],
+              includeUpper: false,
+            ));
+      }
+    });
+  }
+}
+
+extension TrackRecordWeeklyQueryFilter
+    on QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QFilterCondition> {
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterFilterCondition>
+      idEqualTo(Id value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'id',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterFilterCondition>
+      idGreaterThan(
+    Id value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'id',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterFilterCondition>
+      idLessThan(
+    Id value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'id',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterFilterCondition>
+      idBetween(
+    Id lower,
+    Id upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'id',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterFilterCondition>
+      isSyncedEqualTo(bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isSynced',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterFilterCondition>
+      loggedFoodsLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'loggedFoods',
+        length,
+        true,
+        length,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterFilterCondition>
+      loggedFoodsIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'loggedFoods',
+        0,
+        true,
+        0,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterFilterCondition>
+      loggedFoodsIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'loggedFoods',
+        0,
+        false,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterFilterCondition>
+      loggedFoodsLengthLessThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'loggedFoods',
+        0,
+        true,
+        length,
+        include,
+      );
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterFilterCondition>
+      loggedFoodsLengthGreaterThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'loggedFoods',
+        length,
+        include,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterFilterCondition>
+      loggedFoodsLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'loggedFoods',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterFilterCondition>
+      nutrientSummariesLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'nutrientSummaries',
+        length,
+        true,
+        length,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterFilterCondition>
+      nutrientSummariesIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'nutrientSummaries',
+        0,
+        true,
+        0,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterFilterCondition>
+      nutrientSummariesIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'nutrientSummaries',
+        0,
+        false,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterFilterCondition>
+      nutrientSummariesLengthLessThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'nutrientSummaries',
+        0,
+        true,
+        length,
+        include,
+      );
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterFilterCondition>
+      nutrientSummariesLengthGreaterThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'nutrientSummaries',
+        length,
+        include,
+        999999,
+        true,
+      );
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterFilterCondition>
+      nutrientSummariesLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'nutrientSummaries',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterFilterCondition>
+      routineAdherencePercentEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'routineAdherencePercent',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterFilterCondition>
+      routineAdherencePercentGreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'routineAdherencePercent',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterFilterCondition>
+      routineAdherencePercentLessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'routineAdherencePercent',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterFilterCondition>
+      routineAdherencePercentBetween(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'routineAdherencePercent',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterFilterCondition>
+      weekKeyEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'weekKey',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterFilterCondition>
+      weekKeyGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'weekKey',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterFilterCondition>
+      weekKeyLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'weekKey',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterFilterCondition>
+      weekKeyBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'weekKey',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterFilterCondition>
+      weekKeyStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'weekKey',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterFilterCondition>
+      weekKeyEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'weekKey',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterFilterCondition>
+      weekKeyContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'weekKey',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterFilterCondition>
+      weekKeyMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'weekKey',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterFilterCondition>
+      weekKeyIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'weekKey',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterFilterCondition>
+      weekKeyIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'weekKey',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterFilterCondition>
+      weekStartDateEqualTo(DateTime value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'weekStartDate',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterFilterCondition>
+      weekStartDateGreaterThan(
+    DateTime value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'weekStartDate',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterFilterCondition>
+      weekStartDateLessThan(
+    DateTime value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'weekStartDate',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterFilterCondition>
+      weekStartDateBetween(
+    DateTime lower,
+    DateTime upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'weekStartDate',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+}
+
+extension TrackRecordWeeklyQueryObject
+    on QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QFilterCondition> {
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterFilterCondition>
+      loggedFoodsElement(FilterQuery<TrackedFoodEntry> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.object(q, r'loggedFoods');
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterFilterCondition>
+      nutrientSummariesElement(FilterQuery<TrackNutrientSummary> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.object(q, r'nutrientSummaries');
+    });
+  }
+}
+
+extension TrackRecordWeeklyQueryLinks
+    on QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QFilterCondition> {}
+
+extension TrackRecordWeeklyQuerySortBy
+    on QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QSortBy> {
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterSortBy>
+      sortByIsSynced() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isSynced', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterSortBy>
+      sortByIsSyncedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isSynced', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterSortBy>
+      sortByRoutineAdherencePercent() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'routineAdherencePercent', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterSortBy>
+      sortByRoutineAdherencePercentDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'routineAdherencePercent', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterSortBy>
+      sortByWeekKey() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'weekKey', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterSortBy>
+      sortByWeekKeyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'weekKey', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterSortBy>
+      sortByWeekStartDate() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'weekStartDate', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterSortBy>
+      sortByWeekStartDateDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'weekStartDate', Sort.desc);
+    });
+  }
+}
+
+extension TrackRecordWeeklyQuerySortThenBy
+    on QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QSortThenBy> {
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterSortBy> thenById() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'id', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterSortBy>
+      thenByIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'id', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterSortBy>
+      thenByIsSynced() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isSynced', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterSortBy>
+      thenByIsSyncedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isSynced', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterSortBy>
+      thenByRoutineAdherencePercent() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'routineAdherencePercent', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterSortBy>
+      thenByRoutineAdherencePercentDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'routineAdherencePercent', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterSortBy>
+      thenByWeekKey() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'weekKey', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterSortBy>
+      thenByWeekKeyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'weekKey', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterSortBy>
+      thenByWeekStartDate() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'weekStartDate', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QAfterSortBy>
+      thenByWeekStartDateDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'weekStartDate', Sort.desc);
+    });
+  }
+}
+
+extension TrackRecordWeeklyQueryWhereDistinct
+    on QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QDistinct> {
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QDistinct>
+      distinctByIsSynced() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isSynced');
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QDistinct>
+      distinctByRoutineAdherencePercent() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'routineAdherencePercent');
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QDistinct>
+      distinctByWeekKey({bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'weekKey', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QDistinct>
+      distinctByWeekStartDate() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'weekStartDate');
+    });
+  }
+}
+
+extension TrackRecordWeeklyQueryProperty
+    on QueryBuilder<TrackRecordWeekly, TrackRecordWeekly, QQueryProperty> {
+  QueryBuilder<TrackRecordWeekly, int, QQueryOperations> idProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'id');
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, bool, QQueryOperations> isSyncedProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isSynced');
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, List<TrackedFoodEntry>, QQueryOperations>
+      loggedFoodsProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'loggedFoods');
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, List<TrackNutrientSummary>, QQueryOperations>
+      nutrientSummariesProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'nutrientSummaries');
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, double, QQueryOperations>
+      routineAdherencePercentProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'routineAdherencePercent');
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, String, QQueryOperations> weekKeyProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'weekKey');
+    });
+  }
+
+  QueryBuilder<TrackRecordWeekly, DateTime, QQueryOperations>
+      weekStartDateProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'weekStartDate');
     });
   }
 }
@@ -1065,18 +2389,24 @@ const TrackedFoodEntrySchema = Schema(
       name: r'foodTitle',
       type: IsarType.string,
     ),
-    r'isFromRoutine': PropertySchema(
+    r'frequency': PropertySchema(
       id: 3,
+      name: r'frequency',
+      type: IsarType.string,
+      enumMap: _TrackedFoodEntryfrequencyEnumValueMap,
+    ),
+    r'isFromRoutine': PropertySchema(
+      id: 4,
       name: r'isFromRoutine',
       type: IsarType.bool,
     ),
     r'loggedAt': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'loggedAt',
       type: IsarType.dateTime,
     ),
     r'plannedGrams': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'plannedGrams',
       type: IsarType.double,
     )
@@ -1095,6 +2425,7 @@ int _trackedFoodEntryEstimateSize(
   var bytesCount = offsets.last;
   bytesCount += 3 + object.foodId.length * 3;
   bytesCount += 3 + object.foodTitle.length * 3;
+  bytesCount += 3 + object.frequency.name.length * 3;
   return bytesCount;
 }
 
@@ -1107,9 +2438,10 @@ void _trackedFoodEntrySerialize(
   writer.writeDouble(offsets[0], object.amountConsumedGrams);
   writer.writeString(offsets[1], object.foodId);
   writer.writeString(offsets[2], object.foodTitle);
-  writer.writeBool(offsets[3], object.isFromRoutine);
-  writer.writeDateTime(offsets[4], object.loggedAt);
-  writer.writeDouble(offsets[5], object.plannedGrams);
+  writer.writeString(offsets[3], object.frequency.name);
+  writer.writeBool(offsets[4], object.isFromRoutine);
+  writer.writeDateTime(offsets[5], object.loggedAt);
+  writer.writeDouble(offsets[6], object.plannedGrams);
 }
 
 TrackedFoodEntry _trackedFoodEntryDeserialize(
@@ -1122,9 +2454,12 @@ TrackedFoodEntry _trackedFoodEntryDeserialize(
   object.amountConsumedGrams = reader.readDouble(offsets[0]);
   object.foodId = reader.readString(offsets[1]);
   object.foodTitle = reader.readString(offsets[2]);
-  object.isFromRoutine = reader.readBool(offsets[3]);
-  object.loggedAt = reader.readDateTime(offsets[4]);
-  object.plannedGrams = reader.readDouble(offsets[5]);
+  object.frequency = _TrackedFoodEntryfrequencyValueEnumMap[
+          reader.readStringOrNull(offsets[3])] ??
+      TrackingFrequency.daily;
+  object.isFromRoutine = reader.readBool(offsets[4]);
+  object.loggedAt = reader.readDateTime(offsets[5]);
+  object.plannedGrams = reader.readDouble(offsets[6]);
   return object;
 }
 
@@ -1142,15 +2477,28 @@ P _trackedFoodEntryDeserializeProp<P>(
     case 2:
       return (reader.readString(offset)) as P;
     case 3:
-      return (reader.readBool(offset)) as P;
+      return (_TrackedFoodEntryfrequencyValueEnumMap[
+              reader.readStringOrNull(offset)] ??
+          TrackingFrequency.daily) as P;
     case 4:
-      return (reader.readDateTime(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 5:
+      return (reader.readDateTime(offset)) as P;
+    case 6:
       return (reader.readDouble(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
 }
+
+const _TrackedFoodEntryfrequencyEnumValueMap = {
+  r'daily': r'daily',
+  r'weekly': r'weekly',
+};
+const _TrackedFoodEntryfrequencyValueEnumMap = {
+  r'daily': TrackingFrequency.daily,
+  r'weekly': TrackingFrequency.weekly,
+};
 
 extension TrackedFoodEntryQueryFilter
     on QueryBuilder<TrackedFoodEntry, TrackedFoodEntry, QFilterCondition> {
@@ -1487,6 +2835,142 @@ extension TrackedFoodEntryQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'foodTitle',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<TrackedFoodEntry, TrackedFoodEntry, QAfterFilterCondition>
+      frequencyEqualTo(
+    TrackingFrequency value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'frequency',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TrackedFoodEntry, TrackedFoodEntry, QAfterFilterCondition>
+      frequencyGreaterThan(
+    TrackingFrequency value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'frequency',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TrackedFoodEntry, TrackedFoodEntry, QAfterFilterCondition>
+      frequencyLessThan(
+    TrackingFrequency value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'frequency',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TrackedFoodEntry, TrackedFoodEntry, QAfterFilterCondition>
+      frequencyBetween(
+    TrackingFrequency lower,
+    TrackingFrequency upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'frequency',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TrackedFoodEntry, TrackedFoodEntry, QAfterFilterCondition>
+      frequencyStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'frequency',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TrackedFoodEntry, TrackedFoodEntry, QAfterFilterCondition>
+      frequencyEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'frequency',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TrackedFoodEntry, TrackedFoodEntry, QAfterFilterCondition>
+      frequencyContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'frequency',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TrackedFoodEntry, TrackedFoodEntry, QAfterFilterCondition>
+      frequencyMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'frequency',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TrackedFoodEntry, TrackedFoodEntry, QAfterFilterCondition>
+      frequencyIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'frequency',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<TrackedFoodEntry, TrackedFoodEntry, QAfterFilterCondition>
+      frequencyIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'frequency',
         value: '',
       ));
     });

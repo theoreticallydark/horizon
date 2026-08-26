@@ -78,15 +78,26 @@ const FoodSourceItemSchema = CollectionSchema(
       name: r'plannedDailyGrams',
       type: IsarType.double,
     ),
-    r'proteinIndex': PropertySchema(
+    r'plannedWeeklyGrams': PropertySchema(
       id: 12,
+      name: r'plannedWeeklyGrams',
+      type: IsarType.double,
+    ),
+    r'proteinIndex': PropertySchema(
+      id: 13,
       name: r'proteinIndex',
       type: IsarType.long,
     ),
     r'title': PropertySchema(
-      id: 13,
+      id: 14,
       name: r'title',
       type: IsarType.string,
+    ),
+    r'trackingFrequencyOverride': PropertySchema(
+      id: 15,
+      name: r'trackingFrequencyOverride',
+      type: IsarType.string,
+      enumMap: _FoodSourceItemtrackingFrequencyOverrideEnumValueMap,
     )
   },
   estimateSize: _foodSourceItemEstimateSize,
@@ -226,6 +237,12 @@ int _foodSourceItemEstimateSize(
     }
   }
   bytesCount += 3 + object.title.length * 3;
+  {
+    final value = object.trackingFrequencyOverride;
+    if (value != null) {
+      bytesCount += 3 + value.name.length * 3;
+    }
+  }
   return bytesCount;
 }
 
@@ -252,8 +269,10 @@ void _foodSourceItemSerialize(
     object.nutrients,
   );
   writer.writeDouble(offsets[11], object.plannedDailyGrams);
-  writer.writeLong(offsets[12], object.proteinIndex);
-  writer.writeString(offsets[13], object.title);
+  writer.writeDouble(offsets[12], object.plannedWeeklyGrams);
+  writer.writeLong(offsets[13], object.proteinIndex);
+  writer.writeString(offsets[14], object.title);
+  writer.writeString(offsets[15], object.trackingFrequencyOverride?.name);
 }
 
 FoodSourceItem _foodSourceItemDeserialize(
@@ -282,8 +301,11 @@ FoodSourceItem _foodSourceItemDeserialize(
       ) ??
       [];
   object.plannedDailyGrams = reader.readDouble(offsets[11]);
-  object.proteinIndex = reader.readLong(offsets[12]);
-  object.title = reader.readString(offsets[13]);
+  object.proteinIndex = reader.readLong(offsets[13]);
+  object.title = reader.readString(offsets[14]);
+  object.trackingFrequencyOverride =
+      _FoodSourceItemtrackingFrequencyOverrideValueEnumMap[
+          reader.readStringOrNull(offsets[15])];
   return object;
 }
 
@@ -325,13 +347,27 @@ P _foodSourceItemDeserializeProp<P>(
     case 11:
       return (reader.readDouble(offset)) as P;
     case 12:
-      return (reader.readLong(offset)) as P;
+      return (reader.readDouble(offset)) as P;
     case 13:
+      return (reader.readLong(offset)) as P;
+    case 14:
       return (reader.readString(offset)) as P;
+    case 15:
+      return (_FoodSourceItemtrackingFrequencyOverrideValueEnumMap[
+          reader.readStringOrNull(offset)]) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
 }
+
+const _FoodSourceItemtrackingFrequencyOverrideEnumValueMap = {
+  r'daily': r'daily',
+  r'weekly': r'weekly',
+};
+const _FoodSourceItemtrackingFrequencyOverrideValueEnumMap = {
+  r'daily': TrackingFrequency.daily,
+  r'weekly': TrackingFrequency.weekly,
+};
 
 Id _foodSourceItemGetId(FoodSourceItem object) {
   return object.id;
@@ -2117,6 +2153,72 @@ extension FoodSourceItemQueryFilter
   }
 
   QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterFilterCondition>
+      plannedWeeklyGramsEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'plannedWeeklyGrams',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterFilterCondition>
+      plannedWeeklyGramsGreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'plannedWeeklyGrams',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterFilterCondition>
+      plannedWeeklyGramsLessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'plannedWeeklyGrams',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterFilterCondition>
+      plannedWeeklyGramsBetween(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'plannedWeeklyGrams',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterFilterCondition>
       proteinIndexEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -2307,6 +2409,162 @@ extension FoodSourceItemQueryFilter
       ));
     });
   }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterFilterCondition>
+      trackingFrequencyOverrideIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'trackingFrequencyOverride',
+      ));
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterFilterCondition>
+      trackingFrequencyOverrideIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'trackingFrequencyOverride',
+      ));
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterFilterCondition>
+      trackingFrequencyOverrideEqualTo(
+    TrackingFrequency? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'trackingFrequencyOverride',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterFilterCondition>
+      trackingFrequencyOverrideGreaterThan(
+    TrackingFrequency? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'trackingFrequencyOverride',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterFilterCondition>
+      trackingFrequencyOverrideLessThan(
+    TrackingFrequency? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'trackingFrequencyOverride',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterFilterCondition>
+      trackingFrequencyOverrideBetween(
+    TrackingFrequency? lower,
+    TrackingFrequency? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'trackingFrequencyOverride',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterFilterCondition>
+      trackingFrequencyOverrideStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'trackingFrequencyOverride',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterFilterCondition>
+      trackingFrequencyOverrideEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'trackingFrequencyOverride',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterFilterCondition>
+      trackingFrequencyOverrideContains(String value,
+          {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'trackingFrequencyOverride',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterFilterCondition>
+      trackingFrequencyOverrideMatches(String pattern,
+          {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'trackingFrequencyOverride',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterFilterCondition>
+      trackingFrequencyOverrideIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'trackingFrequencyOverride',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterFilterCondition>
+      trackingFrequencyOverrideIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'trackingFrequencyOverride',
+        value: '',
+      ));
+    });
+  }
 }
 
 extension FoodSourceItemQueryObject
@@ -2472,6 +2730,20 @@ extension FoodSourceItemQuerySortBy
   }
 
   QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterSortBy>
+      sortByPlannedWeeklyGrams() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'plannedWeeklyGrams', Sort.asc);
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterSortBy>
+      sortByPlannedWeeklyGramsDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'plannedWeeklyGrams', Sort.desc);
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterSortBy>
       sortByProteinIndex() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'proteinIndex', Sort.asc);
@@ -2494,6 +2766,20 @@ extension FoodSourceItemQuerySortBy
   QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterSortBy> sortByTitleDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'title', Sort.desc);
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterSortBy>
+      sortByTrackingFrequencyOverride() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'trackingFrequencyOverride', Sort.asc);
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterSortBy>
+      sortByTrackingFrequencyOverrideDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'trackingFrequencyOverride', Sort.desc);
     });
   }
 }
@@ -2660,6 +2946,20 @@ extension FoodSourceItemQuerySortThenBy
   }
 
   QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterSortBy>
+      thenByPlannedWeeklyGrams() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'plannedWeeklyGrams', Sort.asc);
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterSortBy>
+      thenByPlannedWeeklyGramsDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'plannedWeeklyGrams', Sort.desc);
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterSortBy>
       thenByProteinIndex() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'proteinIndex', Sort.asc);
@@ -2682,6 +2982,20 @@ extension FoodSourceItemQuerySortThenBy
   QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterSortBy> thenByTitleDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'title', Sort.desc);
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterSortBy>
+      thenByTrackingFrequencyOverride() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'trackingFrequencyOverride', Sort.asc);
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterSortBy>
+      thenByTrackingFrequencyOverrideDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'trackingFrequencyOverride', Sort.desc);
     });
   }
 }
@@ -2766,6 +3080,13 @@ extension FoodSourceItemQueryWhereDistinct
   }
 
   QueryBuilder<FoodSourceItem, FoodSourceItem, QDistinct>
+      distinctByPlannedWeeklyGrams() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'plannedWeeklyGrams');
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QDistinct>
       distinctByProteinIndex() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'proteinIndex');
@@ -2776,6 +3097,14 @@ extension FoodSourceItemQueryWhereDistinct
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'title', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QDistinct>
+      distinctByTrackingFrequencyOverride({bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'trackingFrequencyOverride',
+          caseSensitive: caseSensitive);
     });
   }
 }
@@ -2865,6 +3194,13 @@ extension FoodSourceItemQueryProperty
     });
   }
 
+  QueryBuilder<FoodSourceItem, double, QQueryOperations>
+      plannedWeeklyGramsProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'plannedWeeklyGrams');
+    });
+  }
+
   QueryBuilder<FoodSourceItem, int, QQueryOperations> proteinIndexProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'proteinIndex');
@@ -2874,6 +3210,13 @@ extension FoodSourceItemQueryProperty
   QueryBuilder<FoodSourceItem, String, QQueryOperations> titleProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'title');
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, TrackingFrequency?, QQueryOperations>
+      trackingFrequencyOverrideProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'trackingFrequencyOverride');
     });
   }
 }

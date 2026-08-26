@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'alter/alter.dart';
 import 'data/services/isar_service.dart';
+import 'data/services/nutrition_tracking_service.dart';
 import 'horizon/horizon_application_header.dart';
 import 'horizon/horizon_bottom_navigation_bar_action.dart';
 import 'pages/routine_page.dart';
@@ -11,6 +12,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await IsarService.instance.init();
   await IsarService.instance.seedDemoRoutine();
+  await NutritionTrackingService().syncTrackRecordsWindow();
   runApp(const MyApp());
 }
 

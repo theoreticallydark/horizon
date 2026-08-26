@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart' hide Checkbox;
 import '../alter/alter.dart';
 
+/// HorizonListItemHost represents the host variants from Figma node `130:4671` (.HorizonListItem)
+/// Note: trackDailyChecked is handled dynamically via isChecked on trackDaily.
 enum HorizonListItemHost {
   trackDaily,
   trackWeekly,
-  routine,
-  add,
-  trackDailyChecked,
   trackWeeklyChecked,
+  routine,
   routineRemove,
+  add,
   addIsFavorite,
 }
 
 class HorizonListItem extends StatelessWidget {
   /// Component version for reference.
-  static const String version = '1.0.0';
+  static const String version = '1.4.0'; // trackWeekly dynamically renders ButtonIconGhost (add_box) or Checkbox (checked) based on isChecked
 
   final HorizonListItemHost host;
   final String title;
@@ -44,7 +45,7 @@ class HorizonListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     switch (host) {
-      // 1. Host = Track Daily (no subtitle, no left slot, right slot one is checkbox)
+      // 1. Host = Track Daily (hasSubtitle: false, hasLeftSlot: false, rightSlotOne: Checkbox with state based on isChecked)
       case HorizonListItemHost.trackDaily:
         return ListItem(
           title: title,
@@ -59,22 +60,7 @@ class HorizonListItem extends StatelessWidget {
           onTap: onTap,
         );
 
-      // 2. Host = Track Daily Checked
-      case HorizonListItemHost.trackDailyChecked:
-        return ListItem(
-          title: title,
-          hasSubtitle: false,
-          hasLeftSlot: false,
-          hasRightSlotTwo: false,
-          hasRightSlotOne: true,
-          rightSlotOne: Checkbox(
-            state: CheckboxState.checked,
-            onChanged: onCheckboxChanged,
-          ),
-          onTap: onTap,
-        );
-
-      // 3. Host = Track Weekly (has subtitle, no left slot, right slot one is checkbox)
+      // 2. Host = Track Weekly (hasSubtitle: true, hasLeftSlot: false, rightSlotOne: ButtonIconGhost(add_box) or Checkbox checked if isChecked)
       case HorizonListItemHost.trackWeekly:
         return ListItem(
           title: title,
@@ -83,14 +69,20 @@ class HorizonListItem extends StatelessWidget {
           hasLeftSlot: false,
           hasRightSlotTwo: false,
           hasRightSlotOne: true,
-          rightSlotOne: Checkbox(
-            state: isChecked ? CheckboxState.checked : CheckboxState.unchecked,
-            onChanged: onCheckboxChanged,
-          ),
+          rightSlotOne: isChecked
+              ? Checkbox(
+                  state: CheckboxState.checked,
+                  onChanged: onCheckboxChanged,
+                )
+              : ButtonIconGhost(
+                  icon: Icons.add_box_outlined,
+                  type: ButtonIconGhostType.primary,
+                  onTap: onRightActionTap,
+                ),
           onTap: onTap,
         );
 
-      // 4. Host = Track Weekly Checked
+      // 3. Host = Track Weekly Checked (hasSubtitle: true, hasLeftSlot: false, rightSlotOne: Checkbox Checked)
       case HorizonListItemHost.trackWeeklyChecked:
         return ListItem(
           title: title,
@@ -106,7 +98,7 @@ class HorizonListItem extends StatelessWidget {
           onTap: onTap,
         );
 
-      // 5. Host = Routine (has subtitle, left slot is secondary remove_circle_outline, right slot one is add_box)
+      // 4. Host = Routine (hasSubtitle: true, leftSlot: secondary remove_circle_outline, rightSlotOne: add_box)
       case HorizonListItemHost.routine:
         return ListItem(
           title: title,
@@ -128,7 +120,7 @@ class HorizonListItem extends StatelessWidget {
           onTap: onTap,
         );
 
-      // 6. Host = Routine Remove (has subtitle, left slot is RED remove_circle_outline, right slot one is add_box)
+      // 5. Host = Routine Remove (hasSubtitle: true, leftSlot: RED remove_circle_outline, rightSlotOne: add_box)
       case HorizonListItemHost.routineRemove:
         return ListItem(
           title: title,
@@ -150,7 +142,7 @@ class HorizonListItem extends StatelessWidget {
           onTap: onTap,
         );
 
-      // 7. Host = Add (has subtitle, left slot is unchecked toggle_icon favorite, right slot one is add_circle)
+      // 6. Host = Add (hasSubtitle: true, leftSlot: ToggleIcon unchecked, rightSlotOne: add_box)
       case HorizonListItemHost.add:
         return ListItem(
           title: title,
@@ -164,14 +156,14 @@ class HorizonListItem extends StatelessWidget {
           hasRightSlotTwo: false,
           hasRightSlotOne: true,
           rightSlotOne: ButtonIconGhost(
-            icon: Icons.add_circle_outline,
+            icon: Icons.add_box_outlined,
             type: ButtonIconGhostType.primary,
             onTap: onRightActionTap,
           ),
           onTap: onTap,
         );
 
-      // 8. Host = Add isFavorite (has subtitle, left slot is CHECKED toggle_icon favorite, right slot one is add_circle)
+      // 7. Host = Add Is Favorite (hasSubtitle: true, leftSlot: ToggleIcon checked, rightSlotOne: add_box)
       case HorizonListItemHost.addIsFavorite:
         return ListItem(
           title: title,
@@ -185,7 +177,7 @@ class HorizonListItem extends StatelessWidget {
           hasRightSlotTwo: false,
           hasRightSlotOne: true,
           rightSlotOne: ButtonIconGhost(
-            icon: Icons.add_circle_outline,
+            icon: Icons.add_box_outlined,
             type: ButtonIconGhostType.primary,
             onTap: onRightActionTap,
           ),
