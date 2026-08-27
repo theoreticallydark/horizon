@@ -125,7 +125,7 @@
   1. Created `HorizonDebugModal` (`lib/horizon/debug_modal.dart`) allowing real-time audit of Target vs Coverage (and raw amounts) for all 20 nutrients plus Calories and Protein across both Track View (Actual Consumed) and Routine View (Planned Routine).
   2. Added expandable contributing food breakdowns under each nutrient row, showing each source food item's consumed or planned grams and exact quantitative yield.
   3. Built interactive Time Simulator toolbar: supports stepping dates backward/forward ($\pm 1$ day) or resetting to real device time with live auto-refresh across all app streams, headers, and checklists.
-- **2026-08-26 10:10 AM** - Complete Removal of `firstOrNull` Across Codebase:
-  1. Audited and eliminated all occurrences of `.firstOrNull` from `NutritionTrackingService`, `RoutinePage`, and `TrackPage`, replacing them with explicit for-loops.
-  2. Verified 0 occurrences remain across the entire `lib/` directory and confirmed 0 compilation errors via `flutter analyze`.
+- **2026-08-26 10:15 AM** - Locked Frequency for Active Routine Foods:
+  1. Updated `updateFoodPlannedTarget()` and `syncTrackRecordsWindow()` in `NutritionTrackingService` so that foods already in routine preserve their tracking frequency (daily or weekly) when portions are stepped down or up.
+  2. Prevented daily foods from flipping to weekly goals while stepping down towards the 1g removal threshold.
 

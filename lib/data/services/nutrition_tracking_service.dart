@@ -182,12 +182,11 @@ class NutritionTrackingService {
         .isTrackedEqualTo(true)
         .findAll();
 
-    // Ensure all routine foods have their frequency up to date in the DB
+    // Ensure all routine foods have their frequency up to date in the DB (respecting locked frequency)
     bool foodsUpdated = false;
     for (final food in routineFoods) {
-      final computedFreq = food.calculateFrequency(profile: profile, allNutrients: allNutrients);
-      if (food.frequency != computedFreq) {
-        food.frequency = computedFreq;
+      if (food.trackingFrequencyOverride != null && food.frequency != food.trackingFrequencyOverride) {
+        food.frequency = food.trackingFrequencyOverride!;
         foodsUpdated = true;
       }
     }
@@ -463,9 +462,14 @@ class NutritionTrackingService {
     final clampedGrams = newTargetGrams.clamp(1.0, 99999.0);
     food.plannedDailyGrams = clampedGrams;
 
-    final profile = await _isar.userProfiles.get(1) ?? UserProfile();
-    final allNutrients = await _isar.nutrientInfos.where().findAll();
-    food.frequency = food.calculateFrequency(profile: profile, allNutrients: allNutrients);
+    // Lock frequency if food is already in routine to prevent accidental section flips while adjusting grams
+    if (food.trackingFrequencyOverride != null) {
+      food.frequency = food.trackingFrequencyOverride!;
+    } else if (!food.isTracked) {
+      final profile = await _isar.userProfiles.get(1) ?? UserProfile();
+      final allNutrients = await _isar.nutrientInfos.where().findAll();
+      food.frequency = food.calculateFrequency(profile: profile, allNutrients: allNutrients);
+    }
 
     await _isar.writeTxn(() async {
       await _isar.foodSourceItems.put(food);
