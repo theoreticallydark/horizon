@@ -268,9 +268,13 @@ class _RoutinePageState extends State<RoutinePage> {
                     double plannedTotal = 0.0;
                     for (final food in routineFoods) {
                       if (nutrient.nutrientKey == 'total_protein' && food.proteinIndex != 1) continue;
-                      final foodNutr = food.nutrients
-                          .where((n) => n.nutrientKey == nutrient.nutrientKey)
-                          .firstOrNull;
+                      FoodNutrientValue? foodNutr;
+                      for (final n in food.nutrients) {
+                        if (n.nutrientKey == nutrient.nutrientKey) {
+                          foodNutr = n;
+                          break;
+                        }
+                      }
                       if (foodNutr != null) {
                         plannedTotal += (food.plannedDailyGrams / 100.0) * foodNutr.amountPer100g;
                       }

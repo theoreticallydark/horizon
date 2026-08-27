@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'alter/alter.dart';
 import 'data/services/isar_service.dart';
 import 'data/services/nutrition_tracking_service.dart';
+import 'horizon/debug_modal.dart';
 import 'horizon/horizon_application_header.dart';
 import 'horizon/horizon_bottom_navigation_bar_action.dart';
 import 'pages/routine_page.dart';
@@ -107,6 +108,41 @@ class _HorizonAppShellState extends State<HorizonAppShell> {
                   onPrimaryActionTap: () {
                     debugPrint('Primary Action Button Tapped!');
                   },
+                ),
+              ),
+            ),
+
+            // Floating Debug & Time Travel Button (Top-Right of Viewport)
+            Positioned(
+              top: 14,
+              right: 14,
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: () {
+                    HorizonDebugModal.show(context, initialTabIndex: _currentIndex);
+                  },
+                  borderRadius: BorderRadius.circular(16),
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: AlterSemanticTokens.baseWhite.withAlpha(220),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: AlterSemanticTokens.stroke100),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withAlpha(15),
+                          blurRadius: 6,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: const Icon(
+                      Icons.bug_report,
+                      size: 20,
+                      color: AlterSemanticTokens.textPrimary,
+                    ),
+                  ),
                 ),
               ),
             ),

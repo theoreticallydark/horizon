@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:isar/isar.dart';
 import 'package:horizon/data/models/food_source_item.dart';
 import 'package:horizon/data/models/nutrient_info.dart';
@@ -13,6 +14,35 @@ class NutritionTrackingService {
       : _isarService = isarService ?? IsarService.instance;
 
   Isar get _isar => _isarService.isar;
+
+  /// Global simulated date notifier for time travel / debugging
+  static final ValueNotifier<DateTime> simulatedDateNotifier =
+      ValueNotifier<DateTime>(DateTime.now());
+
+  /// Current normalized date according to the time simulator
+  DateTime get currentDate => _normalizeDate(simulatedDateNotifier.value);
+
+  /// Current week Monday according to the time simulator
+  DateTime get currentWeekMonday => _normalizeWeekMonday(simulatedDateNotifier.value);
+
+  /// Shifts the simulated date by deltaDays (e.g. +1 or -1) and triggers window sync
+  Future<void> stepSimulatedDate(int deltaDays) async {
+    final newDate = simulatedDateNotifier.value.add(Duration(days: deltaDays));
+    simulatedDateNotifier.value = newDate;
+    await syncTrackRecordsWindow();
+  }
+
+  /// Resets simulated date to real device DateTime.now()
+  Future<void> resetSimulatedDateToToday() async {
+    simulatedDateNotifier.value = DateTime.now();
+    await syncTrackRecordsWindow();
+  }
+
+  /// Sets an explicit simulated date
+  Future<void> setSimulatedDate(DateTime date) async {
+    simulatedDateNotifier.value = date;
+    await syncTrackRecordsWindow();
+  }
 
   DateTime _normalizeDate(DateTime dt) => DateTime(dt.year, dt.month, dt.day);
 
@@ -140,9 +170,8 @@ class NutritionTrackingService {
 
   /// Synchronizes TrackRecordDaily across missed past dates & 3-day window, and current TrackRecordWeekly
   Future<void> syncTrackRecordsWindow() async {
-    final now = DateTime.now();
-    final today = _normalizeDate(now);
-    final thisWeekMonday = _normalizeWeekMonday(now);
+    final today = currentDate;
+    final thisWeekMonday = currentWeekMonday;
 
     final profile = await _isar.userProfiles.get(1) ?? UserProfile();
     final allNutrients = await _isar.nutrientInfos.where().findAll();
@@ -512,36 +541,53 @@ class NutritionTrackingService {
 
   /// Consolidated Track Page State Model
   Stream<TrackPageState> watchTrackPageState() {
-    final today = _normalizeDate(DateTime.now());
-    final thisWeekMonday = _normalizeWeekMonday(today);
-
-    // Watch both daily and weekly records simultaneously so checkboxes & steppers react immediately
-    final dailyStream = _isar.trackRecordDailys
-        .filter()
-        .dateEqualTo(today)
-        .watch(fireImmediately: true);
-
-    final weeklyStream = _isar.trackRecordWeeklys
-        .filter()
-        .weekStartDateEqualTo(thisWeekMonday)
-        .watch(fireImmediately: true);
-
     late StreamController<void> controller;
     StreamSubscription? dailySub;
     StreamSubscription? weeklySub;
+    VoidCallback? dateListener;
+
+    void updateSubscriptions(DateTime date) {
+      dailySub?.cancel();
+      weeklySub?.cancel();
+
+      final today = _normalizeDate(date);
+      final thisWeekMonday = _normalizeWeekMonday(date);
+
+      dailySub = _isar.trackRecordDailys
+          .filter()
+          .dateEqualTo(today)
+          .watch(fireImmediately: true)
+          .listen((_) => controller.add(null));
+
+      weeklySub = _isar.trackRecordWeeklys
+          .filter()
+          .weekStartDateEqualTo(thisWeekMonday)
+          .watch(fireImmediately: true)
+          .listen((_) => controller.add(null));
+    }
 
     controller = StreamController<void>(
       onListen: () {
-        dailySub = dailyStream.listen((_) => controller.add(null));
-        weeklySub = weeklyStream.listen((_) => controller.add(null));
+        updateSubscriptions(simulatedDateNotifier.value);
+        dateListener = () {
+          updateSubscriptions(simulatedDateNotifier.value);
+          controller.add(null);
+        };
+        simulatedDateNotifier.addListener(dateListener!);
       },
       onCancel: () {
         dailySub?.cancel();
         weeklySub?.cancel();
+        if (dateListener != null) {
+          simulatedDateNotifier.removeListener(dateListener!);
+        }
       },
     );
 
     return controller.stream.asyncMap((_) async {
+      final today = currentDate;
+      final thisWeekMonday = currentWeekMonday;
+
       final profile = await _isar.userProfiles.get(1) ?? UserProfile();
       final allNutrients = await _isar.nutrientInfos.where().findAll();
 
@@ -603,18 +649,22 @@ class NutritionTrackingService {
         // Calories from food.energy, or fallback to nutrient 'energy'
         double energyPer100g = food.energy;
         if (energyPer100g <= 0) {
-          final energyNutr = food.nutrients.where((n) => n.nutrientKey == 'energy').firstOrNull;
-          energyPer100g = energyNutr?.amountPer100g ?? 0.0;
+          for (final n in food.nutrients) {
+            if (n.nutrientKey == 'energy') {
+              energyPer100g = n.amountPer100g;
+              break;
+            }
+          }
         }
         totalEnergy += (portionGrams / 100.0) * energyPer100g;
 
         // Complete protein from food.nutrients where proteinIndex == 1
         if (food.proteinIndex == 1) {
-          final proteinNutrient = food.nutrients
-              .where((n) => n.nutrientKey == 'total_protein')
-              .firstOrNull;
-          if (proteinNutrient != null) {
-            totalCompleteProtein += (portionGrams / 100.0) * proteinNutrient.amountPer100g;
+          for (final n in food.nutrients) {
+            if (n.nutrientKey == 'total_protein') {
+              totalCompleteProtein += (portionGrams / 100.0) * n.amountPer100g;
+              break;
+            }
           }
         }
       }
@@ -626,13 +676,43 @@ class NutritionTrackingService {
   /// Watch stream for Track Page header: computes live consumed calories & complete protein vs planned routine targets
   Stream<({double consumedCalories, double plannedCalories, double consumedProtein, double plannedProtein})>
       watchTodayTrackHeaderEnergyAndProtein() {
-    final today = _normalizeDate(DateTime.now());
+    late StreamController<void> controller;
+    StreamSubscription? dailySub;
+    VoidCallback? dateListener;
 
-    return _isar.trackRecordDailys
-        .filter()
-        .dateEqualTo(today)
-        .watch(fireImmediately: true)
-        .asyncMap((dailyList) async {
+    void updateSub(DateTime date) {
+      dailySub?.cancel();
+      final today = _normalizeDate(date);
+      dailySub = _isar.trackRecordDailys
+          .filter()
+          .dateEqualTo(today)
+          .watch(fireImmediately: true)
+          .listen((_) => controller.add(null));
+    }
+
+    controller = StreamController<void>(
+      onListen: () {
+        updateSub(simulatedDateNotifier.value);
+        dateListener = () {
+          updateSub(simulatedDateNotifier.value);
+          controller.add(null);
+        };
+        simulatedDateNotifier.addListener(dateListener!);
+      },
+      onCancel: () {
+        dailySub?.cancel();
+        if (dateListener != null) {
+          simulatedDateNotifier.removeListener(dateListener!);
+        }
+      },
+    );
+
+    return controller.stream.asyncMap((_) async {
+      final today = currentDate;
+      final dailyList = await _isar.trackRecordDailys
+          .filter()
+          .dateEqualTo(today)
+          .findAll();
       final routineFoods = await _isar.foodSourceItems
           .filter()
           .isVisibleOnAppEqualTo(true)
@@ -648,17 +728,21 @@ class NutritionTrackingService {
         final portionGrams = food.plannedDailyGrams;
         double energyPer100g = food.energy;
         if (energyPer100g <= 0) {
-          final energyNutr = food.nutrients.where((n) => n.nutrientKey == 'energy').firstOrNull;
-          energyPer100g = energyNutr?.amountPer100g ?? 0.0;
+          for (final n in food.nutrients) {
+            if (n.nutrientKey == 'energy') {
+              energyPer100g = n.amountPer100g;
+              break;
+            }
+          }
         }
         plannedCal += (portionGrams / 100.0) * energyPer100g;
 
         if (food.proteinIndex == 1) {
-          final proteinNutrient = food.nutrients
-              .where((n) => n.nutrientKey == 'total_protein')
-              .firstOrNull;
-          if (proteinNutrient != null) {
-            plannedProt += (portionGrams / 100.0) * proteinNutrient.amountPer100g;
+          for (final n in food.nutrients) {
+            if (n.nutrientKey == 'total_protein') {
+              plannedProt += (portionGrams / 100.0) * n.amountPer100g;
+              break;
+            }
           }
         }
       }
@@ -680,17 +764,21 @@ class NutritionTrackingService {
 
           double energyPer100g = food.energy;
           if (energyPer100g <= 0) {
-            final energyNutr = food.nutrients.where((n) => n.nutrientKey == 'energy').firstOrNull;
-            energyPer100g = energyNutr?.amountPer100g ?? 0.0;
+            for (final n in food.nutrients) {
+              if (n.nutrientKey == 'energy') {
+                energyPer100g = n.amountPer100g;
+                break;
+              }
+            }
           }
           consumedCal += (logged.amountConsumedGrams / 100.0) * energyPer100g;
 
           if (food.proteinIndex == 1) {
-            final proteinNutrient = food.nutrients
-                .where((n) => n.nutrientKey == 'total_protein')
-                .firstOrNull;
-            if (proteinNutrient != null) {
-              consumedProt += (logged.amountConsumedGrams / 100.0) * proteinNutrient.amountPer100g;
+            for (final n in food.nutrients) {
+              if (n.nutrientKey == 'total_protein') {
+                consumedProt += (logged.amountConsumedGrams / 100.0) * n.amountPer100g;
+                break;
+              }
             }
           }
         }
@@ -706,7 +794,7 @@ class NutritionTrackingService {
   }
 
   Stream<TrackRecordDaily?> watchTodayDailyRecord() {
-    final today = _normalizeDate(DateTime.now());
+    final today = currentDate;
     return _isar.trackRecordDailys
         .filter()
         .dateEqualTo(today)
@@ -715,7 +803,7 @@ class NutritionTrackingService {
   }
 
   Stream<TrackRecordWeekly?> watchCurrentWeeklyRecord() {
-    final thisWeekMonday = _normalizeWeekMonday(DateTime.now());
+    final thisWeekMonday = currentWeekMonday;
     return _isar.trackRecordWeeklys
         .filter()
         .weekStartDateEqualTo(thisWeekMonday)
@@ -728,7 +816,7 @@ class NutritionTrackingService {
     required bool isChecked,
     DateTime? date,
   }) async {
-    final targetDate = _normalizeDate(date ?? DateTime.now());
+    final targetDate = _normalizeDate(date ?? currentDate);
     final thisWeekMonday = _normalizeWeekMonday(targetDate);
 
     final dailyRecord = await _isar.trackRecordDailys.getByDate(targetDate) ??
@@ -805,7 +893,7 @@ class NutritionTrackingService {
     required double deltaGrams,
     DateTime? date,
   }) async {
-    final targetDate = _normalizeDate(date ?? DateTime.now());
+    final targetDate = _normalizeDate(date ?? currentDate);
     final thisWeekMonday = _normalizeWeekMonday(targetDate);
 
     final weeklyRecord = await _isar.trackRecordWeeklys.getByWeekStartDate(thisWeekMonday) ??
@@ -877,36 +965,53 @@ class NutritionTrackingService {
   /// Consolidated NutrientMap State Model stream
   Stream<NutrientMapState> watchNutrientMapState(bool isTrackView) {
     if (isTrackView) {
-      final today = _normalizeDate(DateTime.now());
-      final thisWeekMonday = _normalizeWeekMonday(today);
-
-      // Watch both daily and weekly records simultaneously
-      final dailyStream = _isar.trackRecordDailys
-          .filter()
-          .dateEqualTo(today)
-          .watch(fireImmediately: true);
-
-      final weeklyStream = _isar.trackRecordWeeklys
-          .filter()
-          .weekStartDateEqualTo(thisWeekMonday)
-          .watch(fireImmediately: true);
-
       late StreamController<void> controller;
       StreamSubscription? dailySub;
       StreamSubscription? weeklySub;
+      VoidCallback? dateListener;
+
+      void updateSubscriptions(DateTime date) {
+        dailySub?.cancel();
+        weeklySub?.cancel();
+
+        final today = _normalizeDate(date);
+        final thisWeekMonday = _normalizeWeekMonday(date);
+
+        dailySub = _isar.trackRecordDailys
+            .filter()
+            .dateEqualTo(today)
+            .watch(fireImmediately: true)
+            .listen((_) => controller.add(null));
+
+        weeklySub = _isar.trackRecordWeeklys
+            .filter()
+            .weekStartDateEqualTo(thisWeekMonday)
+            .watch(fireImmediately: true)
+            .listen((_) => controller.add(null));
+      }
 
       controller = StreamController<void>(
         onListen: () {
-          dailySub = dailyStream.listen((_) => controller.add(null));
-          weeklySub = weeklyStream.listen((_) => controller.add(null));
+          updateSubscriptions(simulatedDateNotifier.value);
+          dateListener = () {
+            updateSubscriptions(simulatedDateNotifier.value);
+            controller.add(null);
+          };
+          simulatedDateNotifier.addListener(dateListener!);
         },
         onCancel: () {
           dailySub?.cancel();
           weeklySub?.cancel();
+          if (dateListener != null) {
+            simulatedDateNotifier.removeListener(dateListener!);
+          }
         },
       );
 
       return controller.stream.asyncMap((_) async {
+        final today = currentDate;
+        final thisWeekMonday = currentWeekMonday;
+
         final nutrients = await _isar.nutrientInfos
             .filter()
             .isVisibleOnAppEqualTo(true)

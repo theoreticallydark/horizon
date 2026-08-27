@@ -55,8 +55,20 @@ class TrackPage extends StatelessWidget {
           }
 
           final foodMap = state.foodMap;
-          final dailyFoods = state.dailyRecord?.loggedFoods ?? [];
-          final weeklyFoods = state.weeklyRecord?.loggedFoods ?? [];
+          final dailyFoods = (state.dailyRecord?.loggedFoods ?? [])
+              .where((f) {
+                final food = foodMap[f.foodId];
+                final freq = food?.frequency ?? f.frequency;
+                return freq == TrackingFrequency.daily;
+              })
+              .toList();
+          final weeklyFoods = (state.weeklyRecord?.loggedFoods ?? [])
+              .where((f) {
+                final food = foodMap[f.foodId];
+                final freq = food?.frequency ?? f.frequency;
+                return freq == TrackingFrequency.weekly;
+              })
+              .toList();
 
           final filteredDaily = dailyFoods
               .where((f) => _foodProvidesSelectedNutrient(f, foodMap))
@@ -89,15 +101,27 @@ class TrackPage extends StatelessWidget {
                     // Calculate total consumed contribution for this nutrient
                     final double consumedTotal;
                     if (isWeekly) {
-                      final summary = state.weeklyRecord?.nutrientSummaries
-                          .where((s) => s.nutrientKey == selectedNutrientKey)
-                          .firstOrNull;
-                      consumedTotal = summary?.amountConsumed ?? 0.0;
+                      double cVal = 0.0;
+                      if (state.weeklyRecord != null) {
+                        for (final s in state.weeklyRecord!.nutrientSummaries) {
+                          if (s.nutrientKey == selectedNutrientKey) {
+                            cVal = s.amountConsumed;
+                            break;
+                          }
+                        }
+                      }
+                      consumedTotal = cVal;
                     } else {
-                      final summary = state.dailyRecord?.nutrientSummaries
-                          .where((s) => s.nutrientKey == selectedNutrientKey)
-                          .firstOrNull;
-                      consumedTotal = summary?.amountConsumed ?? 0.0;
+                      double cVal = 0.0;
+                      if (state.dailyRecord != null) {
+                        for (final s in state.dailyRecord!.nutrientSummaries) {
+                          if (s.nutrientKey == selectedNutrientKey) {
+                            cVal = s.amountConsumed;
+                            break;
+                          }
+                        }
+                      }
+                      consumedTotal = cVal;
                     }
 
                     final rawUnit = nutrient.unit.isNotEmpty ? nutrient.unit.split('/').first.trim() : '';

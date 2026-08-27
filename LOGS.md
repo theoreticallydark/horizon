@@ -121,8 +121,11 @@
   2. Stepping a weekly food (e.g. $+60\text{g}$ Banana) immediately logs the exact $+60\text{g}$ intake into today's `TrackRecordDaily` and contributes its energy, protein, and micronutrients to today's header and pill map, while also rolling into the week's cumulative total.
   3. Checking a daily food immediately increments the weekly tracking record by its daily planned portion.
 - **2026-08-26 09:40 AM** - Fixed `FixedLengthListMixin` Exception in Tracking Service: converted `dailyRecord.loggedFoods` and `weeklyRecord.loggedFoods` into growable `List<TrackedFoodEntry>.from(...)` lists before performing mutations or additions, preventing runtime crashes when unchecking or stepping weekly items.
-- **2026-08-26 09:45 AM** - Universal Dual-Frequency Nutrition Tracking Architecture:
-  1. Refactored `NutritionTrackingService` so that daily food checkmarks directly accumulate into `TrackRecordWeekly`, and weekly goal steppers log real-time portions into `TrackRecordDaily`.
-  2. Simplified `watchNutrientMapState` on Track View: Daily Pills (7 Neutral Pills) read direct `percentageMet` from `TrackRecordDaily` (today vs daily target); Weekly Pills (13 Gray Pills) read direct `percentageMet` from `TrackRecordWeekly` (actual cumulative week intake vs weekly target).
-  3. Cleaned `TrackPage` filter metrics to read directly from database summaries and corrected `filteredWeekly[i]` list index references.
+- **2026-08-26 09:55 AM** - Built Horizon Debugger & Time Machine:
+  1. Created `HorizonDebugModal` (`lib/horizon/debug_modal.dart`) allowing real-time audit of Target vs Coverage (and raw amounts) for all 20 nutrients plus Calories and Protein across both Track View (Actual Consumed) and Routine View (Planned Routine).
+  2. Added expandable contributing food breakdowns under each nutrient row, showing each source food item's consumed or planned grams and exact quantitative yield.
+  3. Built interactive Time Simulator toolbar: supports stepping dates backward/forward ($\pm 1$ day) or resetting to real device time with live auto-refresh across all app streams, headers, and checklists.
+- **2026-08-26 10:10 AM** - Complete Removal of `firstOrNull` Across Codebase:
+  1. Audited and eliminated all occurrences of `.firstOrNull` from `NutritionTrackingService`, `RoutinePage`, and `TrackPage`, replacing them with explicit for-loops.
+  2. Verified 0 occurrences remain across the entire `lib/` directory and confirmed 0 compilation errors via `flutter analyze`.
 
