@@ -121,4 +121,8 @@
   2. Stepping a weekly food (e.g. $+60\text{g}$ Banana) immediately logs the exact $+60\text{g}$ intake into today's `TrackRecordDaily` and contributes its energy, protein, and micronutrients to today's header and pill map, while also rolling into the week's cumulative total.
   3. Checking a daily food immediately increments the weekly tracking record by its daily planned portion.
 - **2026-08-26 09:40 AM** - Fixed `FixedLengthListMixin` Exception in Tracking Service: converted `dailyRecord.loggedFoods` and `weeklyRecord.loggedFoods` into growable `List<TrackedFoodEntry>.from(...)` lists before performing mutations or additions, preventing runtime crashes when unchecking or stepping weekly items.
+- **2026-08-26 09:45 AM** - Universal Dual-Frequency Nutrition Tracking Architecture:
+  1. Refactored `NutritionTrackingService` so that daily food checkmarks directly accumulate into `TrackRecordWeekly`, and weekly goal steppers log real-time portions into `TrackRecordDaily`.
+  2. Simplified `watchNutrientMapState` on Track View: Daily Pills (7 Neutral Pills) read direct `percentageMet` from `TrackRecordDaily` (today vs daily target); Weekly Pills (13 Gray Pills) read direct `percentageMet` from `TrackRecordWeekly` (actual cumulative week intake vs weekly target).
+  3. Cleaned `TrackPage` filter metrics to read directly from database summaries and corrected `filteredWeekly[i]` list index references.
 

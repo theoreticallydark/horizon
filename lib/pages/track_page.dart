@@ -87,44 +87,17 @@ class TrackPage extends StatelessWidget {
                     final targetVal = state.targetMap[selectedNutrientKey] ?? 0.0;
 
                     // Calculate total consumed contribution for this nutrient
-                    double dailyConsumedTotal = 0.0;
-                    double weeklyConsumedTotal = 0.0;
-
-                    if (state.dailyRecord != null) {
-                      for (final entry in state.dailyRecord!.loggedFoods) {
-                        if (entry.amountConsumedGrams <= 0) continue;
-                        final food = foodMap[entry.foodId];
-                        if (food == null) continue;
-                        if (nutrient.nutrientKey == 'total_protein' && food.proteinIndex != 1) continue;
-                        final foodNutr = food.nutrients
-                            .where((n) => n.nutrientKey == nutrient.nutrientKey)
-                            .firstOrNull;
-                        if (foodNutr != null) {
-                          dailyConsumedTotal += (entry.amountConsumedGrams / 100.0) * foodNutr.amountPer100g;
-                        }
-                      }
-                    }
-
-                    if (state.weeklyRecord != null) {
-                      for (final entry in state.weeklyRecord!.loggedFoods) {
-                        if (entry.amountConsumedGrams <= 0) continue;
-                        final food = foodMap[entry.foodId];
-                        if (food == null) continue;
-                        if (nutrient.nutrientKey == 'total_protein' && food.proteinIndex != 1) continue;
-                        final foodNutr = food.nutrients
-                            .where((n) => n.nutrientKey == nutrient.nutrientKey)
-                            .firstOrNull;
-                        if (foodNutr != null) {
-                          weeklyConsumedTotal += (entry.amountConsumedGrams / 100.0) * foodNutr.amountPer100g;
-                        }
-                      }
-                    }
-
                     final double consumedTotal;
                     if (isWeekly) {
-                      consumedTotal = (dailyConsumedTotal * 7.0) + weeklyConsumedTotal;
+                      final summary = state.weeklyRecord?.nutrientSummaries
+                          .where((s) => s.nutrientKey == selectedNutrientKey)
+                          .firstOrNull;
+                      consumedTotal = summary?.amountConsumed ?? 0.0;
                     } else {
-                      consumedTotal = dailyConsumedTotal;
+                      final summary = state.dailyRecord?.nutrientSummaries
+                          .where((s) => s.nutrientKey == selectedNutrientKey)
+                          .firstOrNull;
+                      consumedTotal = summary?.amountConsumed ?? 0.0;
                     }
 
                     final rawUnit = nutrient.unit.isNotEmpty ? nutrient.unit.split('/').first.trim() : '';
@@ -237,24 +210,24 @@ class TrackPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 for (int i = 0; i < filteredWeekly.length; i++) ...[
-                      if (i > 0) const SizedBox(height: 8),
-                      Builder(
-                        builder: (context) {
-                          final item = weeklyFoods[i];
-                          final target = item.plannedGrams;
-                          final step = target > 0 ? target / 7.0 : 50.0;
-                          final isChecked = item.amountConsumedGrams >= target && target > 0;
+                  if (i > 0) const SizedBox(height: 8),
+                  Builder(
+                    builder: (context) {
+                      final item = filteredWeekly[i];
+                      final target = item.plannedGrams;
+                      final step = target > 0 ? target / 7.0 : 50.0;
+                      final isChecked = item.amountConsumedGrams >= target && target > 0;
 
-                          final consumedLabel = '${item.amountConsumedGrams.round()}g';
-                          final targetLabel = '${target.round()}g';
-                          final itemTitle = '${item.foodTitle}, $consumedLabel';
-                          final subtitleText = 'Target ($targetLabel)';
+                      final consumedLabel = '${item.amountConsumedGrams.round()}g';
+                      final targetLabel = '${target.round()}g';
+                      final itemTitle = '${item.foodTitle}, $consumedLabel';
+                      final subtitleText = 'Target ($targetLabel)';
 
-                          return HorizonListItem(
-                            title: itemTitle,
-                            subtitle: subtitleText,
-                            host: HorizonListItemHost.trackWeekly,
-                            isChecked: isChecked,
+                      return HorizonListItem(
+                        title: itemTitle,
+                        subtitle: subtitleText,
+                        host: HorizonListItemHost.trackWeekly,
+                        isChecked: isChecked,
                             onRightActionTap: () {
                               // Increases amountConsumed by weeklyTarget / 7
                               trackingService.updateWeeklyFoodIntake(

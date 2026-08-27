@@ -276,12 +276,8 @@ class NutritionTrackingService {
     for (final food in routineFoods) {
       final freq = food.frequency;
 
-      // Only weekly foods go into TrackRecordWeekly
+      // Only weekly foods require routine entries in TrackRecordWeekly
       if (freq != TrackingFrequency.weekly) {
-        if (existingMap.containsKey(food.foodId)) {
-          record.loggedFoods.removeWhere((f) => f.foodId == food.foodId);
-          modified = true;
-        }
         continue;
       }
 
@@ -774,13 +770,24 @@ class NutritionTrackingService {
     // Synchronize daily checkbox into the weekly record as well
     final weeklyEntryIndex = weeklyRecord.loggedFoods.indexWhere((f) => f.foodId == foodId);
     if (weeklyEntryIndex >= 0) {
-      // If food is tracked in weekly record, update its daily portion contribution
+      // If food is present in weekly record, update its daily portion contribution
       final currentWeekly = weeklyRecord.loggedFoods[weeklyEntryIndex].amountConsumedGrams;
       final newWeekly = isChecked
           ? (currentWeekly + food.plannedDailyGrams).clamp(0.0, 99999.0)
           : (currentWeekly - food.plannedDailyGrams).clamp(0.0, 99999.0);
       weeklyRecord.loggedFoods[weeklyEntryIndex].amountConsumedGrams = newWeekly;
       weeklyRecord.loggedFoods[weeklyEntryIndex].loggedAt = DateTime.now();
+    } else if (isChecked) {
+      weeklyRecord.loggedFoods.add(
+        TrackedFoodEntry()
+          ..foodId = food.foodId
+          ..foodTitle = food.title
+          ..amountConsumedGrams = food.plannedDailyGrams
+          ..plannedGrams = food.plannedWeeklyGrams
+          ..isFromRoutine = food.isTracked
+          ..frequency = food.frequency
+          ..loggedAt = DateTime.now(),
+      );
     }
 
     await _recalculateDailySummaries(dailyRecord);
@@ -900,7 +907,6 @@ class NutritionTrackingService {
       );
 
       return controller.stream.asyncMap((_) async {
-        final profile = await _isar.userProfiles.get(1) ?? UserProfile();
         final nutrients = await _isar.nutrientInfos
             .filter()
             .isVisibleOnAppEqualTo(true)
@@ -918,73 +924,28 @@ class NutritionTrackingService {
             .weekStartDateEqualTo(thisWeekMonday)
             .findFirst();
 
-        // Collect all consumed foods from both daily record and weekly record
-        final foodIds = <String>{};
+        final Map<String, double> dailySummariesMap = {};
         if (dailyRecord != null) {
-          foodIds.addAll(dailyRecord.loggedFoods.map((f) => f.foodId));
-        }
-        if (weeklyRecord != null) {
-          foodIds.addAll(weeklyRecord.loggedFoods.map((f) => f.foodId));
-        }
-
-        final foods = foodIds.isNotEmpty
-            ? await _isar.foodSourceItems
-                .filter()
-                .anyOf(foodIds.toList(), (q, String id) => q.foodIdEqualTo(id))
-                .findAll()
-            : <FoodSourceItem>[];
-        final foodMap = {for (var f in foods) f.foodId: f};
-
-        final Map<String, double> dailyConsumedTotals = {};
-        final Map<String, double> weeklyConsumedTotals = {};
-
-        if (dailyRecord != null) {
-          for (final logged in dailyRecord.loggedFoods) {
-            if (logged.amountConsumedGrams <= 0) continue;
-            final food = foodMap[logged.foodId];
-            if (food == null) continue;
-            for (final nutrient in food.nutrients) {
-              if (nutrient.nutrientKey == 'total_protein' && food.proteinIndex != 1) continue;
-              final consumed = (logged.amountConsumedGrams / 100.0) * nutrient.amountPer100g;
-              dailyConsumedTotals[nutrient.nutrientKey] =
-                  (dailyConsumedTotals[nutrient.nutrientKey] ?? 0.0) + consumed;
-            }
+          for (final s in dailyRecord.nutrientSummaries) {
+            dailySummariesMap[s.nutrientKey] = s.percentageMet;
           }
         }
 
+        final Map<String, double> weeklySummariesMap = {};
         if (weeklyRecord != null) {
-          for (final logged in weeklyRecord.loggedFoods) {
-            if (logged.amountConsumedGrams <= 0) continue;
-            final food = foodMap[logged.foodId];
-            if (food == null) continue;
-            for (final nutrient in food.nutrients) {
-              if (nutrient.nutrientKey == 'total_protein' && food.proteinIndex != 1) continue;
-              final consumed = (logged.amountConsumedGrams / 100.0) * nutrient.amountPer100g;
-              weeklyConsumedTotals[nutrient.nutrientKey] =
-                  (weeklyConsumedTotals[nutrient.nutrientKey] ?? 0.0) + consumed;
-            }
+          for (final s in weeklyRecord.nutrientSummaries) {
+            weeklySummariesMap[s.nutrientKey] = s.percentageMet;
           }
         }
 
         final Map<String, double> coverageResults = {};
         for (final nutrient in nutrients) {
-          final target = nutrient.calculateEffectiveTarget(profile);
-          if (target <= 0) {
-            coverageResults[nutrient.nutrientKey] = 0.0;
-            continue;
-          }
-
-          if (nutrient.frequency == TrackingFrequency.weekly) {
-            // Weekly nutrient: daily logged foods contribute (dailyConsumed * 7) towards weekly target,
-            // plus any actual weekly goal foods consumed this week.
-            final dailyContribution = (dailyConsumedTotals[nutrient.nutrientKey] ?? 0.0) * 7.0;
-            final weeklyContribution = weeklyConsumedTotals[nutrient.nutrientKey] ?? 0.0;
-            final totalWeeklyYield = dailyContribution + weeklyContribution;
-            coverageResults[nutrient.nutrientKey] = (totalWeeklyYield / target) * 100.0;
+          if (nutrient.frequency == TrackingFrequency.daily) {
+            // Daily Pill: direct percentage met from today's daily record
+            coverageResults[nutrient.nutrientKey] = dailySummariesMap[nutrient.nutrientKey] ?? 0.0;
           } else {
-            // Daily nutrient: daily consumed towards daily target
-            final dailyConsumed = dailyConsumedTotals[nutrient.nutrientKey] ?? 0.0;
-            coverageResults[nutrient.nutrientKey] = (dailyConsumed / target) * 100.0;
+            // Weekly Pill: direct percentage met from this week's cumulative record
+            coverageResults[nutrient.nutrientKey] = weeklySummariesMap[nutrient.nutrientKey] ?? 0.0;
           }
         }
 
