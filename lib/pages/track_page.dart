@@ -55,18 +55,40 @@ class TrackPage extends StatelessWidget {
           }
 
           final foodMap = state.foodMap;
+
+          // Daily Section: Shows active daily routine foods OR removed foods with consumption (>0g)
           final dailyFoods = (state.dailyRecord?.loggedFoods ?? [])
               .where((f) {
                 final food = foodMap[f.foodId];
+                final isTrackedRoutine = food?.isTracked ?? false;
                 final freq = food?.frequency ?? f.frequency;
-                return freq == TrackingFrequency.daily;
+
+                // 1. Active weekly routine foods belong EXCLUSIVELY to Weekly section (never in Daily)
+                if (isTrackedRoutine && freq == TrackingFrequency.weekly) {
+                  return false;
+                }
+
+                // 2. Active daily routine foods belong in Daily section
+                if (isTrackedRoutine && freq == TrackingFrequency.daily) {
+                  return true;
+                }
+
+                // 3. Removed foods (!isTracked) only appear in Daily if consumed on this day (>0g)
+                if (!isTrackedRoutine && f.amountConsumedGrams > 0) {
+                  return true;
+                }
+
+                return false;
               })
               .toList();
+
+          // Weekly Section: Shows ONLY active weekly routine foods
           final weeklyFoods = (state.weeklyRecord?.loggedFoods ?? [])
               .where((f) {
                 final food = foodMap[f.foodId];
+                final isTrackedRoutine = food?.isTracked ?? false;
                 final freq = food?.frequency ?? f.frequency;
-                return freq == TrackingFrequency.weekly;
+                return isTrackedRoutine && freq == TrackingFrequency.weekly;
               })
               .toList();
 
@@ -190,8 +212,10 @@ class TrackPage extends StatelessWidget {
                     builder: (context) {
                       final item = filteredDaily[i];
                       final isChecked = item.amountConsumedGrams > 0;
-                      final targetLabel = '${item.plannedGrams.round()}g';
-                      final itemTitle = '${item.foodTitle}, $targetLabel';
+                      final gramsLabel = isChecked
+                          ? '${item.amountConsumedGrams.round()}g'
+                          : '${item.plannedGrams.round()}g';
+                      final itemTitle = '${item.foodTitle}, $gramsLabel';
 
                       return HorizonListItem(
                         title: itemTitle,

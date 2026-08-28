@@ -65,7 +65,7 @@ class _HorizonDebugModalState extends State<HorizonDebugModal> {
             ),
           ),
 
-          // Header Title & Close Button
+          // Header Title & Actions
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
             child: Row(
@@ -76,16 +76,79 @@ class _HorizonDebugModalState extends State<HorizonDebugModal> {
                     const Icon(Icons.bug_report, size: 22, color: AlterSemanticTokens.textPrimary),
                     const SizedBox(width: 8),
                     Text(
-                      'Horizon Debugger & Time Machine',
+                      'Horizon Debugger',
                       style: AlterTypography.bodyBold.copyWith(
                         color: AlterSemanticTokens.textPrimary,
                       ),
                     ),
                   ],
                 ),
-                IconButton(
-                  icon: const Icon(Icons.close, size: 20),
-                  onPressed: () => Navigator.of(context).pop(),
+                Row(
+                  children: [
+                    // Reset Consumption Data Button (0g intake)
+                    TextButton.icon(
+                      icon: const Icon(Icons.restart_alt, size: 16, color: AlterSemanticTokens.textDanger),
+                      label: Text(
+                        'Reset Tracking',
+                        style: AlterTypography.captionBold.copyWith(
+                          color: AlterSemanticTokens.textDanger,
+                          fontSize: 11,
+                        ),
+                      ),
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        visualDensity: VisualDensity.compact,
+                        backgroundColor: AlterSemanticTokens.baseGray,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      ),
+                      onPressed: () async {
+                        await _trackingService.resetAllTrackingConsumptionData();
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('All tracking records reset to 0g consumed!'),
+                              duration: Duration(seconds: 2),
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                    const SizedBox(width: 6),
+
+                    // Reseed Demo Routine Button
+                    TextButton.icon(
+                      icon: const Icon(Icons.refresh, size: 16, color: AlterSemanticTokens.textCaution),
+                      label: Text(
+                        'Reset Routine',
+                        style: AlterTypography.captionBold.copyWith(
+                          color: AlterSemanticTokens.textCaution,
+                          fontSize: 11,
+                        ),
+                      ),
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        visualDensity: VisualDensity.compact,
+                        backgroundColor: AlterSemanticTokens.baseGray,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      ),
+                      onPressed: () async {
+                        await _trackingService.reseedDemoRoutine();
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Demo routine reseeded successfully! (100%+ Coverage)'),
+                              duration: Duration(seconds: 2),
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                    const SizedBox(width: 6),
+                    IconButton(
+                      icon: const Icon(Icons.close, size: 20),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -168,9 +231,9 @@ class _HorizonDebugModalState extends State<HorizonDebugModal> {
             },
           ),
 
-          // Scope Switcher (Track vs Routine)
+          // Scope Switcher (Track vs Routine vs Foods)
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Container(
               padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
@@ -179,78 +242,55 @@ class _HorizonDebugModalState extends State<HorizonDebugModal> {
               ),
               child: Row(
                 children: [
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () => setState(() => _selectedViewIndex = 0),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        decoration: BoxDecoration(
-                          color: _selectedViewIndex == 0
-                              ? AlterSemanticTokens.baseWhite
-                              : Colors.transparent,
-                          borderRadius: BorderRadius.circular(8),
-                          boxShadow: _selectedViewIndex == 0
-                              ? [
-                                  BoxShadow(
-                                    color: Colors.black.withAlpha(15),
-                                    blurRadius: 4,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ]
-                              : null,
-                        ),
-                        alignment: Alignment.center,
-                        child: Text(
-                          'Track View (Actual Consumed)',
-                          style: _selectedViewIndex == 0
-                              ? AlterTypography.captionBold.copyWith(color: AlterSemanticTokens.textPrimary)
-                              : AlterTypography.caption.copyWith(color: AlterSemanticTokens.textSecondary),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () => setState(() => _selectedViewIndex = 1),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        decoration: BoxDecoration(
-                          color: _selectedViewIndex == 1
-                              ? AlterSemanticTokens.baseWhite
-                              : Colors.transparent,
-                          borderRadius: BorderRadius.circular(8),
-                          boxShadow: _selectedViewIndex == 1
-                              ? [
-                                  BoxShadow(
-                                    color: Colors.black.withAlpha(15),
-                                    blurRadius: 4,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ]
-                              : null,
-                        ),
-                        alignment: Alignment.center,
-                        child: Text(
-                          'Routine View (Planned Routine)',
-                          style: _selectedViewIndex == 1
-                              ? AlterTypography.captionBold.copyWith(color: AlterSemanticTokens.textPrimary)
-                              : AlterTypography.caption.copyWith(color: AlterSemanticTokens.textSecondary),
-                        ),
-                      ),
-                    ),
-                  ),
+                  _buildTabButton(index: 0, label: 'Track View'),
+                  _buildTabButton(index: 1, label: 'Routine View'),
+                  _buildTabButton(index: 2, label: 'Foods & Freq'),
                 ],
               ),
             ),
           ),
 
-          // StreamBuilder for Target vs Coverage
+          // StreamBuilder for Active Tab
           Expanded(
             child: _selectedViewIndex == 0
                 ? _buildTrackViewAudit()
-                : _buildRoutineViewAudit(),
+                : _selectedViewIndex == 1
+                    ? _buildRoutineViewAudit()
+                    : _buildFoodsFrequencyManager(),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildTabButton({required int index, required String label}) {
+    final isSelected = _selectedViewIndex == index;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => setState(() => _selectedViewIndex = index),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          decoration: BoxDecoration(
+            color: isSelected ? AlterSemanticTokens.baseWhite : Colors.transparent,
+            borderRadius: BorderRadius.circular(8),
+            boxShadow: isSelected
+                ? [
+                    BoxShadow(
+                      color: Colors.black.withAlpha(15),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ]
+                : null,
+          ),
+          alignment: Alignment.center,
+          child: Text(
+            label,
+            style: isSelected
+                ? AlterTypography.captionBold.copyWith(color: AlterSemanticTokens.textPrimary)
+                : AlterTypography.caption.copyWith(color: AlterSemanticTokens.textSecondary),
+          ),
+        ),
       ),
     );
   }
@@ -792,4 +832,207 @@ class _HorizonDebugModalState extends State<HorizonDebugModal> {
       ),
     );
   }
+
+  Widget _buildFoodsFrequencyManager() {
+    return StreamBuilder<RoutinePageState>(
+      stream: _trackingService.watchRoutinePageState(),
+      builder: (context, snapshot) {
+        final state = snapshot.data;
+        if (state == null) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        final routineFoods = state.routineFoods;
+        if (routineFoods.isEmpty) {
+          return const Center(
+            child: Text(
+              'No active foods in routine.',
+              style: AlterTypography.caption,
+            ),
+          );
+        }
+
+        // Split into Daily and Weekly
+        final daily = routineFoods.where((f) => f.frequency == TrackingFrequency.daily).toList();
+        final weekly = routineFoods.where((f) => f.frequency == TrackingFrequency.weekly).toList();
+
+        return ListView(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          children: [
+            // Info Header Card
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: AlterSemanticTokens.baseGray,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.swap_horiz, size: 20, color: AlterSemanticTokens.textPrimary),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      'Toggle any active food between Daily and Weekly. Track & Routine views will update instantly.',
+                      style: AlterTypography.caption.copyWith(
+                        color: AlterSemanticTokens.textSecondary,
+                        fontSize: 11,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 12),
+
+            // Daily Foods Section
+            _buildSectionHeader(title: 'DAILY ROUTINE FOODS (${daily.length})', color: AlterSemanticTokens.textSuccess),
+            const SizedBox(height: 6),
+            for (final food in daily) ...[
+              _buildFoodFrequencyRow(food),
+              const Divider(height: 1, color: AlterSemanticTokens.stroke100),
+            ],
+            const SizedBox(height: 16),
+
+            // Weekly Foods Section
+            _buildSectionHeader(title: 'WEEKLY ROUTINE FOODS (${weekly.length})', color: AlterSemanticTokens.textCaution),
+            const SizedBox(height: 6),
+            for (final food in weekly) ...[
+              _buildFoodFrequencyRow(food),
+              const Divider(height: 1, color: AlterSemanticTokens.stroke100),
+            ],
+            const SizedBox(height: 40),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildSectionHeader({required String title, required Color color}) {
+    return Row(
+      children: [
+        Container(
+          width: 4,
+          height: 14,
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(2),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Text(
+          title,
+          style: AlterTypography.captionBold.copyWith(
+            color: AlterSemanticTokens.textPrimary,
+            fontSize: 11,
+            letterSpacing: 0.5,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFoodFrequencyRow(FoodSourceItem food) {
+    final isDaily = food.frequency == TrackingFrequency.daily;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+      child: Row(
+        children: [
+          // Food Title & Portion
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  food.title,
+                  style: AlterTypography.captionBold.copyWith(
+                    color: AlterSemanticTokens.textPrimary,
+                    fontSize: 13,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  isDaily
+                      ? 'Target: ${food.plannedDailyGrams.round()}g / day'
+                      : 'Target: ${food.plannedWeeklyGrams.round()}g / week (${food.plannedDailyGrams.round()}g daily base)',
+                  style: AlterTypography.caption.copyWith(
+                    color: AlterSemanticTokens.textSecondary,
+                    fontSize: 11,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Frequency Toggle Segmented Control
+          Container(
+            decoration: BoxDecoration(
+              color: AlterSemanticTokens.baseGray,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: AlterSemanticTokens.stroke100),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Daily Button
+                InkWell(
+                  onTap: isDaily
+                      ? null
+                      : () async {
+                          await _trackingService.setFoodFrequencyOverride(
+                            foodId: food.foodId,
+                            frequency: TrackingFrequency.daily,
+                          );
+                        },
+                  borderRadius: const BorderRadius.horizontal(left: Radius.circular(7)),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: isDaily ? AlterSemanticTokens.textSuccess.withAlpha(25) : Colors.transparent,
+                      borderRadius: const BorderRadius.horizontal(left: Radius.circular(7)),
+                    ),
+                    child: Text(
+                      'Daily',
+                      style: AlterTypography.captionBold.copyWith(
+                        color: isDaily ? AlterSemanticTokens.textSuccess : AlterSemanticTokens.textSecondary,
+                        fontSize: 11,
+                      ),
+                    ),
+                  ),
+                ),
+
+                // Weekly Button
+                InkWell(
+                  onTap: !isDaily
+                      ? null
+                      : () async {
+                          await _trackingService.setFoodFrequencyOverride(
+                            foodId: food.foodId,
+                            frequency: TrackingFrequency.weekly,
+                          );
+                        },
+                  borderRadius: const BorderRadius.horizontal(right: Radius.circular(7)),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: !isDaily ? AlterSemanticTokens.textCaution.withAlpha(25) : Colors.transparent,
+                      borderRadius: const BorderRadius.horizontal(right: Radius.circular(7)),
+                    ),
+                    child: Text(
+                      'Weekly',
+                      style: AlterTypography.captionBold.copyWith(
+                        color: !isDaily ? AlterSemanticTokens.textCaution : AlterSemanticTokens.textSecondary,
+                        fontSize: 11,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
+

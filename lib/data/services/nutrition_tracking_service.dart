@@ -243,11 +243,15 @@ class NutritionTrackingService {
     for (final food in routineFoods) {
       final freq = food.frequency;
 
-      // Only daily foods go into TrackRecordDaily
+      // Only daily foods belong as routine entries in TrackRecordDaily.
+      // Non-daily foods with recorded consumption (>0g) must be preserved!
       if (freq != TrackingFrequency.daily) {
         if (existingMap.containsKey(food.foodId)) {
-          record.loggedFoods.removeWhere((f) => f.foodId == food.foodId);
-          modified = true;
+          final existing = existingMap[food.foodId]!;
+          if (existing.amountConsumedGrams <= 0) {
+            record.loggedFoods.removeWhere((f) => f.foodId == food.foodId);
+            modified = true;
+          }
         }
         continue;
       }
@@ -391,6 +395,43 @@ class NutritionTrackingService {
     await syncTrackRecordsWindow();
   }
 
+  /// Reseeds the demo routine and re-syncs all track record windows
+  Future<void> reseedDemoRoutine() async {
+    await _isarService.seedDemoRoutine();
+    await syncTrackRecordsWindow();
+  }
+
+  /// Resets all tracking consumption data to 0g across all days and weeks
+  Future<void> resetAllTrackingConsumptionData() async {
+    final allDailies = await _isar.trackRecordDailys.where().findAll();
+    final allWeeklies = await _isar.trackRecordWeeklys.where().findAll();
+
+    await _isar.writeTxn(() async {
+      for (final d in allDailies) {
+        d.loggedFoods = List<TrackedFoodEntry>.from(d.loggedFoods);
+        // Retain only routine foods with 0g consumed
+        d.loggedFoods.removeWhere((f) => !f.isFromRoutine);
+        for (final f in d.loggedFoods) {
+          f.amountConsumedGrams = 0.0;
+        }
+        await _recalculateDailySummaries(d);
+        await _isar.trackRecordDailys.put(d);
+      }
+
+      for (final w in allWeeklies) {
+        w.loggedFoods = List<TrackedFoodEntry>.from(w.loggedFoods);
+        w.loggedFoods.removeWhere((f) => !f.isFromRoutine);
+        for (final f in w.loggedFoods) {
+          f.amountConsumedGrams = 0.0;
+        }
+        await _recalculateWeeklySummaries(w);
+        await _isar.trackRecordWeeklys.put(w);
+      }
+    });
+
+    await syncTrackRecordsWindow();
+  }
+
   Future<void> handleRoutineFoodRemoved(String foodId) async {
     final food = await _isar.foodSourceItems.getByFoodId(foodId);
     if (food == null) return;
@@ -406,14 +447,19 @@ class NutritionTrackingService {
       await _isar.foodSourceItems.put(food);
     });
 
-    final today = _normalizeDate(DateTime.now());
+    final today = currentDate;
 
     // Daily Record
     final todayDaily = await _isar.trackRecordDailys.getByDate(today);
     if (todayDaily != null) {
+      todayDaily.loggedFoods = List<TrackedFoodEntry>.from(todayDaily.loggedFoods);
       final entryIndex = todayDaily.loggedFoods.indexWhere((f) => f.foodId == foodId);
-      if (entryIndex >= 0 && todayDaily.loggedFoods[entryIndex].amountConsumedGrams <= 0) {
-        todayDaily.loggedFoods.removeAt(entryIndex);
+      if (entryIndex >= 0) {
+        if (todayDaily.loggedFoods[entryIndex].amountConsumedGrams <= 0) {
+          todayDaily.loggedFoods.removeAt(entryIndex);
+        } else {
+          todayDaily.loggedFoods[entryIndex].isFromRoutine = false;
+        }
         await _recalculateDailySummaries(todayDaily);
         await _isar.writeTxn(() async {
           await _isar.trackRecordDailys.put(todayDaily);
@@ -421,7 +467,7 @@ class NutritionTrackingService {
       }
     }
 
-    // Future daily records
+    // Future daily records (clean up unconsumed placeholders)
     final futureDailies = await _isar.trackRecordDailys
         .filter()
         .dateGreaterThan(today)
@@ -429,7 +475,11 @@ class NutritionTrackingService {
     if (futureDailies.isNotEmpty) {
       await _isar.writeTxn(() async {
         for (final r in futureDailies) {
-          r.loggedFoods.removeWhere((f) => f.foodId == foodId);
+          r.loggedFoods = List<TrackedFoodEntry>.from(r.loggedFoods);
+          r.loggedFoods.removeWhere((f) => f.foodId == foodId && f.amountConsumedGrams <= 0);
+          for (final f in r.loggedFoods) {
+            if (f.foodId == foodId) f.isFromRoutine = false;
+          }
           await _recalculateDailySummaries(r);
           await _isar.trackRecordDailys.put(r);
         }
@@ -437,18 +487,25 @@ class NutritionTrackingService {
     }
 
     // Weekly record
-    final thisWeekMonday = _normalizeWeekMonday(today);
+    final thisWeekMonday = currentWeekMonday;
     final weekRecord = await _isar.trackRecordWeeklys.getByWeekStartDate(thisWeekMonday);
     if (weekRecord != null) {
+      weekRecord.loggedFoods = List<TrackedFoodEntry>.from(weekRecord.loggedFoods);
       final entryIndex = weekRecord.loggedFoods.indexWhere((f) => f.foodId == foodId);
-      if (entryIndex >= 0 && weekRecord.loggedFoods[entryIndex].amountConsumedGrams <= 0) {
-        weekRecord.loggedFoods.removeAt(entryIndex);
+      if (entryIndex >= 0) {
+        if (weekRecord.loggedFoods[entryIndex].amountConsumedGrams <= 0) {
+          weekRecord.loggedFoods.removeAt(entryIndex);
+        } else {
+          weekRecord.loggedFoods[entryIndex].isFromRoutine = false;
+        }
         await _recalculateWeeklySummaries(weekRecord);
         await _isar.writeTxn(() async {
           await _isar.trackRecordWeeklys.put(weekRecord);
         });
       }
     }
+
+    await syncTrackRecordsWindow();
   }
 
   /// Updates a food's planned portion/target in routine and re-syncs track records
@@ -525,7 +582,6 @@ class NutritionTrackingService {
       final profile = await _isar.userProfiles.get(1) ?? UserProfile();
       final allNutrients = await _isar.nutrientInfos.where().findAll();
 
-      // Pre-compute effective targets for fast O(1) in-memory lookup
       final targetMap = <String, double>{};
       final nutrientMap = <String, NutrientInfo>{};
       for (final n in allNutrients) {
@@ -611,7 +667,19 @@ class NutritionTrackingService {
           .weekStartDateEqualTo(thisWeekMonday)
           .findFirst();
 
-      final foodMap = {for (var f in routineFoods) f.foodId: f};
+      // Gather all referenced food IDs from routine + daily record + weekly record
+      final allReferencedIds = <String>{
+        ...routineFoods.map((f) => f.foodId),
+        if (dailyRecord != null) ...dailyRecord.loggedFoods.map((f) => f.foodId),
+        if (weeklyRecord != null) ...weeklyRecord.loggedFoods.map((f) => f.foodId),
+      }.toList();
+
+      final allFoods = await _isar.foodSourceItems
+          .filter()
+          .anyOf(allReferencedIds, (q, String id) => q.foodIdEqualTo(id))
+          .findAll();
+
+      final foodMap = {for (var f in allFoods) f.foodId: f};
       final targetMap = <String, double>{};
       final nutrientMap = <String, NutrientInfo>{};
       for (final n in allNutrients) {

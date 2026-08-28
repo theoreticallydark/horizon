@@ -125,7 +125,13 @@
   1. Created `HorizonDebugModal` (`lib/horizon/debug_modal.dart`) allowing real-time audit of Target vs Coverage (and raw amounts) for all 20 nutrients plus Calories and Protein across both Track View (Actual Consumed) and Routine View (Planned Routine).
   2. Added expandable contributing food breakdowns under each nutrient row, showing each source food item's consumed or planned grams and exact quantitative yield.
   3. Built interactive Time Simulator toolbar: supports stepping dates backward/forward ($\pm 1$ day) or resetting to real device time with live auto-refresh across all app streams, headers, and checklists.
-- **2026-08-26 10:15 AM** - Locked Frequency for Active Routine Foods:
-  1. Updated `updateFoodPlannedTarget()` and `syncTrackRecordsWindow()` in `NutritionTrackingService` so that foods already in routine preserve their tracking frequency (daily or weekly) when portions are stepped down or up.
-  2. Prevented daily foods from flipping to weekly goals while stepping down towards the 1g removal threshold.
-
+- **2026-08-26 10:20 AM** - Robust Handling of Routine Food Removal & History Retention:
+  1. Updated `handleRoutineFoodRemoved()` in `NutritionTrackingService` so that when a food is removed from routine, unconsumed ($0\text{g}$) placeholder entries are cleaned up, but any previously consumed ($>0\text{g}$) records are preserved across past and current daily logs (`isFromRoutine = false`).
+  2. Updated `TrackPage` (`lib/pages/track_page.dart`) section list filtering:
+     - Daily section shows all active daily routine foods PLUS any food item with consumption on that day ($>0\text{g}$), even if removed from routine or originally a weekly food.
+     - Weekly section shows only active weekly routine foods (`!isTracked` items drop out of future weekly goals).
+  3. Extended `watchTrackPageState()` to load all referenced foods into `foodMap` so removed items retain their titles and nutritional values when rendered.
+- **2026-08-26 10:45 AM** - Upgraded Debug Modal with Food Frequency Switcher & Refined UI:
+  1. Added **Foods & Freq** tab to `HorizonDebugModal` (`lib/horizon/debug_modal.dart`), categorizing routine foods into Daily and Weekly sections with interactive segmented toggle switches.
+  2. Tapping `Daily` or `Weekly` triggers `NutritionTrackingService.setFoodFrequencyOverride()`, dynamically reassigning the food's frequency and instantly re-syncing Track Page sections, checklists, and Routine Page coverage without requiring manual gram edits.
+  3. Polished tab bar navigation, headers, and section indicators.
