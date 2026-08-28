@@ -135,3 +135,24 @@
   1. Added **Foods & Freq** tab to `HorizonDebugModal` (`lib/horizon/debug_modal.dart`), categorizing routine foods into Daily and Weekly sections with interactive segmented toggle switches.
   2. Tapping `Daily` or `Weekly` triggers `NutritionTrackingService.setFoodFrequencyOverride()`, dynamically reassigning the food's frequency and instantly re-syncing Track Page sections, checklists, and Routine Page coverage without requiring manual gram edits.
   3. Polished tab bar navigation, headers, and section indicators.
+- **2026-08-28 10:45 AM** - Built `Search` component (v1.0.0) in `lib/alter/components/search/search.dart` matching Figma node `130:11237` (Component Set `Search` with `State=Default`, `State=Typing`, and `State=Typed` variants) using `AlterSemanticTokens` and `AlterTypography.geistFont`.
+- **2026-08-28 10:52 AM** - Refactored `Search` component to `v1.0.1`: removed extra non-Figma leading/trailing slots to strictly adhere to Figma node `130:11237`.
+- **2026-08-28 10:54 AM** - Removed component preview from `StatsPage` (`lib/pages/stats_page.dart`), restoring clean placeholder view.
+
+---
+
+## 3. Truth Table Matrix: Track Page Single Unique Entity Display Rules
+
+The table below defines how every food item is rendered on the **Track Page** across its lifecycle states (Routine status, Tracking frequency, and Consumption history), strictly guaranteeing that **each food is rendered at most once** (no duplicate rows between Daily Foods and Weekly Goals) while maintaining immutable historical records.
+
+| Routine Status | Tracking Frequency | Consumed Today (`> 0g`) | Appears in Daily Foods? | Appears in Weekly Goals? | Total Times Rendered | Behavior / Notes |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Active Routine** (`isTracked: true`) | `daily` | `0g` (Unchecked) | **YES** (Checkbox: `0g`) | NO | **1** | Planned daily habit waiting for checkoff. |
+| **Active Routine** (`isTracked: true`) | `daily` | `> 0g` (Checked) | **YES** (Checkbox: `Done`) | NO | **1** | Completed daily habit for today. |
+| **Active Routine** (`isTracked: true`) | `weekly` | `0g` (Unstepped) | NO | **YES** (Stepper: `0g`) | **1** | Active weekly goal for current week. |
+| **Active Routine** (`isTracked: true`) | `weekly` | `> 0g` (Stepped) | **NO** *(Duplicate Blocked)* | **YES** (Stepper: `+Xg`) | **1** | Consumed delta logs in background for daily macros, but remains strictly in Weekly Goals UI. |
+| **Removed from Routine** (`isTracked: false`) | `daily` | `0g` (Unconsumed) | NO | NO | **0** | Placeholder cleaned up; no ghost items. |
+| **Removed from Routine** (`isTracked: false`) | `daily` | `> 0g` (Historical Log) | **YES** (Logged: `Xg`) | NO | **1** | Preserved consumption history on that specific day (`isFromRoutine: false`). |
+| **Removed from Routine** (`isTracked: false`) | `weekly` | `0g` (Unconsumed) | NO | NO | **0** | Drops out of Weekly Goals; no ghost items. |
+| **Removed from Routine** (`isTracked: false`) | `weekly` | `> 0g` (Historical Log) | **YES** (Logged: `Xg`) | NO | **1** | Preserved consumption history in Daily section for that day; dropped from Weekly Goals. |
+

@@ -9,6 +9,7 @@ export 'components/buttons/button_icon.dart';
 export 'components/buttons/button_icon_ghost.dart';
 export 'components/buttons/button_text.dart';
 export 'components/list_item.dart';
+export 'components/search/search.dart';
 export 'components/selects/checkbox.dart';
 export 'components/selects/toggle_icon.dart';
 export 'styles/swatches.dart';

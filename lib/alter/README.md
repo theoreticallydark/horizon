@@ -63,6 +63,11 @@ MaterialApp(
 | **`ButtonGraphicImage`** | `v1.0.1` | Compact `48x48` icon button container. | Node `28:875` |
 | **`ButtonGraphicText`** | `v1.0.1` | Dual-label badge button (customizable `title` & `subtitle`). | Node `28:876` |
 
+### Input Components (`lib/alter/components/search/`)
+| Component | Version | Description | Figma Node |
+| :--- | :--- | :--- | :--- |
+| **`Search`** | `v1.0.1` | Reusable search input field with 20px rounded corners, 64px height, supporting Default, Typing, and Typed states. | Node `130:11237` |
+
 ### Private Components
 - **`.BottomNavigationItem` (`v1.0.1`, Node `1:392`)**: `lib/alter/components/bottom_navigation/bottom_navigation_item.dart`
 - **`.BottomNavigationButton` (`v1.0.1`, Node `60:1950`)**: `lib/alter/components/bottom_navigation/bottom_navigation_button.dart`
