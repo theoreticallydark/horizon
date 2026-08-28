@@ -4,15 +4,20 @@ import '../alter/alter.dart';
 import '../data/models/food_source_item.dart';
 import '../data/models/nutrient_info.dart';
 import '../data/services/nutrition_tracking_service.dart';
+import '../horizon/horizon_add_source.dart';
 import '../horizon/horizon_list_item.dart';
 import '../horizon/horizon_title_bar.dart';
 
 class RoutinePage extends StatefulWidget {
   final String? selectedNutrientKey;
+  final bool isAddSourceOpen;
+  final VoidCallback? onAddSourceClose;
 
   const RoutinePage({
     super.key,
     this.selectedNutrientKey,
+    this.isAddSourceOpen = false,
+    this.onAddSourceClose,
   });
 
   @override
@@ -220,13 +225,16 @@ class _RoutinePageState extends State<RoutinePage> {
     return Container(
       width: double.infinity,
       height: double.infinity,
-      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: AlterSemanticTokens.baseWhite,
         borderRadius: BorderRadius.circular(24),
       ),
-      child: StreamBuilder<RoutinePageState>(
-        stream: _trackingService.watchRoutinePageState(),
+      child: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(24),
+            child: StreamBuilder<RoutinePageState>(
+              stream: _trackingService.watchRoutinePageState(),
         builder: (context, snapshot) {
           final state = snapshot.data;
           if (state == null) {
@@ -394,6 +402,18 @@ class _RoutinePageState extends State<RoutinePage> {
           );
         },
       ),
+    ),
+
+    // HorizonAddSource Overlay
+    if (widget.isAddSourceOpen)
+      Positioned.fill(
+        child: HorizonAddSource(
+          selectedNutrientKey: widget.selectedNutrientKey,
+          onDone: widget.onAddSourceClose,
+        ),
+      ),
+  ],
+),
     );
   }
 }

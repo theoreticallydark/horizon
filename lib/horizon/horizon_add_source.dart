@@ -14,6 +14,7 @@ import 'horizon_title_bar.dart';
 /// - Child 1: `HorizonTitleBar` ('Add new source' / 'Quantities are editable post selection of source').
 /// - Child 2: `FoodSourcesListContainer` (gap=16, no padding) with `HorizonListItem`'s ADD variant.
 ///   - Alphabetically sorted food sources.
+///   - Reactively filterable by Application Header's `NutrientMap` (`selectedNutrientKey`).
 ///   - Retains foods in the list during session even when added (`isTracked` becomes true).
 ///   - `add_circle` button switches to `checkbox` filled on add.
 ///   - Clicking `checkbox` filled switches it back to `add_circle` and sets `isTracked = false`.
@@ -27,25 +28,34 @@ import 'horizon_title_bar.dart';
 ///   - `ButtonIcon` Gray 64x64 with `search` (toggles Search bar, selected state `stroke1000`).
 class HorizonAddSource extends StatefulWidget {
   /// Component version for reference.
-  /// v1.1.0: Added bidirectional tracking toggle (checkbox -> button_ghost with isTracked=false), 64x64 ButtonIcon size, alphabetical sorting, and undulled transparent modal barrier.
-  static const String version = '1.1.0';
+  /// v1.2.0: Added `selectedNutrientKey` reactive filtering from Application Header's Nutrient Map.
+  static const String version = '1.2.0';
 
+  final String? selectedNutrientKey;
   final VoidCallback? onDone;
 
   const HorizonAddSource({
     super.key,
+    this.selectedNutrientKey,
     this.onDone,
   });
 
   /// Opens HorizonAddSource as a bottom-up modal covering the Routine page area.
-  static Future<void> show(BuildContext context, {VoidCallback? onDone}) {
+  static Future<void> show(
+    BuildContext context, {
+    String? selectedNutrientKey,
+    VoidCallback? onDone,
+  }) {
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
       backgroundColor: Colors.transparent,
       barrierColor: Colors.transparent, // Background is not dulled
-      builder: (context) => HorizonAddSource(onDone: onDone),
+      builder: (context) => HorizonAddSource(
+        selectedNutrientKey: selectedNutrientKey,
+        onDone: onDone,
+      ),
     );
   }
 
@@ -141,8 +151,25 @@ class _HorizonAddSourceState extends State<HorizonAddSource> {
     return selected.map((e) => '${e.key} ${e.value.round()}%').join(' • ');
   }
 
+  bool _foodProvidesSelectedNutrient(FoodSourceItem food) {
+    if (widget.selectedNutrientKey == null) return true;
+
+    final foodNutrientKeys = {
+      for (final n in food.nutrients)
+        if (n.amountPer100g > 0 &&
+            (n.nutrientKey != 'total_protein' || food.proteinIndex == 1))
+          n.nutrientKey
+    };
+
+    return foodNutrientKeys.contains(widget.selectedNutrientKey);
+  }
+
   List<FoodSourceItem> _getFilteredFoods() {
     return _foodList.where((food) {
+      // Nutrient filter from Header NutrientMap
+      if (!_foodProvidesSelectedNutrient(food)) {
+        return false;
+      }
       // Favorite filter
       if (_isFavoriteFilterActive && !food.isFavorite) {
         return false;
@@ -187,15 +214,13 @@ class _HorizonAddSourceState extends State<HorizonAddSource> {
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-
     return Container(
       width: double.infinity,
-      height: screenHeight * 0.92,
+      height: double.infinity,
       padding: const EdgeInsets.all(24),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: AlterSemanticTokens.baseWhite,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        borderRadius: BorderRadius.circular(24),
       ),
       child: _isLoading || _state == null
           ? const Center(
@@ -240,13 +265,21 @@ class _HorizonAddSourceState extends State<HorizonAddSource> {
     final filteredFoods = _getFilteredFoods();
 
     if (filteredFoods.isEmpty) {
+      final nutrientName = widget.selectedNutrientKey != null &&
+              _state?.nutrientMap.containsKey(widget.selectedNutrientKey) == true
+          ? _state!.nutrientMap[widget.selectedNutrientKey]!.displayName
+          : null;
+
       return Center(
         child: Text(
-          _isSearchActive && _searchQuery.isNotEmpty
-              ? 'No matching food sources found'
-              : _isFavoriteFilterActive
-                  ? 'No favorite food sources'
-                  : 'No available food sources',
+          nutrientName != null
+              ? 'No food sources providing $nutrientName'
+              : _isSearchActive && _searchQuery.isNotEmpty
+                  ? 'No matching food sources found'
+                  : _isFavoriteFilterActive
+                      ? 'No favorite food sources'
+                      : 'No available food sources',
+          textAlign: TextAlign.center,
           style: AlterTypography.caption.copyWith(
             color: AlterSemanticTokens.textSecondary,
           ),
@@ -300,7 +333,6 @@ class _HorizonAddSourceState extends State<HorizonAddSource> {
             size: ButtonSize.large,
             onTap: () {
               widget.onDone?.call();
-              Navigator.of(context).pop();
             },
           ),
         ),

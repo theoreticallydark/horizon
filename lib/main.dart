@@ -3,7 +3,6 @@ import 'alter/alter.dart';
 import 'data/services/isar_service.dart';
 import 'data/services/nutrition_tracking_service.dart';
 import 'horizon/debug_modal.dart';
-import 'horizon/horizon_add_source.dart';
 import 'horizon/horizon_application_header.dart';
 import 'horizon/horizon_bottom_navigation_bar_action.dart';
 import 'pages/routine_page.dart';
@@ -43,6 +42,7 @@ class HorizonAppShell extends StatefulWidget {
 class _HorizonAppShellState extends State<HorizonAppShell> {
   int _currentIndex = 0;
   String? _selectedNutrientKey;
+  bool _isAddSourceOpen = false;
 
   void _handleNutrientTap(String nutrientKey) {
     setState(() {
@@ -59,7 +59,11 @@ class _HorizonAppShellState extends State<HorizonAppShell> {
     final pages = [
       TrackPage(selectedNutrientKey: _selectedNutrientKey),
       const StatsPage(),
-      RoutinePage(selectedNutrientKey: _selectedNutrientKey),
+      RoutinePage(
+        selectedNutrientKey: _selectedNutrientKey,
+        isAddSourceOpen: _isAddSourceOpen,
+        onAddSourceClose: () => setState(() => _isAddSourceOpen = false),
+      ),
     ];
 
     return Scaffold(
@@ -91,31 +95,35 @@ class _HorizonAppShellState extends State<HorizonAppShell> {
             ),
 
             // Floating Bottom Navigation Action Bar (Floating 28px from bottom)
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 28,
-              child: Center(
-                child: HorizonBottomNavigationBarAction(
-                  selectedIndex: _currentIndex,
-                  onItemTapped: (index) {
-                    setState(() {
-                      if (_currentIndex != index) {
-                        _selectedNutrientKey = null;
+            if (!_isAddSourceOpen || _currentIndex != 2)
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 28,
+                child: Center(
+                  child: HorizonBottomNavigationBarAction(
+                    selectedIndex: _currentIndex,
+                    onItemTapped: (index) {
+                      setState(() {
+                        if (_currentIndex != index) {
+                          _selectedNutrientKey = null;
+                          _isAddSourceOpen = false;
+                        }
+                        _currentIndex = index;
+                      });
+                    },
+                    onPrimaryActionTap: () {
+                      if (_currentIndex == 2) {
+                        setState(() {
+                          _isAddSourceOpen = !_isAddSourceOpen;
+                        });
+                      } else {
+                        debugPrint('Primary Action Button Tapped!');
                       }
-                      _currentIndex = index;
-                    });
-                  },
-                  onPrimaryActionTap: () {
-                    if (_currentIndex == 2) {
-                      HorizonAddSource.show(context);
-                    } else {
-                      debugPrint('Primary Action Button Tapped!');
-                    }
-                  },
+                    },
+                  ),
                 ),
               ),
-            ),
 
             // Floating Debug & Time Travel Button (Top-Right of Viewport)
             Positioned(

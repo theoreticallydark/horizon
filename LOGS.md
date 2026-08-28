@@ -142,6 +142,7 @@
 - **2026-08-28 11:18 AM** - Removed component preview from `StatsPage` (`lib/pages/stats_page.dart`), restoring clean placeholder view.
 - **2026-08-28 11:27 AM** - Built `HorizonAddSource` (v1.0.0) in `lib/horizon/horizon_add_source.dart` featuring 24px padding, 16px gap, `HorizonTitleBar`, untracked food sources list using `HorizonListItemHost.add` (with session retention, `CheckboxState.checked`, top 3 nutrient percentages, and `ToggleIcon` for `isFavorite`), dynamic `Search` bar integration, and `AddActionBarContainer` (Done button + Favorite filter + Search toggles with `ButtonIcon.isSelected`). Connected Routine page bottom navigation action button to open `HorizonAddSource` bottom-up modal.
 - **2026-08-28 11:38 AM** - Upgraded `ButtonIcon` to `v1.2.0` (with 64x64 size support) and `HorizonAddSource` to `v1.1.0`: configured modal to precisely cover Routine Page area with undulled transparent background, 64x64 action buttons, bidirectional tracking check/uncheck toggle (`isTracked` toggling between `add_circle` and `checkbox-filled`), and alphabetical sorting across food sources.
+- **2026-08-28 11:51 AM** - Upgraded `HorizonAddSource` to `v1.2.0`: integrated reactive `selectedNutrientKey` filtering driven by the Application Header's `NutrientMap` on the Routine page with zero disruption to existing pill tracking/filtering behavior.
 
 ---
 
