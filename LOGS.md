@@ -138,6 +138,10 @@
 - **2026-08-28 10:45 AM** - Built `Search` component (v1.0.0) in `lib/alter/components/search/search.dart` matching Figma node `130:11237` (Component Set `Search` with `State=Default`, `State=Typing`, and `State=Typed` variants) using `AlterSemanticTokens` and `AlterTypography.geistFont`.
 - **2026-08-28 10:52 AM** - Refactored `Search` component to `v1.0.1`: removed extra non-Figma leading/trailing slots to strictly adhere to Figma node `130:11237`.
 - **2026-08-28 10:54 AM** - Removed component preview from `StatsPage` (`lib/pages/stats_page.dart`), restoring clean placeholder view.
+- **2026-08-28 11:15 AM** - Upgraded `ButtonIcon` to `v1.1.0`: added `isSelected: bool` property where stroke becomes `AlterSemanticTokens.stroke1000` for `ButtonIconType.gray` and `ButtonIconType.white`.
+- **2026-08-28 11:18 AM** - Removed component preview from `StatsPage` (`lib/pages/stats_page.dart`), restoring clean placeholder view.
+- **2026-08-28 11:27 AM** - Built `HorizonAddSource` (v1.0.0) in `lib/horizon/horizon_add_source.dart` featuring 24px padding, 16px gap, `HorizonTitleBar`, untracked food sources list using `HorizonListItemHost.add` (with session retention, `CheckboxState.checked`, top 3 nutrient percentages, and `ToggleIcon` for `isFavorite`), dynamic `Search` bar integration, and `AddActionBarContainer` (Done button + Favorite filter + Search toggles with `ButtonIcon.isSelected`). Connected Routine page bottom navigation action button to open `HorizonAddSource` bottom-up modal.
+- **2026-08-28 11:38 AM** - Upgraded `ButtonIcon` to `v1.2.0` (with 64x64 size support) and `HorizonAddSource` to `v1.1.0`: configured modal to precisely cover Routine Page area with undulled transparent background, 64x64 action buttons, bidirectional tracking check/uncheck toggle (`isTracked` toggling between `add_circle` and `checkbox-filled`), and alphabetical sorting across food sources.
 
 ---
 

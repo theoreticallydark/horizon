@@ -3,6 +3,7 @@ import 'alter/alter.dart';
 import 'data/services/isar_service.dart';
 import 'data/services/nutrition_tracking_service.dart';
 import 'horizon/debug_modal.dart';
+import 'horizon/horizon_add_source.dart';
 import 'horizon/horizon_application_header.dart';
 import 'horizon/horizon_bottom_navigation_bar_action.dart';
 import 'pages/routine_page.dart';
@@ -106,7 +107,11 @@ class _HorizonAppShellState extends State<HorizonAppShell> {
                     });
                   },
                   onPrimaryActionTap: () {
-                    debugPrint('Primary Action Button Tapped!');
+                    if (_currentIndex == 2) {
+                      HorizonAddSource.show(context);
+                    } else {
+                      debugPrint('Primary Action Button Tapped!');
+                    }
                   },
                 ),
               ),

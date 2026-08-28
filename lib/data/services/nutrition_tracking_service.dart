@@ -395,6 +395,51 @@ class NutritionTrackingService {
     await syncTrackRecordsWindow();
   }
 
+  /// Toggles favorite state for a food source
+  Future<void> toggleFoodFavorite(String foodId) async {
+    final food = await _isar.foodSourceItems.getByFoodId(foodId);
+    if (food == null) return;
+
+    food.isFavorite = !food.isFavorite;
+
+    await _isar.writeTxn(() async {
+      await _isar.foodSourceItems.put(food);
+    });
+  }
+
+  /// Loads initial state for HorizonAddSource (all untracked foods + nutrient target maps)
+  Future<AddSourceState> loadAddSourceState() async {
+    final profile = await _isar.userProfiles.get(1) ?? UserProfile();
+    final allNutrients = await _isar.nutrientInfos
+        .filter()
+        .isVisibleOnAppEqualTo(true)
+        .findAll();
+
+    final untrackedFoods = await _isar.foodSourceItems
+        .filter()
+        .isVisibleOnAppEqualTo(true)
+        .and()
+        .isTrackedEqualTo(false)
+        .findAll();
+
+    final targetMap = {
+      for (final n in allNutrients)
+        n.nutrientKey: n.calculateEffectiveTarget(profile)
+    };
+    final nutrientMap = {
+      for (final n in allNutrients)
+        n.nutrientKey: n
+    };
+
+    return AddSourceState(
+      foods: untrackedFoods,
+      profile: profile,
+      allNutrients: allNutrients,
+      targetMap: targetMap,
+      nutrientMap: nutrientMap,
+    );
+  }
+
   /// Reseeds the demo routine and re-syncs all track record windows
   Future<void> reseedDemoRoutine() async {
     await _isarService.seedDemoRoutine();
@@ -1372,5 +1417,22 @@ class NutrientMapState {
   const NutrientMapState({
     required this.nutrients,
     required this.coverageMap,
+  });
+}
+
+/// Consolidated state model for HorizonAddSource
+class AddSourceState {
+  final List<FoodSourceItem> foods;
+  final UserProfile profile;
+  final List<NutrientInfo> allNutrients;
+  final Map<String, double> targetMap;
+  final Map<String, NutrientInfo> nutrientMap;
+
+  const AddSourceState({
+    required this.foods,
+    required this.profile,
+    required this.allNutrients,
+    required this.targetMap,
+    required this.nutrientMap,
   });
 }

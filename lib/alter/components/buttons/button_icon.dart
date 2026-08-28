@@ -5,16 +5,23 @@ enum ButtonIconType { gray, white, primary }
 
 class ButtonIcon extends StatelessWidget {
   /// Component version for reference.
-  static const String version = '1.0.0';
+  /// v1.2.0: Added customizable `size` (e.g. 64x64) and `iconSize` properties.
+  static const String version = '1.2.0';
 
   final IconData icon;
   final ButtonIconType type;
+  final bool isSelected;
+  final double size;
+  final double? iconSize;
   final VoidCallback? onTap;
 
   const ButtonIcon({
     super.key,
     this.icon = Icons.favorite_border,
     this.type = ButtonIconType.gray,
+    this.isSelected = false,
+    this.size = 48.0,
+    this.iconSize,
     this.onTap,
   });
 
@@ -30,6 +37,9 @@ class ButtonIcon extends StatelessWidget {
   }
 
   Color get _borderColor {
+    if (isSelected && type != ButtonIconType.primary) {
+      return AlterSemanticTokens.stroke1000;
+    }
     switch (type) {
       case ButtonIconType.gray:
       case ButtonIconType.white:
@@ -55,8 +65,8 @@ class ButtonIcon extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(20),
       child: Container(
-        width: 48,
-        height: 48,
+        width: size,
+        height: size,
         decoration: BoxDecoration(
           color: _backgroundColor,
           borderRadius: BorderRadius.circular(20),
@@ -69,7 +79,7 @@ class ButtonIcon extends StatelessWidget {
           child: Icon(
             icon,
             color: _iconColor,
-            size: 28,
+            size: iconSize ?? 28.0,
           ),
         ),
       ),

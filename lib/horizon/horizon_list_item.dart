@@ -14,8 +14,8 @@ enum HorizonListItemHost {
 
 class HorizonListItem extends StatelessWidget {
   /// Component version for reference.
-  /// v1.7.0: Unified add/addIsFavorite into a single `add` host variant driven dynamically by `isFavorite`.
-  static const String version = '1.7.0';
+  /// v1.8.0: Support dynamic isChecked in add host variant toggling between ButtonIconGhost(add_circle_outline) and Checkbox(checked).
+  static const String version = '1.8.0';
 
   final HorizonListItemHost host;
   final String title;
@@ -153,7 +153,7 @@ class HorizonListItem extends StatelessWidget {
           onTap: onTap,
         );
 
-      // 5. Host = Add (hasSubtitle: true, leftSlot: ToggleIcon driven by isFavorite, rightSlotOne: add_box)
+      // 5. Host = Add (hasSubtitle: true, leftSlot: ToggleIcon driven by isFavorite, rightSlotOne: add_circle ButtonIconGhost or Checkbox if isChecked)
       case HorizonListItemHost.add:
         return ListItem(
           title: title,
@@ -166,11 +166,16 @@ class HorizonListItem extends StatelessWidget {
           ),
           hasRightSlotTwo: false,
           hasRightSlotOne: true,
-          rightSlotOne: ButtonIconGhost(
-            icon: Icons.add_box_outlined,
-            type: ButtonIconGhostType.primary,
-            onTap: onRightActionTap,
-          ),
+          rightSlotOne: isChecked
+              ? Checkbox(
+                  state: CheckboxState.checked,
+                  onChanged: onCheckboxChanged,
+                )
+              : ButtonIconGhost(
+                  icon: Icons.add_circle_outline,
+                  type: ButtonIconGhostType.primary,
+                  onTap: onRightActionTap,
+                ),
           onTap: onTap,
         );
     }

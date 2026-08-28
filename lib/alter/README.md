@@ -59,7 +59,7 @@ MaterialApp(
 | Component | Version | Description | Figma Node |
 | :--- | :--- | :--- | :--- |
 | **`ButtonText`** | `v1.0.1` | Text button with `ButtonType` (`gray`, `white`, `primary`) and `ButtonSize` (`normal`, `large`) variants. `minWidth: 64px`. | Node `130:8382` |
-| **`ButtonIcon`** | `v1.0.0` | Square icon button (`48x48`) supporting `ButtonIconType` (`gray`, `white`, `primary`) variants. | Node `130:8371` |
+| **`ButtonIcon`** | `v1.2.0` | Square icon button (`48x48`, `64x64`) supporting `ButtonIconType` (`gray`, `white`, `primary`) and `isSelected` state variants. | Node `130:8371` |
 | **`ButtonGraphicImage`** | `v1.0.1` | Compact `48x48` icon button container. | Node `28:875` |
 | **`ButtonGraphicText`** | `v1.0.1` | Dual-label badge button (customizable `title` & `subtitle`). | Node `28:876` |
 
