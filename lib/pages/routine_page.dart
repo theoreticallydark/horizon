@@ -229,12 +229,14 @@ class _RoutinePageState extends State<RoutinePage> {
         color: AlterSemanticTokens.baseWhite,
         borderRadius: BorderRadius.circular(24),
       ),
-      child: Stack(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(24),
-            child: StreamBuilder<RoutinePageState>(
-              stream: _trackingService.watchRoutinePageState(),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(24),
+              child: StreamBuilder<RoutinePageState>(
+                stream: _trackingService.watchRoutinePageState(),
         builder: (context, snapshot) {
           final state = snapshot.data;
           if (state == null) {
@@ -353,7 +355,7 @@ class _RoutinePageState extends State<RoutinePage> {
                   const HorizonTitleBar(
                     title: 'Daily targets',
                     subtitle:
-                        'Supports nutrients requiring continuous daily supply.',
+                        'Supports nutrients with faster biological turnover.',
                   ),
                   const SizedBox(height: 16),
                 ],
@@ -404,16 +406,28 @@ class _RoutinePageState extends State<RoutinePage> {
       ),
     ),
 
-    // HorizonAddSource Overlay
-    if (widget.isAddSourceOpen)
-      Positioned.fill(
-        child: HorizonAddSource(
-          selectedNutrientKey: widget.selectedNutrientKey,
-          onDone: widget.onAddSourceClose,
+            // Smooth Animated Bottom-Up HorizonAddSource Overlay
+            AnimatedSlide(
+              offset:
+                  widget.isAddSourceOpen ? Offset.zero : const Offset(0.0, 1.0),
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOutCubic,
+              child: AnimatedOpacity(
+                opacity: widget.isAddSourceOpen ? 1.0 : 0.0,
+                duration: const Duration(milliseconds: 250),
+                curve: Curves.easeInOut,
+                child: IgnorePointer(
+                  ignoring: !widget.isAddSourceOpen,
+                  child: HorizonAddSource(
+                    selectedNutrientKey: widget.selectedNutrientKey,
+                    onDone: widget.onAddSourceClose,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
-  ],
-),
     );
   }
 }
