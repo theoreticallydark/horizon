@@ -12,12 +12,14 @@ class RoutinePage extends StatefulWidget {
   final String? selectedNutrientKey;
   final bool isAddSourceOpen;
   final VoidCallback? onAddSourceClose;
+  final ValueChanged<bool>? onSearchActiveChanged;
 
   const RoutinePage({
     super.key,
     this.selectedNutrientKey,
     this.isAddSourceOpen = false,
     this.onAddSourceClose,
+    this.onSearchActiveChanged,
   });
 
   @override
@@ -421,6 +423,7 @@ class _RoutinePageState extends State<RoutinePage> {
                   child: HorizonAddSource(
                     selectedNutrientKey: widget.selectedNutrientKey,
                     onDone: widget.onAddSourceClose,
+                    onSearchToggle: widget.onSearchActiveChanged,
                   ),
                 ),
               ),

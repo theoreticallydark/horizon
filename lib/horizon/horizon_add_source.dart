@@ -28,16 +28,18 @@ import 'horizon_title_bar.dart';
 ///   - `ButtonIcon` Gray 64x64 with `search` (toggles Search bar, selected state `stroke1000`).
 class HorizonAddSource extends StatefulWidget {
   /// Component version for reference.
-  /// v1.2.0: Added `selectedNutrientKey` reactive filtering from Application Header's Nutrient Map.
-  static const String version = '1.2.0';
+  /// v1.3.0: Added onSearchToggle callback to coordinate hiding ApplicationHeader NutrientMap during active search with keyboard.
+  static const String version = '1.3.0';
 
   final String? selectedNutrientKey;
   final VoidCallback? onDone;
+  final ValueChanged<bool>? onSearchToggle;
 
   const HorizonAddSource({
     super.key,
     this.selectedNutrientKey,
     this.onDone,
+    this.onSearchToggle,
   });
 
   /// Opens HorizonAddSource as a bottom-up modal covering the Routine page area.
@@ -92,6 +94,9 @@ class _HorizonAddSourceState extends State<HorizonAddSource> {
   @override
   void dispose() {
     _searchController.dispose();
+    if (_isSearchActive) {
+      widget.onSearchToggle?.call(false);
+    }
     super.dispose();
   }
 
@@ -366,6 +371,7 @@ class _HorizonAddSourceState extends State<HorizonAddSource> {
                 _searchQuery = '';
               }
             });
+            widget.onSearchToggle?.call(_isSearchActive);
           },
         ),
       ],

@@ -144,6 +144,7 @@
 - **2026-08-28 11:38 AM** - Upgraded `ButtonIcon` to `v1.2.0` (with 64x64 size support) and `HorizonAddSource` to `v1.1.0`: configured modal to precisely cover Routine Page area with undulled transparent background, 64x64 action buttons, bidirectional tracking check/uncheck toggle (`isTracked` toggling between `add_circle` and `checkbox-filled`), and alphabetical sorting across food sources.
 - **2026-08-28 11:51 AM** - Upgraded `HorizonAddSource` to `v1.2.0`: integrated reactive `selectedNutrientKey` filtering driven by the Application Header's `NutrientMap` on the Routine page with zero disruption to existing pill tracking/filtering behavior.
 - **2026-08-28 11:56 AM** - Added smooth bottom-up slide & fade animation (`AnimatedSlide`, `AnimatedOpacity`, `Curves.easeInOutCubic`, `300ms`) for `HorizonAddSource` within `RoutinePage`, cleanly clipped to the 24px container border.
+- **2026-08-28 12:04 PM** - Added dynamic NutrientMap collapse in `HorizonApplicationHeader`: when Search is active in `HorizonAddSource` and the software keyboard is visible (`MediaQuery.viewInsets.bottom > 0`), `NutrientMap` smoothly collapses via `AnimatedSize` (250ms), maximizing vertical space for the search results list.
 
 ---
 

@@ -9,6 +9,7 @@ class HorizonApplicationHeader extends StatelessWidget {
   final VoidCallback? onStreakTap;
   final String? selectedNutrientKey;
   final ValueChanged<String>? onNutrientTap;
+  final bool hideNutrientMap;
 
   const HorizonApplicationHeader({
     super.key,
@@ -17,6 +18,7 @@ class HorizonApplicationHeader extends StatelessWidget {
     this.onStreakTap,
     this.selectedNutrientKey,
     this.onNutrientTap,
+    this.hideNutrientMap = false,
   });
 
   @override
@@ -43,12 +45,14 @@ class HorizonApplicationHeader extends StatelessWidget {
             subtitle = '$consumedCal/$plannedCal calories • $consumedProt/${plannedProt}g protein';
             hasStyleButton = true;
             hasProfileAction = false;
-            slotWidget = NutrientMap(
-              key: const ValueKey('track_map'),
-              variant: NutrientMapVariant.trackFullView,
-              selectedNutrientKey: selectedNutrientKey,
-              onNutrientTap: onNutrientTap,
-            );
+            slotWidget = hideNutrientMap
+                ? null
+                : NutrientMap(
+                    key: const ValueKey('track_map'),
+                    variant: NutrientMapVariant.trackFullView,
+                    selectedNutrientKey: selectedNutrientKey,
+                    onNutrientTap: onNutrientTap,
+                  );
             break;
           case 1:
             title = 'Stats';
@@ -62,12 +66,14 @@ class HorizonApplicationHeader extends StatelessWidget {
             subtitle = '$plannedCal calories • ${plannedProt}g protein';
             hasStyleButton = false;
             hasProfileAction = true;
-            slotWidget = NutrientMap(
-              key: const ValueKey('routine_map'),
-              variant: NutrientMapVariant.routine,
-              selectedNutrientKey: selectedNutrientKey,
-              onNutrientTap: onNutrientTap,
-            );
+            slotWidget = hideNutrientMap
+                ? null
+                : NutrientMap(
+                    key: const ValueKey('routine_map'),
+                    variant: NutrientMapVariant.routine,
+                    selectedNutrientKey: selectedNutrientKey,
+                    onNutrientTap: onNutrientTap,
+                  );
             break;
           default:
             title = 'Horizon';
@@ -94,4 +100,3 @@ class HorizonApplicationHeader extends StatelessWidget {
     );
   }
 }
-

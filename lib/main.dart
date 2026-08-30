@@ -43,6 +43,7 @@ class _HorizonAppShellState extends State<HorizonAppShell> {
   int _currentIndex = 0;
   String? _selectedNutrientKey;
   bool _isAddSourceOpen = false;
+  bool _isSearchActive = false;
 
   void _handleNutrientTap(String nutrientKey) {
     setState(() {
@@ -56,13 +57,21 @@ class _HorizonAppShellState extends State<HorizonAppShell> {
 
   @override
   Widget build(BuildContext context) {
+    final isKeyboardVisible = MediaQuery.of(context).viewInsets.bottom > 0;
+    final hideNutrientMap = _isSearchActive && isKeyboardVisible;
+
     final pages = [
       TrackPage(selectedNutrientKey: _selectedNutrientKey),
       const StatsPage(),
       RoutinePage(
         selectedNutrientKey: _selectedNutrientKey,
         isAddSourceOpen: _isAddSourceOpen,
-        onAddSourceClose: () => setState(() => _isAddSourceOpen = false),
+        onAddSourceClose: () => setState(() {
+          _isAddSourceOpen = false;
+          _isSearchActive = false;
+        }),
+        onSearchActiveChanged: (active) =>
+            setState(() => _isSearchActive = active),
       ),
     ];
 
@@ -78,6 +87,7 @@ class _HorizonAppShellState extends State<HorizonAppShell> {
                   currentIndex: _currentIndex,
                   selectedNutrientKey: _selectedNutrientKey,
                   onNutrientTap: _handleNutrientTap,
+                  hideNutrientMap: hideNutrientMap,
                   onProfileTap: () {
                     debugPrint('Profile Tapped');
                   },
@@ -108,6 +118,7 @@ class _HorizonAppShellState extends State<HorizonAppShell> {
                         if (_currentIndex != index) {
                           _selectedNutrientKey = null;
                           _isAddSourceOpen = false;
+                          _isSearchActive = false;
                         }
                         _currentIndex = index;
                       });
