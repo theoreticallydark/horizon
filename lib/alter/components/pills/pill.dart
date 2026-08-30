@@ -8,7 +8,8 @@ enum PillColor { gray, neutral }
 
 class Pill extends StatelessWidget {
   /// Component version for reference.
-  static const String version = '1.0.2';
+  /// v1.0.3: Enhanced smooth size and label showcase transitions with synchronized AnimatedCrossFade and cubic interpolation.
+  static const String version = '1.0.3';
 
   final String label;
   final String? value;
@@ -115,29 +116,33 @@ class Pill extends StatelessWidget {
                 color: _textColor,
               ),
             ),
-          AnimatedSize(
-            duration: const Duration(milliseconds: 250),
-            curve: Curves.easeInOutCubic,
-            child: showValue
-                ? Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (hasLabel) const SizedBox(height: 2),
-                      AnimatedOpacity(
-                        duration: const Duration(milliseconds: 200),
-                        curve: Curves.easeInOutCubic,
-                        opacity: showValue ? 1.0 : 0.0,
-                        child: Text(
-                          value!,
-                          textAlign: TextAlign.center,
-                          style: AlterTypography.caption.copyWith(
-                            color: _textColor,
-                          ),
-                        ),
-                      ),
-                    ],
-                  )
-                : const SizedBox.shrink(),
+          ClipRect(
+            child: AnimatedCrossFade(
+              alignment: Alignment.topCenter,
+              firstChild: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (hasLabel) const SizedBox(height: 2),
+                  Text(
+                    value ?? '',
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.clip,
+                    style: AlterTypography.caption.copyWith(
+                      color: _textColor,
+                    ),
+                  ),
+                ],
+              ),
+              secondChild: const SizedBox(width: double.infinity, height: 0),
+              crossFadeState: showValue
+                  ? CrossFadeState.showFirst
+                  : CrossFadeState.showSecond,
+              duration: const Duration(milliseconds: 250),
+              firstCurve: Curves.easeInOutCubic,
+              secondCurve: Curves.easeInOutCubic,
+              sizeCurve: Curves.easeInOutCubic,
+            ),
           ),
         ],
       ),

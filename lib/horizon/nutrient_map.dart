@@ -49,7 +49,7 @@ class NutrientData {
   }
 }
 
-class NutrientMap extends StatelessWidget {
+class NutrientMap extends StatefulWidget {
   final NutrientMapVariant variant;
   final List<NutrientData>? nutrients;
   final String? selectedNutrientKey;
@@ -96,12 +96,19 @@ class NutrientMap extends StatelessWidget {
     this.runSpacing = 3.5,
   });
 
+  @override
+  State<NutrientMap> createState() => _NutrientMapState();
+}
+
+class _NutrientMapState extends State<NutrientMap> {
+  NutrientMapState? _lastState;
+
   /// Map database NutrientInfo list and calculated live coverage to NutrientData UI items
   List<NutrientData> _mapFromEntities(
     List<NutrientInfo> list,
     Map<String, double> coverageMap,
   ) {
-    if (list.isEmpty) return defaultNutrients;
+    if (list.isEmpty) return NutrientMap.defaultNutrients;
 
     // Sort: Daily nutrients first (Row 1), then Weekly nutrients
     final daily = list.where((n) => n.frequency == TrackingFrequency.daily).toList();
@@ -114,7 +121,7 @@ class NutrientMap extends StatelessWidget {
       final rawPercent = coverageMap[n.nutrientKey] ?? 0.0;
       final percentClamped = rawPercent.clamp(0.0, 999.0).round();
       final isCompleted = rawPercent >= 100.0;
-      final isSelected = selectedNutrientKey == n.nutrientKey;
+      final isSelected = widget.selectedNutrientKey == n.nutrientKey;
 
       return NutrientData(
         nutrientKey: n.nutrientKey,
@@ -128,16 +135,16 @@ class NutrientMap extends StatelessWidget {
   }
 
   Widget _buildGrid(List<NutrientData> dataList) {
-    final isCompact = variant != NutrientMapVariant.routine;
+    final isCompact = widget.variant != NutrientMapVariant.routine;
     final pillSize = isCompact ? PillSize.compact : PillSize.defaultSize;
 
     // Track Daily View shows 1 row (7 pills), other variants show all tracked pills
-    final itemCount = variant == NutrientMapVariant.trackDailyView ? 7 : dataList.length;
+    final itemCount = widget.variant == NutrientMapVariant.trackDailyView ? 7 : dataList.length;
     final displayedNutrients = dataList.take(itemCount).toList();
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final totalSpacing = spacing * 6;
+        final totalSpacing = widget.spacing * 6;
         final columnWidth = (constraints.maxWidth - totalSpacing) / 7;
 
         return Column(
@@ -145,12 +152,12 @@ class NutrientMap extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             for (int rowIndex = 0; rowIndex < (displayedNutrients.length / 7).ceil(); rowIndex++) ...[
-              if (rowIndex > 0) SizedBox(height: runSpacing),
+              if (rowIndex > 0) SizedBox(height: widget.runSpacing),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   for (int colIndex = 0; colIndex < 7; colIndex++) ...[
-                    if (colIndex > 0) SizedBox(width: spacing),
+                    if (colIndex > 0) SizedBox(width: widget.spacing),
                     Expanded(
                       child: Builder(
                         builder: (context) {
@@ -160,11 +167,12 @@ class NutrientMap extends StatelessWidget {
                           }
                           final item = displayedNutrients[itemIndex];
                           final isSelected = item.nutrientKey.isNotEmpty &&
-                              selectedNutrientKey == item.nutrientKey;
+                              widget.selectedNutrientKey == item.nutrientKey;
 
                           return SizedBox(
                             width: columnWidth,
                             child: Pill(
+                              key: ValueKey('pill_${item.nutrientKey.isNotEmpty ? item.nutrientKey : item.label}'),
                               label: item.label,
                               value: isCompact ? null : item.value,
                               size: pillSize,
@@ -175,7 +183,7 @@ class NutrientMap extends StatelessWidget {
                               horizontalPadding: 2.4,
                               onTap: () {
                                 if (item.nutrientKey.isNotEmpty) {
-                                  onNutrientTap?.call(item.nutrientKey);
+                                  widget.onNutrientTap?.call(item.nutrientKey);
                                 }
                               },
                             ),
@@ -196,20 +204,24 @@ class NutrientMap extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // If nutrients are passed explicitly, use them directly
-    if (nutrients != null) {
-      return _buildGrid(nutrients!);
+    if (widget.nutrients != null) {
+      return _buildGrid(widget.nutrients!);
     }
 
     final trackingService = NutritionTrackingService();
-    final isTrackView = variant != NutrientMapVariant.routine;
+    final isTrackView = widget.variant != NutrientMapVariant.routine;
 
     // Single consolidated watcher stream for nutrients + live coverage
     return StreamBuilder<NutrientMapState>(
+      initialData: _lastState,
       stream: trackingService.watchNutrientMapState(isTrackView),
       builder: (context, snapshot) {
-        final state = snapshot.data;
+        if (snapshot.hasData) {
+          _lastState = snapshot.data;
+        }
+        final state = snapshot.data ?? _lastState;
         if (state == null) {
-          return _buildGrid(defaultNutrients);
+          return _buildGrid(NutrientMap.defaultNutrients);
         }
 
         final items = _mapFromEntities(state.nutrients, state.coverageMap);

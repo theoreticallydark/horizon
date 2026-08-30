@@ -48,7 +48,7 @@ class HorizonApplicationHeader extends StatelessWidget {
             slotWidget = hideNutrientMap
                 ? null
                 : NutrientMap(
-                    key: const ValueKey('track_map'),
+                    key: const ValueKey('header_nutrient_map'),
                     variant: NutrientMapVariant.trackFullView,
                     selectedNutrientKey: selectedNutrientKey,
                     onNutrientTap: onNutrientTap,
@@ -69,7 +69,7 @@ class HorizonApplicationHeader extends StatelessWidget {
             slotWidget = hideNutrientMap
                 ? null
                 : NutrientMap(
-                    key: const ValueKey('routine_map'),
+                    key: const ValueKey('header_nutrient_map'),
                     variant: NutrientMapVariant.routine,
                     selectedNutrientKey: selectedNutrientKey,
                     onNutrientTap: onNutrientTap,

@@ -145,6 +145,7 @@
 - **2026-08-28 11:51 AM** - Upgraded `HorizonAddSource` to `v1.2.0`: integrated reactive `selectedNutrientKey` filtering driven by the Application Header's `NutrientMap` on the Routine page with zero disruption to existing pill tracking/filtering behavior.
 - **2026-08-28 11:56 AM** - Added smooth bottom-up slide & fade animation (`AnimatedSlide`, `AnimatedOpacity`, `Curves.easeInOutCubic`, `300ms`) for `HorizonAddSource` within `RoutinePage`, cleanly clipped to the 24px container border.
 - **2026-08-28 12:04 PM** - Added dynamic NutrientMap collapse in `HorizonApplicationHeader`: when Search is active in `HorizonAddSource` and the software keyboard is visible (`MediaQuery.viewInsets.bottom > 0`), `NutrientMap` smoothly collapses via `AnimatedSize` (250ms), maximizing vertical space for the search results list.
+- **2026-08-30 11:00 AM** - Upgraded `Pill` to `v1.0.3` and smoothed `HorizonApplicationHeader` `NutrientMap` transitions between Track and Routine pages: unified header `NutrientMap` key (`header_nutrient_map`), assigned stable item keys (`pill_<key>`), converted `NutrientMap` to stateful caching to eliminate stream-switch redraw flickers, and synchronized `AnimatedCrossFade` label show/hide with `AnimatedContainer` size transitions (`250ms`, `easeInOutCubic`).
 
 ---
 
