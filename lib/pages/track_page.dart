@@ -4,15 +4,22 @@ import '../data/models/food_source_item.dart';
 import '../data/models/nutrient_info.dart';
 import '../data/models/track_record.dart';
 import '../data/services/nutrition_tracking_service.dart';
+import '../horizon/horizon_add_source_track.dart';
 import '../horizon/horizon_list_item.dart';
 import '../horizon/horizon_title_bar.dart';
 
 class TrackPage extends StatelessWidget {
   final String? selectedNutrientKey;
+  final bool isAddSourceOpen;
+  final VoidCallback? onAddSourceClose;
+  final ValueChanged<bool>? onSearchActiveChanged;
 
   const TrackPage({
     super.key,
     this.selectedNutrientKey,
+    this.isAddSourceOpen = false,
+    this.onAddSourceClose,
+    this.onSearchActiveChanged,
   });
 
   bool _foodProvidesSelectedNutrient(
@@ -41,12 +48,17 @@ class TrackPage extends StatelessWidget {
     return Container(
       width: double.infinity,
       height: double.infinity,
-      padding: const EdgeInsets.all(24),
+      clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         color: AlterSemanticTokens.baseWhite,
         borderRadius: BorderRadius.circular(24),
       ),
-      child: StreamBuilder<TrackPageState>(
+      child: Stack(
+        children: [
+          // Main Scrollable List Container (with 24px padding)
+          Padding(
+            padding: const EdgeInsets.all(24),
+            child: StreamBuilder<TrackPageState>(
         stream: trackingService.watchTrackPageState(),
         builder: (context, snapshot) {
           final state = snapshot.data;
@@ -317,6 +329,30 @@ class TrackPage extends StatelessWidget {
               );
             },
           ),
-        );
-      }
-    }
+        ),
+
+        // Smooth Animated Bottom-Up HorizonAddSourceTrack Overlay
+        AnimatedSlide(
+          offset:
+              isAddSourceOpen ? Offset.zero : const Offset(0.0, 1.0),
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOutCubic,
+          child: AnimatedOpacity(
+            opacity: isAddSourceOpen ? 1.0 : 0.0,
+            duration: const Duration(milliseconds: 250),
+            curve: Curves.easeInOut,
+            child: IgnorePointer(
+              ignoring: !isAddSourceOpen,
+              child: HorizonAddSourceTrack(
+                selectedNutrientKey: selectedNutrientKey,
+                onDone: onAddSourceClose,
+                onSearchToggle: onSearchActiveChanged,
+              ),
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+}

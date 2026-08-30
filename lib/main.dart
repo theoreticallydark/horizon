@@ -43,6 +43,7 @@ class _HorizonAppShellState extends State<HorizonAppShell> {
   int _currentIndex = 0;
   String? _selectedNutrientKey;
   bool _isAddSourceOpen = false;
+  bool _isAddSourceTrackOpen = false;
   bool _isSearchActive = false;
 
   void _handleNutrientTap(String nutrientKey) {
@@ -59,9 +60,20 @@ class _HorizonAppShellState extends State<HorizonAppShell> {
   Widget build(BuildContext context) {
     final isKeyboardVisible = MediaQuery.of(context).viewInsets.bottom > 0;
     final hideNutrientMap = _isSearchActive && isKeyboardVisible;
+    final isModalOpen = (_currentIndex == 2 && _isAddSourceOpen) ||
+        (_currentIndex == 0 && _isAddSourceTrackOpen);
 
     final pages = [
-      TrackPage(selectedNutrientKey: _selectedNutrientKey),
+      TrackPage(
+        selectedNutrientKey: _selectedNutrientKey,
+        isAddSourceOpen: _isAddSourceTrackOpen,
+        onAddSourceClose: () => setState(() {
+          _isAddSourceTrackOpen = false;
+          _isSearchActive = false;
+        }),
+        onSearchActiveChanged: (active) =>
+            setState(() => _isSearchActive = active),
+      ),
       const StatsPage(),
       RoutinePage(
         selectedNutrientKey: _selectedNutrientKey,
@@ -105,7 +117,7 @@ class _HorizonAppShellState extends State<HorizonAppShell> {
             ),
 
             // Floating Bottom Navigation Action Bar (Floating 28px from bottom)
-            if (!_isAddSourceOpen || _currentIndex != 2)
+            if (!isModalOpen)
               Positioned(
                 left: 0,
                 right: 0,
@@ -118,6 +130,7 @@ class _HorizonAppShellState extends State<HorizonAppShell> {
                         if (_currentIndex != index) {
                           _selectedNutrientKey = null;
                           _isAddSourceOpen = false;
+                          _isAddSourceTrackOpen = false;
                           _isSearchActive = false;
                         }
                         _currentIndex = index;
@@ -127,6 +140,10 @@ class _HorizonAppShellState extends State<HorizonAppShell> {
                       if (_currentIndex == 2) {
                         setState(() {
                           _isAddSourceOpen = !_isAddSourceOpen;
+                        });
+                      } else if (_currentIndex == 0) {
+                        setState(() {
+                          _isAddSourceTrackOpen = !_isAddSourceTrackOpen;
                         });
                       } else {
                         debugPrint('Primary Action Button Tapped!');

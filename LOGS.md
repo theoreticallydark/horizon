@@ -146,6 +146,7 @@
 - **2026-08-28 11:56 AM** - Added smooth bottom-up slide & fade animation (`AnimatedSlide`, `AnimatedOpacity`, `Curves.easeInOutCubic`, `300ms`) for `HorizonAddSource` within `RoutinePage`, cleanly clipped to the 24px container border.
 - **2026-08-28 12:04 PM** - Added dynamic NutrientMap collapse in `HorizonApplicationHeader`: when Search is active in `HorizonAddSource` and the software keyboard is visible (`MediaQuery.viewInsets.bottom > 0`), `NutrientMap` smoothly collapses via `AnimatedSize` (250ms), maximizing vertical space for the search results list.
 - **2026-08-30 11:00 AM** - Upgraded `Pill` to `v1.0.3` and smoothed `HorizonApplicationHeader` `NutrientMap` transitions between Track and Routine pages: unified header `NutrientMap` key (`header_nutrient_map`), assigned stable item keys (`pill_<key>`), converted `NutrientMap` to stateful caching to eliminate stream-switch redraw flickers, and synchronized `AnimatedCrossFade` label show/hide with `AnimatedContainer` size transitions (`250ms`, `easeInOutCubic`).
+- **2026-08-30 05:55 PM** - Built `HorizonAddSourceTrack` (`lib/horizon/horizon_add_source_track.dart` v1.0.0) and wired it to the Track page action button: displays untracked food sources with `HorizonTitleBar` ('Add to the day' / 'Top-up nutrients with a new source'), tapping `add_circle` immediately adds the food source directly to today's consumption in `TrackRecordDaily` (without adding it to the routine) and automatically closes the modal.
 
 ---
 
