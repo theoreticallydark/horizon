@@ -49,3 +49,16 @@ class NutrientInfo {
 }
 
 enum TrackingFrequency { daily, weekly }
+
+/// Centralized formatting extension for nutrient amounts and targets.
+extension NutrientDisplayExtension on num {
+  /// Formats nutrient number cleanly: whole number if >= 10, otherwise 1 decimal place.
+  String toNutrientDisplayString() {
+    if (this >= 10.0) {
+      return round().toString();
+    }
+    // Remove trailing .0 if integer (e.g. 5.0 -> 5)
+    final fixed = toStringAsFixed(1);
+    return fixed.endsWith('.0') ? fixed.substring(0, fixed.length - 2) : fixed;
+  }
+}

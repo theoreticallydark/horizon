@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../alter/alter.dart';
 import '../data/models/food_source_item.dart';
-import '../data/models/nutrient_info.dart';
 import '../data/services/nutrition_tracking_service.dart';
 import 'horizon_list_item.dart';
 import 'horizon_title_bar.dart';
@@ -114,65 +113,10 @@ class _HorizonAddSourceState extends State<HorizonAddSource> {
     });
   }
 
-  String _buildNutrientCoverageSubtitle({
-    required FoodSourceItem food,
-    required double portionGrams,
-    required Map<String, double> targetMap,
-    required Map<String, NutrientInfo> nutrientMap,
-  }) {
-    final List<MapEntry<String, double>> topList = [];
-
-    for (final nutrientVal in food.nutrients) {
-      if (nutrientVal.nutrientKey == 'energy') continue;
-      if (nutrientVal.nutrientKey == 'total_protein' && food.proteinIndex != 1) {
-        continue;
-      }
-
-      final nutrientInfo = nutrientMap[nutrientVal.nutrientKey];
-      if (nutrientInfo == null || !nutrientInfo.isTracked) continue;
-
-      final target = targetMap[nutrientVal.nutrientKey] ?? 0.0;
-      if (target <= 0) continue;
-
-      final dailyYield = (portionGrams / 100.0) * nutrientVal.amountPer100g;
-      final plannedYield = nutrientInfo.frequency == TrackingFrequency.weekly
-          ? dailyYield * 7.0
-          : dailyYield;
-
-      final coveragePercent = (plannedYield / target) * 100.0;
-
-      if (coveragePercent > 0.0) {
-        final keyLabel = nutrientInfo.shortKey ?? nutrientInfo.displayName;
-        topList.add(MapEntry(keyLabel, coveragePercent));
-      }
-    }
-
-    topList.sort((a, b) => b.value.compareTo(a.value));
-    final selected = topList.take(3).toList();
-    if (selected.isEmpty) {
-      return '';
-    }
-
-    return selected.map((e) => '${e.key} ${e.value.round()}%').join(' • ');
-  }
-
-  bool _foodProvidesSelectedNutrient(FoodSourceItem food) {
-    if (widget.selectedNutrientKey == null) return true;
-
-    final foodNutrientKeys = {
-      for (final n in food.nutrients)
-        if (n.amountPer100g > 0 &&
-            (n.nutrientKey != 'total_protein' || food.proteinIndex == 1))
-          n.nutrientKey
-    };
-
-    return foodNutrientKeys.contains(widget.selectedNutrientKey);
-  }
-
   List<FoodSourceItem> _getFilteredFoods() {
     return _foodList.where((food) {
       // Nutrient filter from Header NutrientMap
-      if (!_foodProvidesSelectedNutrient(food)) {
+      if (!food.providesNutrient(widget.selectedNutrientKey)) {
         return false;
       }
       // Favorite filter
@@ -304,8 +248,7 @@ class _HorizonAddSourceState extends State<HorizonAddSource> {
         final isAdded = _addedFoodIds.contains(food.foodId) || food.isTracked;
         final portionGrams = food.defaultPortionGrams;
         final title = '${food.title}, ${portionGrams.round()}g';
-        final subtitle = _buildNutrientCoverageSubtitle(
-          food: food,
+        final subtitle = food.buildNutrientCoverageSubtitle(
           portionGrams: portionGrams,
           targetMap: targetMap,
           nutrientMap: nutrientMap,

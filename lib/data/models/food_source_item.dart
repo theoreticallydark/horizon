@@ -108,6 +108,83 @@ class FoodSourceItem {
 
     return TrackingFrequency.weekly;
   }
+
+  /// Checks whether this food item provides non-zero coverage for the selected nutrient
+  bool providesNutrient(String? nutrientKey) {
+    if (nutrientKey == null) return true;
+    return nutrients.any((n) =>
+        n.amountPer100g > 0 &&
+        (n.nutrientKey != 'total_protein' || proteinIndex == 1) &&
+        n.nutrientKey == nutrientKey);
+  }
+
+  /// Calculates nutrient contributions (% coverage of targets) for this food item.
+  /// Ignores energy, ignores un-tracked nutrients, and requires complete protein (proteinIndex == 1).
+  List<({NutrientInfo info, double coveragePercent, bool isDaily})> calculateNutrientContributions({
+    required double portionGrams,
+    required Map<String, double> targetMap,
+    required Map<String, NutrientInfo> nutrientMap,
+    double minCoveragePercent = 0.0,
+  }) {
+    final List<({NutrientInfo info, double coveragePercent, bool isDaily})> results = [];
+
+    for (final nutrientVal in nutrients) {
+      if (nutrientVal.nutrientKey == 'energy') continue;
+      if (nutrientVal.nutrientKey == 'total_protein' && proteinIndex != 1) continue;
+
+      final nutrientInfo = nutrientMap[nutrientVal.nutrientKey];
+      if (nutrientInfo == null || !nutrientInfo.isTracked) continue;
+
+      final target = targetMap[nutrientVal.nutrientKey] ?? 0.0;
+      if (target <= 0) continue;
+
+      final yieldAmount = (portionGrams / 100.0) * nutrientVal.amountPer100g;
+      final isWeeklyNutrient = nutrientInfo.frequency == TrackingFrequency.weekly;
+      final isDailyRoutineFood = isTracked && frequency == TrackingFrequency.daily;
+
+      // For daily nutrients: compares single portion yield against daily target.
+      // For weekly nutrients: if the food is part of daily routine, 7 daily portions are projected;
+      // otherwise, this single portion's contribution against the weekly target is calculated.
+      final effectiveYield = (isWeeklyNutrient && isDailyRoutineFood)
+          ? yieldAmount * 7.0
+          : (isWeeklyNutrient && !isTracked ? yieldAmount * 7.0 : yieldAmount);
+
+      final coveragePercent = (effectiveYield / target) * 100.0;
+
+      if (coveragePercent >= minCoveragePercent && coveragePercent > 0.0) {
+        results.add((
+          info: nutrientInfo,
+          coveragePercent: coveragePercent,
+          isDaily: nutrientInfo.frequency == TrackingFrequency.daily,
+        ));
+      }
+    }
+
+    results.sort((a, b) => b.coveragePercent.compareTo(a.coveragePercent));
+    return results;
+  }
+
+  /// Computes top nutrient contribution subtitle string: "'Key' 'coverage%' • ..."
+  String buildNutrientCoverageSubtitle({
+    required double portionGrams,
+    required Map<String, double> targetMap,
+    required Map<String, NutrientInfo> nutrientMap,
+    int topCount = 3,
+  }) {
+    final list = calculateNutrientContributions(
+      portionGrams: portionGrams,
+      targetMap: targetMap,
+      nutrientMap: nutrientMap,
+    );
+
+    final selected = list.take(topCount).toList();
+    if (selected.isEmpty) return '';
+
+    return selected.map((e) {
+      final keyLabel = e.info.shortKey ?? e.info.displayName;
+      return '$keyLabel ${e.coveragePercent.round()}%';
+    }).join(' • ');
+  }
 }
 
 @embedded

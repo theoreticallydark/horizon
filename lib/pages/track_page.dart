@@ -28,18 +28,9 @@ class TrackPage extends StatelessWidget {
     Map<String, FoodSourceItem> foodMap,
   ) {
     if (selectedNutrientKey == null) return true;
-
     final food = foodMap[entry.foodId];
     if (food == null) return true;
-
-    final foodNutrientKeys = {
-      for (final n in food.nutrients)
-        if (n.amountPer100g > 0 &&
-            (n.nutrientKey != 'total_protein' || food.proteinIndex == 1))
-          n.nutrientKey
-    };
-
-    return foodNutrientKeys.contains(selectedNutrientKey);
+    return food.providesNutrient(selectedNutrientKey);
   }
 
   @override
@@ -161,12 +152,8 @@ class TrackPage extends StatelessWidget {
 
                     final rawUnit = nutrient.unit.isNotEmpty ? nutrient.unit.split('/').first.trim() : '';
                     final unit = rawUnit.replaceAll('RAE', '').trim();
-                    final String formatConsumed = consumedTotal >= 10
-                        ? consumedTotal.round().toString()
-                        : consumedTotal.toStringAsFixed(1);
-                    final String formatTarget = targetVal >= 10
-                        ? targetVal.round().toString()
-                        : targetVal.toStringAsFixed(1);
+                    final String formatConsumed = consumedTotal.toNutrientDisplayString();
+                    final String formatTarget = targetVal.toNutrientDisplayString();
 
                     final percent = targetVal > 0 ? (consumedTotal / targetVal) * 100.0 : 0.0;
                     final Color amountColor;

@@ -4,6 +4,7 @@ import '../alter/alter.dart';
 import '../data/models/food_source_item.dart';
 import '../data/models/nutrient_info.dart';
 import '../data/services/nutrition_tracking_service.dart';
+import '../data/utils/continuous_step_controller.dart';
 import 'horizon_list_item.dart';
 import 'horizon_title_bar.dart';
 
@@ -81,8 +82,7 @@ class _HorizonFoodModalState extends State<HorizonFoodModal> {
   final NutritionTrackingService _trackingService = NutritionTrackingService();
 
   late double _quantityGrams;
-  Timer? _holdTimer;
-  Timer? _continuousTimer;
+  late final ContinuousStepController _stepController;
 
   Map<String, double>? _targetMap;
   Map<String, NutrientInfo>? _nutrientMap;
@@ -96,6 +96,15 @@ class _HorizonFoodModalState extends State<HorizonFoodModal> {
             ? widget.food.plannedDailyGrams
             : widget.food.defaultPortionGrams);
 
+    _stepController = ContinuousStepController(
+      minValue: 1.0,
+      onStep: (newVal) {
+        setState(() {
+          _quantityGrams = newVal;
+        });
+      },
+    );
+
     if (widget.targetMap != null && widget.nutrientMap != null) {
       _targetMap = widget.targetMap;
       _nutrientMap = widget.nutrientMap;
@@ -107,7 +116,7 @@ class _HorizonFoodModalState extends State<HorizonFoodModal> {
 
   @override
   void dispose() {
-    _stopContinuousChange();
+    _stepController.dispose();
     super.dispose();
   }
 
@@ -128,111 +137,23 @@ class _HorizonFoodModalState extends State<HorizonFoodModal> {
     });
   }
 
-  void _startContinuousChange(double delta) {
-    _stopContinuousChange();
-    // After 350ms hold delay, start continuous stepping
-    _holdTimer = Timer(const Duration(milliseconds: 350), () {
-      _continuousTimer = Timer.periodic(const Duration(milliseconds: 80), (timer) {
-        if (delta < 0 && _quantityGrams <= 1.0) {
-          timer.cancel();
-          return;
-        }
-        _stepQuantity(delta);
-      });
-    });
-  }
-
-  void _stopContinuousChange() {
-    _holdTimer?.cancel();
-    _holdTimer = null;
-    _continuousTimer?.cancel();
-    _continuousTimer = null;
-  }
-
   String _buildSubtitle() {
     if (_targetMap == null || _nutrientMap == null) return '';
-
-    final List<MapEntry<String, double>> topList = [];
-    for (final nutrientVal in widget.food.nutrients) {
-      if (nutrientVal.nutrientKey == 'energy') continue;
-      if (nutrientVal.nutrientKey == 'total_protein' && widget.food.proteinIndex != 1) {
-        continue;
-      }
-
-      final nutrientInfo = _nutrientMap![nutrientVal.nutrientKey];
-      if (nutrientInfo == null || !nutrientInfo.isTracked) continue;
-
-      final target = _targetMap![nutrientVal.nutrientKey] ?? 0.0;
-      if (target <= 0) continue;
-
-      final yieldAmount = (_quantityGrams / 100.0) * nutrientVal.amountPer100g;
-      final isWeeklyNutrient = nutrientInfo.frequency == TrackingFrequency.weekly;
-      final isDailyRoutineFood = widget.food.isTracked && widget.food.frequency == TrackingFrequency.daily;
-
-      // For daily nutrients: compares single portion yield against daily target.
-      // For weekly nutrients: if the food is part of daily routine, 7 daily portions are projected;
-      // otherwise, this single portion's contribution against the weekly target is calculated.
-      final effectiveYield = (isWeeklyNutrient && isDailyRoutineFood)
-          ? yieldAmount * 7.0
-          : yieldAmount;
-
-      final coveragePercent = (effectiveYield / target) * 100.0;
-      if (coveragePercent > 0.0) {
-        final keyLabel = nutrientInfo.shortKey ?? nutrientInfo.displayName;
-        topList.add(MapEntry(keyLabel, coveragePercent));
-      }
-    }
-
-    topList.sort((a, b) => b.value.compareTo(a.value));
-    final selected = topList.take(3).toList();
-    if (selected.isEmpty) return '';
-
-    return selected.map((e) => '${e.key} ${e.value.round()}%').join(' • ');
+    return widget.food.buildNutrientCoverageSubtitle(
+      portionGrams: _quantityGrams,
+      targetMap: _targetMap!,
+      nutrientMap: _nutrientMap!,
+    );
   }
 
   List<({NutrientInfo info, double coveragePercent, bool isDaily})> _getQualifiedNutrients() {
     if (_targetMap == null || _nutrientMap == null) return [];
-
-    final List<({NutrientInfo info, double coveragePercent, bool isDaily})> qualified = [];
-
-    for (final nutrientVal in widget.food.nutrients) {
-      if (nutrientVal.nutrientKey == 'energy') continue;
-      if (nutrientVal.nutrientKey == 'total_protein' && widget.food.proteinIndex != 1) {
-        continue;
-      }
-
-      final nutrientInfo = _nutrientMap![nutrientVal.nutrientKey];
-      // Only include nutrients configured on NutrientMap
-      if (nutrientInfo == null || !nutrientInfo.isTracked) continue;
-
-      final target = _targetMap![nutrientVal.nutrientKey] ?? 0.0;
-      if (target <= 0) continue;
-
-      final yieldAmount = (_quantityGrams / 100.0) * nutrientVal.amountPer100g;
-      final isWeeklyNutrient = nutrientInfo.frequency == TrackingFrequency.weekly;
-      final isDailyRoutineFood = widget.food.isTracked && widget.food.frequency == TrackingFrequency.daily;
-
-      // Calculates coverage offered by this food for either the day or week depending on nutrient frequency
-      final effectiveYield = (isWeeklyNutrient && isDailyRoutineFood)
-          ? yieldAmount * 7.0
-          : yieldAmount;
-
-      final coveragePercent = (effectiveYield / target) * 100.0;
-
-      // Filter: only >= 5% contributors allowed
-      if (coveragePercent >= 5.0) {
-        final isDaily = nutrientInfo.frequency == TrackingFrequency.daily;
-        qualified.add((
-          info: nutrientInfo,
-          coveragePercent: coveragePercent,
-          isDaily: isDaily,
-        ));
-      }
-    }
-
-    // Sort by highest percentage contribution first
-    qualified.sort((a, b) => b.coveragePercent.compareTo(a.coveragePercent));
-    return qualified;
+    return widget.food.calculateNutrientContributions(
+      portionGrams: _quantityGrams,
+      targetMap: _targetMap!,
+      nutrientMap: _nutrientMap!,
+      minCoveragePercent: 5.0,
+    );
   }
 
   @override
@@ -272,13 +193,19 @@ class _HorizonFoodModalState extends State<HorizonFoodModal> {
                   title: '${widget.food.title}, ${_quantityGrams.round()}g',
                   subtitle: _buildSubtitle(),
                   onLeftActionTap: () => _stepQuantity(-1.0),
-                  onLeftTapDown: (_) => _startContinuousChange(-1.0),
-                  onLeftTapUp: (_) => _stopContinuousChange(),
-                  onLeftTapCancel: () => _stopContinuousChange(),
+                  onLeftTapDown: (_) => _stepController.start(
+                    currentDelta: -1.0,
+                    currentValue: _quantityGrams,
+                  ),
+                  onLeftTapUp: (_) => _stepController.stop(),
+                  onLeftTapCancel: () => _stepController.stop(),
                   onRightActionTap: () => _stepQuantity(1.0),
-                  onRightTapDown: (_) => _startContinuousChange(1.0),
-                  onRightTapUp: (_) => _stopContinuousChange(),
-                  onRightTapCancel: () => _stopContinuousChange(),
+                  onRightTapDown: (_) => _stepController.start(
+                    currentDelta: 1.0,
+                    currentValue: _quantityGrams,
+                  ),
+                  onRightTapUp: (_) => _stepController.stop(),
+                  onRightTapCancel: () => _stepController.stop(),
                 ),
                 const SizedBox(height: 16),
 

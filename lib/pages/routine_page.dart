@@ -1,9 +1,9 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import '../alter/alter.dart';
 import '../data/models/food_source_item.dart';
 import '../data/models/nutrient_info.dart';
 import '../data/services/nutrition_tracking_service.dart';
+import '../data/utils/continuous_step_controller.dart';
 import '../horizon/horizon_add_source.dart';
 import '../horizon/horizon_list_item.dart';
 import '../horizon/horizon_title_bar.dart';
@@ -29,121 +29,54 @@ class RoutinePage extends StatefulWidget {
 class _RoutinePageState extends State<RoutinePage> {
   final NutritionTrackingService _trackingService = NutritionTrackingService();
 
-  // Active timer for continuous increment/decrement during long press
-  Timer? _continuousTimer;
+  late final ContinuousStepController _stepController;
   String? _activeFoodId;
   double? _activeTargetGrams;
+
+  @override
+  void initState() {
+    super.initState();
+    _stepController = ContinuousStepController(
+      minValue: 1.0,
+      onStep: (newVal) {
+        setState(() {
+          _activeTargetGrams = newVal;
+        });
+      },
+      onHoldEnd: () {
+        if (_activeFoodId != null && _activeTargetGrams != null) {
+          _trackingService.updateFoodPlannedTarget(
+            foodId: _activeFoodId!,
+            newTargetGrams: _activeTargetGrams!,
+          );
+        }
+        _activeFoodId = null;
+        _activeTargetGrams = null;
+      },
+    );
+  }
 
   void _startContinuousChange({
     required String foodId,
     required double currentPlannedGrams,
     required double delta,
   }) {
-    _continuousTimer?.cancel();
     _activeFoodId = foodId;
     _activeTargetGrams = currentPlannedGrams;
-
-    // Step immediately
-    _activeTargetGrams = (_activeTargetGrams! + delta);
-    if (_activeTargetGrams! < 1.0) _activeTargetGrams = 1.0;
-    setState(() {}); // Instant visual feedback
-
-    // Continuous step every 80ms locally without flooding disk I/O
-    _continuousTimer = Timer.periodic(const Duration(milliseconds: 80), (timer) {
-      if (delta < 0 && _activeTargetGrams! <= 1.0) {
-        timer.cancel();
-        return;
-      }
-      _activeTargetGrams = (_activeTargetGrams! + delta);
-      if (_activeTargetGrams! < 1.0) _activeTargetGrams = 1.0;
-      setState(() {});
-    });
+    _stepController.start(
+      currentDelta: delta,
+      currentValue: currentPlannedGrams,
+    );
   }
 
   void _stopContinuousChange() {
-    _continuousTimer?.cancel();
-    _continuousTimer = null;
-
-    // Flush single write transaction to Isar on release
-    if (_activeFoodId != null && _activeTargetGrams != null) {
-      _trackingService.updateFoodPlannedTarget(
-        foodId: _activeFoodId!,
-        newTargetGrams: _activeTargetGrams!,
-      );
-    }
-    _activeFoodId = null;
-    _activeTargetGrams = null;
-  }
-
-  /// Checks whether a given food item provides non-zero coverage for the selected nutrient
-  bool _foodProvidesSelectedNutrient(FoodSourceItem food) {
-    if (widget.selectedNutrientKey == null) return true;
-
-    final foodNutrientKeys = {
-      for (final n in food.nutrients)
-        if (n.amountPer100g > 0 &&
-            (n.nutrientKey != 'total_protein' || food.proteinIndex == 1))
-          n.nutrientKey
-    };
-
-    return foodNutrientKeys.contains(widget.selectedNutrientKey);
+    _stepController.stop();
   }
 
   @override
   void dispose() {
-    _continuousTimer?.cancel();
+    _stepController.dispose();
     super.dispose();
-  }
-
-  /// Computes top 2 or 3 nutrient contribution strings: "'Key' 'coverage%' • ..."
-  /// Uses O(1) in-memory targetMap and nutrientMap for zero re-computation overhead.
-  String _buildNutrientCoverageSubtitle({
-    required FoodSourceItem food,
-    required double portionGrams,
-    required Map<String, double> targetMap,
-    required Map<String, NutrientInfo> nutrientMap,
-  }) {
-    final List<MapEntry<String, double>> topList = [];
-
-    for (final nutrientVal in food.nutrients) {
-      // Exclude energy from subtitle list
-      if (nutrientVal.nutrientKey == 'energy') continue;
-
-      // Protein qualification requires food to be a complete protein source (proteinIndex == 1)
-      if (nutrientVal.nutrientKey == 'total_protein' && food.proteinIndex != 1) continue;
-
-      final nutrientInfo = nutrientMap[nutrientVal.nutrientKey];
-      if (nutrientInfo == null || !nutrientInfo.isTracked) continue;
-
-      final target = targetMap[nutrientVal.nutrientKey] ?? 0.0;
-      if (target <= 0) continue;
-
-      final dailyYield = (portionGrams / 100.0) * nutrientVal.amountPer100g;
-      // If nutrient frequency is weekly, compare weekly yield (dailyYield * 7) against weekly target
-      final plannedYield = nutrientInfo.frequency == TrackingFrequency.weekly
-          ? dailyYield * 7.0
-          : dailyYield;
-
-      final coveragePercent = (plannedYield / target) * 100.0;
-
-      if (coveragePercent > 0.0) {
-        final keyLabel = nutrientInfo.shortKey ?? nutrientInfo.displayName;
-        topList.add(MapEntry(keyLabel, coveragePercent));
-      }
-    }
-
-    // Sort by highest coverage percentage first
-    topList.sort((a, b) => b.value.compareTo(a.value));
-
-    // Take top 3
-    final selected = topList.take(3).toList();
-    if (selected.isEmpty) {
-      return '';
-    }
-
-    return selected
-        .map((e) => '${e.key} ${e.value.round()}%')
-        .join(' • ');
   }
 
   Widget _buildRoutineItem({
@@ -159,9 +92,8 @@ class _RoutinePageState extends State<RoutinePage> {
     final displayGrams = isDaily ? currentGrams : currentGrams * 7.0;
     final targetLabel = '${displayGrams.round()}g';
     final itemTitle = '${food.title}, $targetLabel';
-    final subtitleText = _buildNutrientCoverageSubtitle(
-      food: food,
-      portionGrams: currentGrams,
+    final subtitleText = food.buildNutrientCoverageSubtitle(
+      portionGrams: displayGrams,
       targetMap: targetMap,
       nutrientMap: nutrientMap,
     );
@@ -246,7 +178,9 @@ class _RoutinePageState extends State<RoutinePage> {
           }
 
           final routineFoods = state.routineFoods;
-          final filteredFoods = routineFoods.where(_foodProvidesSelectedNutrient).toList();
+          final filteredFoods = routineFoods
+              .where((f) => f.providesNutrient(widget.selectedNutrientKey))
+              .toList();
 
           if (routineFoods.isEmpty && widget.selectedNutrientKey == null) {
             return const Center(

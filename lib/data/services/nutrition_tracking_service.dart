@@ -46,6 +46,36 @@ class NutritionTrackingService {
 
   DateTime _normalizeDate(DateTime dt) => DateTime(dt.year, dt.month, dt.day);
 
+  /// In-memory cache to prevent redundant disk I/O on rapid tracking/UI ticks
+  UserProfile? _cachedProfile;
+  List<NutrientInfo>? _cachedNutrients;
+
+  /// Fast cached profile retriever
+  Future<UserProfile> getCachedProfile({bool forceRefresh = false}) async {
+    if (!forceRefresh && _cachedProfile != null) {
+      return _cachedProfile!;
+    }
+    final p = await _isar.userProfiles.get(1) ?? UserProfile();
+    _cachedProfile = p;
+    return p;
+  }
+
+  /// Fast cached nutrient info list retriever
+  Future<List<NutrientInfo>> getCachedNutrients({bool forceRefresh = false}) async {
+    if (!forceRefresh && _cachedNutrients != null) {
+      return _cachedNutrients!;
+    }
+    final list = await _isar.nutrientInfos.where().findAll();
+    _cachedNutrients = list;
+    return list;
+  }
+
+  /// Invalidate profile cache (e.g. when user changes weight/strictness)
+  void invalidateCache() {
+    _cachedProfile = null;
+    _cachedNutrients = null;
+  }
+
   /// Normalizes date to the Monday midnight of that calendar week
   DateTime _normalizeWeekMonday(DateTime dt) {
     final normalized = _normalizeDate(dt);
@@ -80,9 +110,51 @@ class NutritionTrackingService {
     return food.calculateFrequency(profile: profile, allNutrients: allNutrients);
   }
 
-  // --------------------------------------------------------------------------
-  // ROUTINE COVERAGE CALCULATION
-  // --------------------------------------------------------------------------
+  /// Pure calculation helper for routine coverage against targets.
+  Map<String, double> _computeRoutineCoverage({
+    required List<FoodSourceItem> routineFoods,
+    required List<NutrientInfo> trackedNutrients,
+    required UserProfile profile,
+  }) {
+    final Map<String, double> dailyPlannedTotals = {};
+    final Map<String, double> weeklyPlannedTotals = {};
+
+    for (final food in routineFoods) {
+      final portionGrams = food.plannedDailyGrams;
+      final isDailyFood = food.frequency == TrackingFrequency.daily;
+
+      for (final nutrient in food.nutrients) {
+        if (nutrient.nutrientKey == 'total_protein' && food.proteinIndex != 1) continue;
+        final contribution = (portionGrams / 100.0) * nutrient.amountPer100g;
+
+        if (isDailyFood) {
+          // Daily routine foods contribute 1x to daily totals, and 7x across the week to weekly totals
+          dailyPlannedTotals[nutrient.nutrientKey] =
+              (dailyPlannedTotals[nutrient.nutrientKey] ?? 0.0) + contribution;
+          weeklyPlannedTotals[nutrient.nutrientKey] =
+              (weeklyPlannedTotals[nutrient.nutrientKey] ?? 0.0) + (contribution * 7.0);
+        } else {
+          // Weekly routine foods contribute 1x to the weekly totals
+          weeklyPlannedTotals[nutrient.nutrientKey] =
+              (weeklyPlannedTotals[nutrient.nutrientKey] ?? 0.0) + contribution;
+        }
+      }
+    }
+
+    final Map<String, double> coverageResults = {};
+    for (final nutrient in trackedNutrients) {
+      final target = nutrient.calculateEffectiveTarget(profile);
+      final isWeeklyNutrient = nutrient.frequency == TrackingFrequency.weekly;
+      final plannedYield = isWeeklyNutrient
+          ? (weeklyPlannedTotals[nutrient.nutrientKey] ?? 0.0)
+          : (dailyPlannedTotals[nutrient.nutrientKey] ?? 0.0);
+
+      final percent = target > 0 ? (plannedYield / target) * 100.0 : 0.0;
+      coverageResults[nutrient.nutrientKey] = percent;
+    }
+
+    return coverageResults;
+  }
 
   /// Computes the planned coverage of the user's active routine against their targets.
   Future<Map<String, double>> calculatePlannedRoutineCoverage() async {
@@ -101,31 +173,11 @@ class NutritionTrackingService {
         .isTrackedEqualTo(true)
         .findAll();
 
-    final Map<String, double> plannedTotals = {};
-
-    for (final food in routineFoods) {
-      final portionGrams = food.plannedDailyGrams;
-      for (final nutrient in food.nutrients) {
-        if (nutrient.nutrientKey == 'total_protein' && food.proteinIndex != 1) continue;
-        final contribution = (portionGrams / 100.0) * nutrient.amountPer100g;
-        plannedTotals[nutrient.nutrientKey] =
-            (plannedTotals[nutrient.nutrientKey] ?? 0.0) + contribution;
-      }
-    }
-
-    final Map<String, double> coverageResults = {};
-    for (final nutrient in trackedNutrients) {
-      final target = nutrient.calculateEffectiveTarget(profile);
-      final dailyConsumed = plannedTotals[nutrient.nutrientKey] ?? 0.0;
-      // If nutrient target is weekly (7 days), compare planned weekly yield (dailyConsumed * 7) against weekly target
-      final plannedYield = nutrient.frequency == TrackingFrequency.weekly
-          ? dailyConsumed * 7.0
-          : dailyConsumed;
-      final percent = target > 0 ? (plannedYield / target) * 100.0 : 0.0;
-      coverageResults[nutrient.nutrientKey] = percent;
-    }
-
-    return coverageResults;
+    return _computeRoutineCoverage(
+      routineFoods: routineFoods,
+      trackedNutrients: trackedNutrients,
+      profile: profile,
+    );
   }
 
   /// Watch stream of routine coverage map whenever tracked foods change.
@@ -138,29 +190,11 @@ class NutritionTrackingService {
           .isTrackedEqualTo(true)
           .findAll();
 
-      final Map<String, double> plannedTotals = {};
-      for (final food in routineFoods) {
-        final portionGrams = food.plannedDailyGrams;
-        for (final nutrient in food.nutrients) {
-          if (nutrient.nutrientKey == 'total_protein' && food.proteinIndex != 1) continue;
-          final contribution = (portionGrams / 100.0) * nutrient.amountPer100g;
-          plannedTotals[nutrient.nutrientKey] =
-              (plannedTotals[nutrient.nutrientKey] ?? 0.0) + contribution;
-        }
-      }
-
-      final Map<String, double> coverageResults = {};
-      for (final nutrient in trackedNutrients) {
-        final target = nutrient.calculateEffectiveTarget(profile);
-        final dailyConsumed = plannedTotals[nutrient.nutrientKey] ?? 0.0;
-        final plannedYield = nutrient.frequency == TrackingFrequency.weekly
-            ? dailyConsumed * 7.0
-            : dailyConsumed;
-        final percent = target > 0 ? (plannedYield / target) * 100.0 : 0.0;
-        coverageResults[nutrient.nutrientKey] = percent;
-      }
-
-      return coverageResults;
+      return _computeRoutineCoverage(
+        routineFoods: routineFoods,
+        trackedNutrients: trackedNutrients,
+        profile: profile,
+      );
     });
   }
 
@@ -624,8 +658,8 @@ class NutritionTrackingService {
         .isTrackedEqualTo(true)
         .watch(fireImmediately: true)
         .asyncMap((routineFoods) async {
-      final profile = await _isar.userProfiles.get(1) ?? UserProfile();
-      final allNutrients = await _isar.nutrientInfos.where().findAll();
+      final profile = await getCachedProfile();
+      final allNutrients = await getCachedNutrients();
 
       final targetMap = <String, double>{};
       final nutrientMap = <String, NutrientInfo>{};
@@ -693,8 +727,8 @@ class NutritionTrackingService {
       final today = currentDate;
       final thisWeekMonday = currentWeekMonday;
 
-      final profile = await _isar.userProfiles.get(1) ?? UserProfile();
-      final allNutrients = await _isar.nutrientInfos.where().findAll();
+      final profile = await getCachedProfile();
+      final allNutrients = await getCachedNutrients();
 
       final routineFoods = await _isar.foodSourceItems
           .filter()
@@ -1298,38 +1332,51 @@ class NutritionTrackingService {
             .findFirst();
 
         final Map<String, double> dailySummariesMap = {};
+        final Map<String, double> dailyAmountMap = {};
         if (dailyRecord != null) {
           for (final s in dailyRecord.nutrientSummaries) {
             dailySummariesMap[s.nutrientKey] = s.percentageMet;
+            dailyAmountMap[s.nutrientKey] = s.amountConsumed;
           }
         }
 
         final Map<String, double> weeklySummariesMap = {};
+        final Map<String, double> weeklyAmountMap = {};
         if (weeklyRecord != null) {
           for (final s in weeklyRecord.nutrientSummaries) {
             weeklySummariesMap[s.nutrientKey] = s.percentageMet;
+            weeklyAmountMap[s.nutrientKey] = s.amountConsumed;
           }
         }
 
+        final profile = await getCachedProfile();
         final Map<String, double> coverageResults = {};
+        final Map<String, double> amountResults = {};
+        final Map<String, double> targetMap = {};
+
         for (final nutrient in nutrients) {
+          targetMap[nutrient.nutrientKey] = nutrient.calculateEffectiveTarget(profile);
           if (nutrient.frequency == TrackingFrequency.daily) {
-            // Daily Pill: direct percentage met from today's daily record
+            // Daily Pill: direct percentage met and consumed amount from today's daily record
             coverageResults[nutrient.nutrientKey] = dailySummariesMap[nutrient.nutrientKey] ?? 0.0;
+            amountResults[nutrient.nutrientKey] = dailyAmountMap[nutrient.nutrientKey] ?? 0.0;
           } else {
-            // Weekly Pill: direct percentage met from this week's cumulative record
+            // Weekly Pill: direct percentage met and consumed amount from this week's cumulative record
             coverageResults[nutrient.nutrientKey] = weeklySummariesMap[nutrient.nutrientKey] ?? 0.0;
+            amountResults[nutrient.nutrientKey] = weeklyAmountMap[nutrient.nutrientKey] ?? 0.0;
           }
         }
 
         return NutrientMapState(
           nutrients: nutrients,
           coverageMap: coverageResults,
+          amountMap: amountResults,
+          targetMap: targetMap,
         );
       });
     } else {
       return watchTrackedRoutineFoods().asyncMap((routineFoods) async {
-        final profile = await _isar.userProfiles.get(1) ?? UserProfile();
+        final profile = await getCachedProfile();
         final nutrients = await _isar.nutrientInfos
             .filter()
             .isVisibleOnAppEqualTo(true)
@@ -1337,31 +1384,51 @@ class NutritionTrackingService {
             .isTrackedEqualTo(true)
             .findAll();
 
-        final Map<String, double> plannedTotals = {};
+        final Map<String, double> dailyPlannedTotals = {};
+        final Map<String, double> weeklyPlannedTotals = {};
+
         for (final food in routineFoods) {
           final portionGrams = food.plannedDailyGrams;
+          final isDailyFood = food.frequency == TrackingFrequency.daily;
+
           for (final nutrient in food.nutrients) {
             if (nutrient.nutrientKey == 'total_protein' && food.proteinIndex != 1) continue;
             final contribution = (portionGrams / 100.0) * nutrient.amountPer100g;
-            plannedTotals[nutrient.nutrientKey] =
-                (plannedTotals[nutrient.nutrientKey] ?? 0.0) + contribution;
+
+            if (isDailyFood) {
+              dailyPlannedTotals[nutrient.nutrientKey] =
+                  (dailyPlannedTotals[nutrient.nutrientKey] ?? 0.0) + contribution;
+              weeklyPlannedTotals[nutrient.nutrientKey] =
+                  (weeklyPlannedTotals[nutrient.nutrientKey] ?? 0.0) + (contribution * 7.0);
+            } else {
+              weeklyPlannedTotals[nutrient.nutrientKey] =
+                  (weeklyPlannedTotals[nutrient.nutrientKey] ?? 0.0) + contribution;
+            }
           }
         }
 
         final Map<String, double> coverageResults = {};
+        final Map<String, double> amountResults = {};
+        final Map<String, double> targetMap = {};
+
         for (final nutrient in nutrients) {
           final target = nutrient.calculateEffectiveTarget(profile);
-          final dailyConsumed = plannedTotals[nutrient.nutrientKey] ?? 0.0;
-          final plannedYield = nutrient.frequency == TrackingFrequency.weekly
-              ? dailyConsumed * 7.0
-              : dailyConsumed;
+          targetMap[nutrient.nutrientKey] = target;
+          final isWeeklyNutrient = nutrient.frequency == TrackingFrequency.weekly;
+          final plannedYield = isWeeklyNutrient
+              ? (weeklyPlannedTotals[nutrient.nutrientKey] ?? 0.0)
+              : (dailyPlannedTotals[nutrient.nutrientKey] ?? 0.0);
+
           final percent = target > 0 ? (plannedYield / target) * 100.0 : 0.0;
           coverageResults[nutrient.nutrientKey] = percent;
+          amountResults[nutrient.nutrientKey] = plannedYield;
         }
 
         return NutrientMapState(
           nutrients: nutrients,
           coverageMap: coverageResults,
+          amountMap: amountResults,
+          targetMap: targetMap,
         );
       });
     }
@@ -1564,10 +1631,14 @@ class TrackPageState {
 class NutrientMapState {
   final List<NutrientInfo> nutrients;
   final Map<String, double> coverageMap;
+  final Map<String, double> amountMap;
+  final Map<String, double> targetMap;
 
   const NutrientMapState({
     required this.nutrients,
     required this.coverageMap,
+    this.amountMap = const {},
+    this.targetMap = const {},
   });
 }
 
