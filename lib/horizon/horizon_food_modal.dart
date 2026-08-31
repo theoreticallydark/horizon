@@ -19,7 +19,8 @@ import 'horizon_title_bar.dart';
 /// - Child 5: Option W=Fill text container with center-aligned text (default: "Visit Routine to include Daily/Weekly").
 class HorizonFoodModal extends StatefulWidget {
   /// Component version for reference.
-  static const String version = '1.0.0';
+  // Version 1.0.1: Sorted nutrients in the 4-column grid to match NutrientMap order (Daily first, then Weekly).
+  static const String version = '1.0.1';
 
   final String? title;
   final FoodSourceItem food;
@@ -131,9 +132,9 @@ class _HorizonFoodModalState extends State<HorizonFoodModal> {
   }
 
   void _stepQuantity(double delta) {
+    final updated = (_quantityGrams + delta).clamp(1.0, 99999.0);
     setState(() {
-      final updated = _quantityGrams + delta;
-      _quantityGrams = updated < 1.0 ? 1.0 : updated;
+      _quantityGrams = updated;
     });
   }
 
@@ -148,12 +149,17 @@ class _HorizonFoodModalState extends State<HorizonFoodModal> {
 
   List<({NutrientInfo info, double coveragePercent, bool isDaily})> _getQualifiedNutrients() {
     if (_targetMap == null || _nutrientMap == null) return [];
-    return widget.food.calculateNutrientContributions(
+    final qualified = widget.food.calculateNutrientContributions(
       portionGrams: _quantityGrams,
       targetMap: _targetMap!,
       nutrientMap: _nutrientMap!,
       minCoveragePercent: 5.0,
     );
+
+    // Sort: Daily nutrients first, then Weekly nutrients (same ordering as NutrientMap)
+    final daily = qualified.where((n) => n.isDaily).toList();
+    final weekly = qualified.where((n) => !n.isDaily).toList();
+    return [...daily, ...weekly];
   }
 
   @override
