@@ -54,6 +54,31 @@ class FoodSourceItem {
   /// Planned Weekly target (daily target * 7)
   double get plannedWeeklyGrams => plannedDailyGrams * 7.0;
 
+  /// Dynamic step grams for incrementing/decrementing portions:
+  /// - defaultPortionGrams < 30g -> 5g
+  /// - 30g <= defaultPortionGrams <= 100g -> 10g
+  /// - defaultPortionGrams > 100g -> 25g
+  double get stepGrams {
+    if (defaultPortionGrams < 30.0) {
+      return 5.0;
+    } else if (defaultPortionGrams <= 100.0) {
+      return 10.0;
+    } else {
+      return 25.0;
+    }
+  }
+
+  /// Clean, user-friendly initial portion snapped to the food's step size:
+  /// - <30g -> rounded to nearest 5g (e.g. 14g -> 15g, 28g -> 30g)
+  /// - 30-100g -> rounded to nearest 10g (e.g. 52g -> 50g)
+  /// - >100g -> rounded to nearest 25g (e.g. 246g -> 250g)
+  double get snappedPortionGrams {
+    if (defaultPortionGrams <= 0) return 100.0;
+    final step = stepGrams;
+    final snapped = (defaultPortionGrams / step).round() * step;
+    return snapped < step ? step : snapped;
+  }
+
   /// Energy in kcal per 100g edible portion
   double energy = 0.0;
 

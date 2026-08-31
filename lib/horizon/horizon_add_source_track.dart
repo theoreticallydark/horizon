@@ -230,7 +230,7 @@ class _HorizonAddSourceTrackState extends State<HorizonAddSourceTrack> {
       separatorBuilder: (_, _) => const SizedBox(height: 16),
       itemBuilder: (context, index) {
         final food = filteredFoods[index];
-        final portionGrams = food.defaultPortionGrams;
+        final portionGrams = food.snappedPortionGrams;
         final title = '${food.title}, ${portionGrams.round()}g';
         final subtitle = food.buildNutrientCoverageSubtitle(
           portionGrams: portionGrams,

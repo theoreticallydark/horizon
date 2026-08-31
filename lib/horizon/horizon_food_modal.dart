@@ -19,8 +19,8 @@ import 'horizon_title_bar.dart';
 /// - Child 5: Option W=Fill text container with center-aligned text (default: "Visit Routine to include Daily/Weekly").
 class HorizonFoodModal extends StatefulWidget {
   /// Component version for reference.
-  // Version 1.0.1: Sorted nutrients in the 4-column grid to match NutrientMap order (Daily first, then Weekly).
-  static const String version = '1.0.1';
+  // Version 1.0.3: Initial quantity falls back to clean snappedPortionGrams.
+  static const String version = '1.0.3';
 
   final String? title;
   final FoodSourceItem food;
@@ -95,7 +95,7 @@ class _HorizonFoodModalState extends State<HorizonFoodModal> {
     _quantityGrams = widget.initialGrams ??
         (widget.food.plannedDailyGrams > 0
             ? widget.food.plannedDailyGrams
-            : widget.food.defaultPortionGrams);
+            : widget.food.snappedPortionGrams);
 
     _stepController = ContinuousStepController(
       minValue: 1.0,
@@ -198,16 +198,16 @@ class _HorizonFoodModalState extends State<HorizonFoodModal> {
                   host: HorizonListItemHost.routine,
                   title: '${widget.food.title}, ${_quantityGrams.round()}g',
                   subtitle: _buildSubtitle(),
-                  onLeftActionTap: () => _stepQuantity(-1.0),
+                  onLeftActionTap: () => _stepQuantity(-widget.food.stepGrams),
                   onLeftTapDown: (_) => _stepController.start(
-                    currentDelta: -1.0,
+                    currentDelta: -widget.food.stepGrams,
                     currentValue: _quantityGrams,
                   ),
                   onLeftTapUp: (_) => _stepController.stop(),
                   onLeftTapCancel: () => _stepController.stop(),
-                  onRightActionTap: () => _stepQuantity(1.0),
+                  onRightActionTap: () => _stepQuantity(widget.food.stepGrams),
                   onRightTapDown: (_) => _stepController.start(
-                    currentDelta: 1.0,
+                    currentDelta: widget.food.stepGrams,
                     currentValue: _quantityGrams,
                   ),
                   onRightTapUp: (_) => _stepController.stop(),

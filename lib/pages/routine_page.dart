@@ -103,6 +103,11 @@ class _RoutinePageState extends State<RoutinePage> {
         ? HorizonListItemHost.routineRemove
         : HorizonListItemHost.routine;
 
+    // For daily foods: step directly changes plannedDailyGrams by stepGrams.
+    // For weekly foods: displayGrams represents weekly planned quota (currentGrams * 7).
+    // Stepping weekly foods by stepGrams shifts daily quota by (stepGrams / 7.0).
+    final dailyDelta = isDaily ? food.stepGrams : (food.stepGrams / 7.0);
+
     return HorizonListItem(
       title: itemTitle,
       subtitle: subtitleText,
@@ -114,8 +119,7 @@ class _RoutinePageState extends State<RoutinePage> {
           // Click on Red button removes food from routine
           _trackingService.handleRoutineFoodRemoved(food.foodId);
         } else {
-          // Single tap decrements target by 1g
-          final updated = (currentGrams - 1.0).clamp(1.0, 99999.0);
+          final updated = (currentGrams - dailyDelta).clamp(1.0, 99999.0);
           _trackingService.updateFoodPlannedTarget(
             foodId: food.foodId,
             newTargetGrams: updated,
@@ -127,7 +131,7 @@ class _RoutinePageState extends State<RoutinePage> {
           _startContinuousChange(
             foodId: food.foodId,
             currentPlannedGrams: currentGrams,
-            delta: -1.0,
+            delta: -dailyDelta,
           );
         }
       },
@@ -136,7 +140,7 @@ class _RoutinePageState extends State<RoutinePage> {
 
       // RIGHT ACTION (Increment)
       onRightActionTap: () {
-        final updated = (currentGrams + 1.0).clamp(1.0, 99999.0);
+        final updated = (currentGrams + dailyDelta).clamp(1.0, 99999.0);
         _trackingService.updateFoodPlannedTarget(
           foodId: food.foodId,
           newTargetGrams: updated,
@@ -146,7 +150,7 @@ class _RoutinePageState extends State<RoutinePage> {
         _startContinuousChange(
           foodId: food.foodId,
           currentPlannedGrams: currentGrams,
-          delta: 1.0,
+          delta: dailyDelta,
         );
       },
       onRightTapUp: (_) => _stopContinuousChange(),

@@ -246,7 +246,7 @@ class _HorizonAddSourceState extends State<HorizonAddSource> {
       itemBuilder: (context, index) {
         final food = filteredFoods[index];
         final isAdded = _addedFoodIds.contains(food.foodId) || food.isTracked;
-        final portionGrams = food.defaultPortionGrams;
+        final portionGrams = food.snappedPortionGrams;
         final title = '${food.title}, ${portionGrams.round()}g';
         final subtitle = food.buildNutrientCoverageSubtitle(
           portionGrams: portionGrams,

@@ -420,6 +420,7 @@ class NutritionTrackingService {
     final allNutrients = await _isar.nutrientInfos.where().findAll();
 
     food.isTracked = true;
+    food.plannedDailyGrams = food.snappedPortionGrams;
     food.frequency = food.calculateFrequency(profile: profile, allNutrients: allNutrients);
 
     await _isar.writeTxn(() async {
