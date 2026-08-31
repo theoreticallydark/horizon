@@ -5,6 +5,7 @@ import '../data/models/nutrient_info.dart';
 import '../data/models/track_record.dart';
 import '../data/services/nutrition_tracking_service.dart';
 import '../horizon/horizon_add_source_track.dart';
+import '../horizon/horizon_food_modal.dart';
 import '../horizon/horizon_list_item.dart';
 import '../horizon/horizon_title_bar.dart';
 
@@ -240,11 +241,30 @@ class TrackPage extends StatelessWidget {
                             isChecked: willCheck,
                           );
                         },
-                        onTap: () {
-                          trackingService.toggleDailyFoodChecked(
-                            foodId: item.foodId,
-                            isChecked: !isChecked,
+                        onTap: () async {
+                          final food = foodMap[item.foodId];
+                          if (food == null) return;
+
+                          final initialGrams = item.amountConsumedGrams > 0
+                              ? item.amountConsumedGrams
+                              : item.plannedGrams;
+
+                          final updatedGrams = await HorizonFoodModal.show(
+                            context,
+                            title: 'Adjust quantity',
+                            food: food,
+                            initialGrams: initialGrams,
+                            targetMap: state.targetMap,
+                            nutrientMap: state.nutrientMap,
+                            showFooter: false,
                           );
+
+                          if (updatedGrams != null) {
+                            await trackingService.setDailyFoodConsumedGrams(
+                              foodId: item.foodId,
+                              consumedGrams: updatedGrams,
+                            );
+                          }
                         },
                       );
                     },
@@ -288,36 +308,48 @@ class TrackPage extends StatelessWidget {
                         subtitle: subtitleText,
                         host: HorizonListItemHost.trackWeekly,
                         isChecked: isChecked,
-                            onRightActionTap: () {
-                              // Increases amountConsumed by weeklyTarget / 7
-                              trackingService.updateWeeklyFoodIntake(
-                                foodId: item.foodId,
-                                deltaGrams: step,
-                              );
-                            },
-                            onCheckboxChanged: (state) {
-                              // Unchecking reduces amountConsumed by weeklyTarget / 7
-                              if (state == CheckboxState.unchecked) {
-                                trackingService.updateWeeklyFoodIntake(
-                                  foodId: item.foodId,
-                                  deltaGrams: -step,
-                                );
-                              }
-                            },
-                            onTap: () {
-                              if (isChecked) {
-                                trackingService.updateWeeklyFoodIntake(
-                                  foodId: item.foodId,
-                                  deltaGrams: -step,
-                                );
-                              } else {
-                                trackingService.updateWeeklyFoodIntake(
-                                  foodId: item.foodId,
-                                  deltaGrams: step,
-                                );
-                              }
-                            },
+                        onRightActionTap: () {
+                          // Increases amountConsumed by weeklyTarget / 7
+                          trackingService.updateWeeklyFoodIntake(
+                            foodId: item.foodId,
+                            deltaGrams: step,
                           );
+                        },
+                        onCheckboxChanged: (state) {
+                          // Unchecking reduces amountConsumed by weeklyTarget / 7
+                          if (state == CheckboxState.unchecked) {
+                            trackingService.updateWeeklyFoodIntake(
+                              foodId: item.foodId,
+                              deltaGrams: -step,
+                            );
+                          }
+                        },
+                        onTap: () async {
+                          final food = foodMap[item.foodId];
+                          if (food == null) return;
+
+                          final initialGrams = item.amountConsumedGrams > 0
+                              ? item.amountConsumedGrams
+                              : item.plannedGrams;
+
+                          final updatedGrams = await HorizonFoodModal.show(
+                            context,
+                            title: 'Adjust quantity',
+                            food: food,
+                            initialGrams: initialGrams,
+                            targetMap: state.targetMap,
+                            nutrientMap: state.nutrientMap,
+                            showFooter: false,
+                          );
+
+                          if (updatedGrams != null) {
+                            await trackingService.setDailyFoodConsumedGrams(
+                              foodId: item.foodId,
+                              consumedGrams: updatedGrams,
+                            );
+                          }
+                        },
+                      );
                         },
                       ),
                     ],

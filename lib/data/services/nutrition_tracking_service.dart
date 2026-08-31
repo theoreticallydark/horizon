@@ -1152,6 +1152,84 @@ class NutritionTrackingService {
     });
   }
 
+  /// Sets the exact amountConsumed for a food on a specific day without modifying routine planned targets
+  Future<void> setDailyFoodConsumedGrams({
+    required String foodId,
+    required double consumedGrams,
+    DateTime? date,
+  }) async {
+    final targetDate = _normalizeDate(date ?? currentDate);
+    final thisWeekMonday = _normalizeWeekMonday(targetDate);
+
+    final dailyRecord = await _isar.trackRecordDailys.getByDate(targetDate) ??
+        TrackRecordDaily()
+          ..date = targetDate
+          ..isSynced = false;
+
+    final weeklyRecord = await _isar.trackRecordWeeklys.getByWeekStartDate(thisWeekMonday) ??
+        TrackRecordWeekly()
+          ..weekStartDate = thisWeekMonday
+          ..weekKey = _formatWeekKey(thisWeekMonday)
+          ..isSynced = false;
+
+    dailyRecord.loggedFoods = List<TrackedFoodEntry>.from(dailyRecord.loggedFoods);
+    weeklyRecord.loggedFoods = List<TrackedFoodEntry>.from(weeklyRecord.loggedFoods);
+
+    final food = await _isar.foodSourceItems.getByFoodId(foodId);
+    if (food == null) return;
+
+    final grams = consumedGrams.clamp(0.0, 99999.0);
+
+    // 1. Update Daily Record
+    final dailyEntryIndex = dailyRecord.loggedFoods.indexWhere((f) => f.foodId == foodId);
+    double oldDailyConsumed = 0.0;
+    if (dailyEntryIndex >= 0) {
+      oldDailyConsumed = dailyRecord.loggedFoods[dailyEntryIndex].amountConsumedGrams;
+      dailyRecord.loggedFoods[dailyEntryIndex].amountConsumedGrams = grams;
+      dailyRecord.loggedFoods[dailyEntryIndex].loggedAt = DateTime.now();
+    } else {
+      dailyRecord.loggedFoods.add(
+        TrackedFoodEntry()
+          ..foodId = food.foodId
+          ..foodTitle = food.title
+          ..amountConsumedGrams = grams
+          ..plannedGrams = food.plannedDailyGrams
+          ..isFromRoutine = food.isTracked
+          ..frequency = food.frequency
+          ..loggedAt = DateTime.now(),
+      );
+    }
+
+    // 2. Synchronize delta into Weekly Record
+    final delta = grams - oldDailyConsumed;
+    final weeklyEntryIndex = weeklyRecord.loggedFoods.indexWhere((f) => f.foodId == foodId);
+    if (weeklyEntryIndex >= 0) {
+      final currentWeekly = weeklyRecord.loggedFoods[weeklyEntryIndex].amountConsumedGrams;
+      weeklyRecord.loggedFoods[weeklyEntryIndex].amountConsumedGrams =
+          (currentWeekly + delta).clamp(0.0, 99999.0);
+      weeklyRecord.loggedFoods[weeklyEntryIndex].loggedAt = DateTime.now();
+    } else if (grams > 0) {
+      weeklyRecord.loggedFoods.add(
+        TrackedFoodEntry()
+          ..foodId = food.foodId
+          ..foodTitle = food.title
+          ..amountConsumedGrams = grams
+          ..plannedGrams = food.plannedWeeklyGrams
+          ..isFromRoutine = food.isTracked
+          ..frequency = food.frequency
+          ..loggedAt = DateTime.now(),
+      );
+    }
+
+    await _recalculateDailySummaries(dailyRecord);
+    await _recalculateWeeklySummaries(weeklyRecord);
+
+    await _isar.writeTxn(() async {
+      await _isar.trackRecordWeeklys.put(weeklyRecord);
+      await _isar.trackRecordDailys.put(dailyRecord);
+    });
+  }
+
   /// Consolidated NutrientMap State Model stream
   Stream<NutrientMapState> watchNutrientMapState(bool isTrackView) {
     if (isTrackView) {
