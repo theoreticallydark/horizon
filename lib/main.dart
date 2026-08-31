@@ -12,7 +12,6 @@ import 'pages/track_page.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await IsarService.instance.init();
-  await IsarService.instance.seedDemoRoutine();
   await NutritionTrackingService().syncTrackRecordsWindow();
   runApp(const MyApp());
 }
