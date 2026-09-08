@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import '../alter/alter.dart';
+import 'package:alter/alter.dart';
 import '../data/models/food_source_item.dart';
 import '../data/models/nutrient_info.dart';
 import '../data/services/nutrition_tracking_service.dart';

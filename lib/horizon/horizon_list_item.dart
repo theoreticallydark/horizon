@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart' hide Checkbox;
-import '../alter/alter.dart';
+import 'package:alter/alter.dart';
 
 /// HorizonListItemHost represents the host variants from Figma node `130:4671` (.HorizonListItem)
 /// Note: trackDaily/trackWeekly checked states are handled dynamically via isChecked,

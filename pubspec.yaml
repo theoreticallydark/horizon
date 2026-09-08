@@ -76,31 +76,3 @@ flutter:
   # For details regarding adding assets from package dependencies, see
   # https://flutter.dev/to/asset-from-package
 
-  fonts:
-    - family: Geist
-      fonts:
-        - asset: lib/alter/assets/geist/Geist-Thin.ttf
-          weight: 100
-        - asset: lib/alter/assets/geist/Geist-ExtraLight.ttf
-          weight: 200
-        - asset: lib/alter/assets/geist/Geist-Light.ttf
-          weight: 300
-        - asset: lib/alter/assets/geist/Geist-Regular.ttf
-          weight: 400
-        - asset: lib/alter/assets/geist/Geist-Medium.ttf
-          weight: 500
-        - asset: lib/alter/assets/geist/Geist-SemiBold.ttf
-          weight: 600
-        - asset: lib/alter/assets/geist/Geist-Bold.ttf
-          weight: 700
-        - asset: lib/alter/assets/geist/Geist-ExtraBold.ttf
-          weight: 800
-        - asset: lib/alter/assets/geist/Geist-Black.ttf
-          weight: 900
-    - family: InstrumentSerif
-      fonts:
-        - asset: lib/alter/assets/instrumentserif/InstrumentSerif-Regular.ttf
-          weight: 400
-        - asset: lib/alter/assets/instrumentserif/InstrumentSerif-Italic.ttf
-          style: italic
-
