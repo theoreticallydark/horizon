@@ -149,6 +149,7 @@
 - **2026-08-30 06:15 PM** - Built `HorizonFoodModal` (`lib/horizon/horizon_food_modal.dart` v1.0.0): features 24px padding, 16px gap, H=Hug, rounded corners 24px, base-white background, editable `HorizonTitleBar` (without subtitle), `HorizonListItem` of type Routine (with 1g minimum boundary limit), `NutrientPillGridContainer` rendering a 4-column `Pill` grid of nutrients on `NutrientMap` with >5% contribution (computed against daily target for daily nutrients, and weekly target for weekly nutrients), `ActionContainer` with Large Gray 'Cancel' and Large Primary 'Done' `ButtonText`s, and an optional full-width center-aligned text message ("Visit Routine to include Daily/Weekly").
 - **2026-08-30 06:21 PM** - Connected `HorizonFoodModal` to Track page list items: clicking any `HorizonListItem` row on `TrackPage` smoothly presents `HorizonFoodModal` from the bottom with title `'Adjust quantity'`, filled nutrient data, and hidden footer, enabling local adjustments of today's consumed grams (`amountConsumedGrams`) via `NutritionTrackingService.setDailyFoodConsumedGrams()` upon tapping 'Done'.
 - **2026-08-30 06:24 PM** - Calibrated `HorizonFoodModal` button gestures: discrete single clicks step portion by exactly $\pm 1\text{g}$ via `_stepQuantity()` while press-and-hold triggers continuous stepping only after an intentional `350ms` hold delay, identical to Routine page list items.
+- **2026-09-08 02:58 PM** - Added `alter: ^1.0.0` published package dependency to `pubspec.yaml` and resolved dependencies via `flutter pub get`.
 
 ---
 
