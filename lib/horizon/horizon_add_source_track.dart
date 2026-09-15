@@ -180,9 +180,9 @@ class _HorizonAddSourceTrackState extends State<HorizonAddSourceTrack> {
 
                 // Dynamic Search Insertion (between List and Action Bar)
                 if (_isSearchActive) ...[
-                  Search(
+                  SearchInput(
                     controller: _searchController,
-                    hintText: 'Search food sources...',
+                    placeholder: 'Search food sources...',
                     autofocus: true,
                   ),
                   const SizedBox(height: 16),
