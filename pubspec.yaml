@@ -31,7 +31,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  alter: ^1.0.0
+  alter: ^2.0.0
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
@@ -75,32 +75,4 @@ flutter:
 
   # For details regarding adding assets from package dependencies, see
   # https://flutter.dev/to/asset-from-package
-
-  fonts:
-    - family: Geist
-      fonts:
-        - asset: lib/alter/assets/geist/Geist-Thin.ttf
-          weight: 100
-        - asset: lib/alter/assets/geist/Geist-ExtraLight.ttf
-          weight: 200
-        - asset: lib/alter/assets/geist/Geist-Light.ttf
-          weight: 300
-        - asset: lib/alter/assets/geist/Geist-Regular.ttf
-          weight: 400
-        - asset: lib/alter/assets/geist/Geist-Medium.ttf
-          weight: 500
-        - asset: lib/alter/assets/geist/Geist-SemiBold.ttf
-          weight: 600
-        - asset: lib/alter/assets/geist/Geist-Bold.ttf
-          weight: 700
-        - asset: lib/alter/assets/geist/Geist-ExtraBold.ttf
-          weight: 800
-        - asset: lib/alter/assets/geist/Geist-Black.ttf
-          weight: 900
-    - family: InstrumentSerif
-      fonts:
-        - asset: lib/alter/assets/instrumentserif/InstrumentSerif-Regular.ttf
-          weight: 400
-        - asset: lib/alter/assets/instrumentserif/InstrumentSerif-Italic.ttf
-          style: italic
 

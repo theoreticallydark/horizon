@@ -13,10 +13,10 @@ packages:
     dependency: "direct main"
     description:
       name: alter
-      sha256: "509690626fab9bd8823737eefb7f24e35e66ab07d8a774e5039758e999cea72f"
+      sha256: "4811d629dc450126354c736fa95f834a8d1257b2e786bd4915fdb9a37e09c096"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.0"
+    version: "2.0.0"
   analyzer:
     dependency: transitive
     description:

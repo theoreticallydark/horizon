@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../alter/alter.dart';
+import 'package:alter/alter.dart';
 import '../data/services/nutrition_tracking_service.dart';
 import 'nutrient_map.dart';
 

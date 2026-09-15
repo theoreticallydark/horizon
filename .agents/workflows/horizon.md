@@ -9,8 +9,8 @@ Horizon is a Flutter project that hosts
 
 About Alter
 
-1. lib/alter is the Alter design system. All components, styles and other design system resources should live here.
-2. Components in Alter needs to be reusable across projects. Hence, avoid usage of specific icon, labels or images. They should always be generic. Label can be label, choose a default icon, etc.
+1. Alter is consumed as an external Flutter package (`package:alter`). All design system components, tokens, swatches, and typography are imported from `package:alter/alter.dart`.
+2. Components in Alter are designed to be reusable across projects with generic icons, labels, and styles.
 
 General Instruction:
 

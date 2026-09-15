@@ -1,0 +1,2643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Horizon Database Structure & Action Lifecycle Visualizer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-base: #0b0f17;
+      --bg-surface: #111827;
+      --bg-surface-elevated: #1a2234;
+      --bg-surface-glass: rgba(17, 24, 39, 0.75);
+      --border-subtle: #1f293d;
+      --border-accent: #374151;
+      --primary: #6366f1;
+      --primary-glow: rgba(99, 102, 241, 0.25);
+      --primary-hover: #4f46e5;
+      --secondary: #06b6d4;
+      --accent-green: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-purple: #a855f7;
+      --accent-pink: #ec4899;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --text-dim: #6b7280;
+      --code-bg: #0d1117;
+      --shadow-lg: 0 20px 35px -5px rgba(0, 0, 0, 0.5), 0 10px 15px -5px rgba(0, 0, 0, 0.4);
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'Fira Code', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      line-height: 1.5;
+      min-height: 100vh;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(99, 102, 241, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 85% 85%, rgba(6, 182, 212, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.05) 0%, transparent 50%);
+      background-attachment: fixed;
+    }
+
+    header {
+      border-bottom: 1px solid var(--border-subtle);
+      background: var(--bg-surface-glass);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .brand-logo {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #6366f1, #06b6d4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 16px var(--primary-glow);
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: #fff;
+    }
+
+    .brand-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      background: linear-gradient(to right, #ffffff, #94a3b8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-subtitle {
+      font-size: 0.75rem;
+      color: var(--secondary);
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 0.5rem;
+      background: var(--bg-base);
+      padding: 0.35rem;
+      border-radius: 12px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 0.875rem;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .tab-btn.active {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 4px 12px var(--primary-glow);
+    }
+
+    .tab-btn:hover:not(.active) {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    main {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .view-section {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .view-section.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Section Headers */
+    .section-head {
+      margin-bottom: 2rem;
+    }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .section-desc {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      max-width: 900px;
+    }
+
+    /* Schema Grid */
+    .schema-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .schema-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .schema-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--border-accent);
+    }
+
+    .card-header {
+      padding: 1.1rem 1.25rem;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .card-title-group {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .entity-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    .icon-user { background: rgba(168, 85, 247, 0.2); color: var(--accent-purple); }
+    .icon-nutrient { background: rgba(6, 182, 212, 0.2); color: var(--secondary); }
+    .icon-food { background: rgba(16, 185, 129, 0.2); color: var(--accent-green); }
+    .icon-daily { background: rgba(99, 102, 241, 0.2); color: var(--primary); }
+    .icon-weekly { background: rgba(245, 158, 11, 0.2); color: var(--accent-amber); }
+
+    .card-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+    }
+
+    .badge {
+      font-size: 0.7rem;
+      font-family: var(--font-mono);
+      padding: 0.2rem 0.5rem;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-muted);
+    }
+
+    .badge-isar {
+      background: rgba(99, 102, 241, 0.15);
+      color: #818cf8;
+      border: 1px solid rgba(99, 102, 241, 0.3);
+    }
+
+    .card-body {
+      padding: 1.25rem;
+    }
+
+    .table-props {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+
+    .table-props th {
+      text-align: left;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-dim);
+      padding-bottom: 0.6rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .table-props td {
+      padding: 0.5rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      vertical-align: top;
+    }
+
+    .prop-name {
+      font-family: var(--font-mono);
+      font-weight: 500;
+      color: #e2e8f0;
+    }
+
+    .prop-type {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: #38bdf8;
+    }
+
+    .prop-desc {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+    }
+
+    .index-pill {
+      font-size: 0.65rem;
+      background: rgba(245, 158, 11, 0.15);
+      color: #fbbf24;
+      padding: 0.1rem 0.35rem;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      display: inline-block;
+      margin-left: 0.3rem;
+    }
+
+    .unique-pill {
+      font-size: 0.65rem;
+      background: rgba(236, 72, 153, 0.15);
+      color: #f472b6;
+      padding: 0.1rem 0.35rem;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      display: inline-block;
+      margin-left: 0.3rem;
+    }
+
+    /* Action Flow Simulator */
+    .simulator-container {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 1024px) {
+      .simulator-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .control-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      height: fit-content;
+    }
+
+    .panel-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #fff;
+    }
+
+    .action-btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .sim-btn {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 0.85rem 1rem;
+      color: var(--text-main);
+      font-size: 0.88rem;
+      font-weight: 500;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .sim-btn:hover {
+      border-color: var(--primary);
+      background: rgba(99, 102, 241, 0.1);
+      transform: translateX(4px);
+    }
+
+    .sim-btn.active {
+      border-color: var(--primary);
+      background: rgba(99, 102, 241, 0.2);
+      box-shadow: 0 0 14px var(--primary-glow);
+    }
+
+    .sim-btn-title {
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .sim-btn-desc {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .visual-stage {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 1.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .stage-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 1rem;
+    }
+
+    .stage-step-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .step-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--text-dim);
+    }
+
+    .step-dot.active {
+      background: var(--accent-green);
+      box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+    }
+
+    /* Pipeline Visualization */
+    .pipeline {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      position: relative;
+    }
+
+    .pipe-step {
+      background: var(--bg-base);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 1.25rem;
+      position: relative;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .pipe-step.highlight {
+      border-color: var(--secondary);
+      background: rgba(6, 182, 212, 0.05);
+      box-shadow: 0 0 20px rgba(6, 182, 212, 0.15);
+    }
+
+    .pipe-step-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .pipe-step-num {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .pipe-step-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #e0e7ff;
+    }
+
+    .pipe-step-detail {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    /* Diff View */
+    .diff-box {
+      background: var(--code-bg);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      overflow-x: auto;
+    }
+
+    .diff-line {
+      display: flex;
+      gap: 0.5rem;
+      padding: 0.1rem 0;
+    }
+
+    .diff-add {
+      color: #34d399;
+      background: rgba(52, 211, 153, 0.1);
+      border-radius: 3px;
+      padding: 0 0.25rem;
+    }
+
+    .diff-mod {
+      color: #60a5fa;
+      background: rgba(96, 165, 250, 0.1);
+      border-radius: 3px;
+      padding: 0 0.25rem;
+    }
+
+    .diff-del {
+      color: #f87171;
+      background: rgba(248, 113, 113, 0.1);
+      border-radius: 3px;
+      padding: 0 0.25rem;
+    }
+
+    .diff-key { color: #94a3b8; }
+    .diff-val { color: #f8fafc; font-weight: 500; }
+
+    /* Interactive DB Explorer */
+    .db-inspector {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      width: 100%;
+    }
+
+    .collection-nav {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 0.5rem 0.75rem;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      align-items: center;
+    }
+
+    .col-item {
+      padding: 0.6rem 1.1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      border: 1px solid transparent;
+      background: var(--bg-surface-elevated);
+    }
+
+    .col-item:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-main);
+      border-color: var(--border-subtle);
+    }
+
+    .col-item.active {
+      background: rgba(99, 102, 241, 0.18);
+      color: #818cf8;
+      border-color: rgba(99, 102, 241, 0.4);
+      box-shadow: 0 0 14px var(--primary-glow);
+    }
+
+    /* Pinned Column Styles for horizontal scrolling */
+    .pinned-col-header {
+      position: sticky !important;
+      left: 0 !important;
+      z-index: 25 !important;
+      background: var(--bg-base) !important;
+      box-shadow: 4px 0 10px -2px rgba(0, 0, 0, 0.6) !important;
+      border-right: 1px solid var(--border-accent) !important;
+    }
+
+    .pinned-col-filter {
+      position: sticky !important;
+      left: 0 !important;
+      z-index: 25 !important;
+      background: var(--bg-surface-elevated) !important;
+      box-shadow: 4px 0 10px -2px rgba(0, 0, 0, 0.6) !important;
+      border-right: 1px solid var(--border-accent) !important;
+    }
+
+    .pinned-col-cell {
+      position: sticky !important;
+      left: 0 !important;
+      z-index: 15 !important;
+      background: var(--bg-surface) !important;
+      box-shadow: 4px 0 10px -2px rgba(0, 0, 0, 0.6) !important;
+      border-right: 1px solid var(--border-subtle) !important;
+    }
+
+    .data-table tr:hover .pinned-col-cell {
+      background: #172033 !important;
+    }
+
+    .inspector-table-container {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 1.5rem;
+      overflow-x: auto;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+
+    .data-table th {
+      background: var(--bg-base);
+      color: var(--text-muted);
+      padding: 0.6rem 0.8rem;
+      text-align: left;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .data-table td {
+      padding: 0.7rem 0.8rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: var(--text-main);
+      font-family: var(--font-mono);
+    }
+
+    .data-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .tag-true {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.7rem;
+    }
+
+    .tag-false {
+      background: rgba(239, 68, 68, 0.15);
+      color: #f87171;
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.7rem;
+    }
+
+    .tag-freq-daily {
+      background: rgba(99, 102, 241, 0.15);
+      color: #818cf8;
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.7rem;
+    }
+
+    .tag-freq-weekly {
+      background: rgba(245, 158, 11, 0.15);
+      color: #fbbf24;
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.7rem;
+    }
+
+    /* Math Formulas Card */
+    .formula-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .formula-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #e2e8f0;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .formula-block {
+      background: var(--code-bg);
+      border-left: 3px solid var(--secondary);
+      border-radius: 0 8px 8px 0;
+      padding: 0.85rem 1.25rem;
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      color: #38bdf8;
+      margin: 0.75rem 0;
+    }
+
+    .formula-explainer {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .trigger-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+    }
+
+    .chip {
+      background: rgba(99, 102, 241, 0.1);
+      border: 1px solid rgba(99, 102, 241, 0.2);
+      color: #c7d2fe;
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-family: var(--font-mono);
+    }
+
+    .n-filter-btn {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .n-filter-btn:hover {
+      color: #fff;
+      border-color: var(--border-accent);
+    }
+    .n-filter-btn.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    .header-filter-row th {
+      padding: 0.35rem 0.4rem !important;
+      background: var(--bg-surface-elevated) !important;
+      border-bottom: 1px solid var(--border-accent) !important;
+    }
+
+    .col-filter-input, .col-filter-select {
+      width: 100%;
+      background: var(--bg-base);
+      border: 1px solid var(--border-subtle);
+      color: #f3f4f6;
+      padding: 0.3rem 0.45rem;
+      border-radius: 5px;
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .col-filter-input:focus, .col-filter-select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 6px var(--primary-glow);
+    }
+
+    .col-filter-select option {
+      background: var(--bg-surface);
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <div class="brand-logo">H</div>
+      <div>
+        <div class="brand-title">Horizon Database Architecture</div>
+        <div class="brand-subtitle">Isar NoSQL Engine • Reactive Schemas &amp; Lifecycles</div>
+      </div>
+    </div>
+
+    <nav class="nav-tabs">
+      <button class="tab-btn active" onclick="switchTab('schema')">
+        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M4 4h7v7H4V4m0 9h7v7H4v-7m9-9h7v7h-7V4m0 9h7v7h-7v-7Z"/></svg>
+        Schema &amp; Entities
+      </button>
+      <button class="tab-btn" onclick="switchTab('actions')">
+        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"/></svg>
+        Action Lifecycles (Simulator)
+      </button>
+      <button class="tab-btn" onclick="switchTab('explorer')">
+        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+        Live Data Explorer
+      </button>
+      <button class="tab-btn" onclick="switchTab('rules')">
+        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l7.59-7.59L21 8l-9 9z"/></svg>
+        Math &amp; Qualification Rules
+      </button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- TAB 1: SCHEMA & ENTITIES -->
+    <section id="tab-schema" class="view-section active">
+      <div class="section-head">
+        <h1 class="section-title">Isar Database Collections &amp; Embedded Objects</h1>
+        <p class="section-desc">
+          Horizon uses an embedded fast NoSQL database (Isar) organized into 5 primary Collections and 3 Embedded sub-objects.
+          Every collection is indexed for instant filtering, reactive live stream queries, and time-travel windowing.
+        </p>
+      </div>
+
+      <div class="schema-grid">
+        
+        <!-- UserProfile -->
+        <div class="schema-card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <div class="entity-icon icon-user">U</div>
+              <div class="card-title">UserProfile</div>
+            </div>
+            <span class="badge badge-isar">Singleton (id=1)</span>
+          </div>
+          <div class="card-body">
+            <table class="table-props">
+              <thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td><span class="prop-name">id</span></td>
+                  <td><span class="prop-type">Id = 1</span></td>
+                  <td class="prop-desc">Singleton identifier (always 1)</td>
+                </tr>
+                <tr>
+                  <td><span class="prop-name">name</span></td>
+                  <td><span class="prop-type">String</span></td>
+                  <td class="prop-desc">User display name (e.g. "Vayu")</td>
+                </tr>
+                <tr>
+                  <td><span class="prop-name">age</span></td>
+                  <td><span class="prop-type">int</span></td>
+                  <td class="prop-desc">Demographic DRI lookup (default 25)</td>
+                </tr>
+                <tr>
+                  <td><span class="prop-name">sex</span></td>
+                  <td><span class="prop-type">String</span></td>
+                  <td class="prop-desc">'male' | 'female' | 'both'</td>
+                </tr>
+                <tr>
+                  <td><span class="prop-name">goal</span></td>
+                  <td><span class="prop-type">Enum</span></td>
+                  <td class="prop-desc">'bulk' | 'cut' | 'maintain' (User nutrition &amp; fitness objective)</td>
+                </tr>
+                <tr>
+                  <td><span class="prop-name">isPregnant</span></td>
+                  <td><span class="prop-type">bool</span></td>
+                  <td class="prop-desc"><strong>false</strong> by default (kept off for male &amp; female)</td>
+                </tr>
+                <tr>
+                  <td><span class="prop-name">isLactating</span></td>
+                  <td><span class="prop-type">bool</span></td>
+                  <td class="prop-desc"><strong>false</strong> by default (kept off for male &amp; female)</td>
+                </tr>
+                <tr>
+                  <td><span class="prop-name">weightKg</span></td>
+                  <td><span class="prop-type">double</span></td>
+                  <td class="prop-desc">Body weight in kg (used for protein target calculation)</td>
+                </tr>
+                <tr>
+                  <td><span class="prop-name">heightCm</span></td>
+                  <td><span class="prop-type">double</span></td>
+                  <td class="prop-desc">Body height recorded in centimeters (cm)</td>
+                </tr>
+                <tr>
+                  <td><span class="prop-name">strictness</span></td>
+                  <td><span class="prop-type">double</span></td>
+                  <td class="prop-desc">RDA multiplier (0.0 to 1.0, default 0.9 = 90%)</td>
+                </tr>
+                <tr>
+                  <td><span class="prop-name">nutrientTargets</span></td>
+                  <td><span class="prop-type">List&lt;String&gt;</span></td>
+                  <td class="prop-desc">List of active nutrient keys user wants to track from database</td>
+                </tr>
+                <tr>
+                  <td><span class="prop-name">lastUpdated</span></td>
+                  <td><span class="prop-type">DateTime</span></td>
+                  <td class="prop-desc">Timestamp of last profile update</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- NutrientInfo -->
+        <div class="schema-card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <div class="entity-icon icon-nutrient">N</div>
+              <div class="card-title">NutrientInfo</div>
+            </div>
+            <span class="badge badge-isar">Collection</span>
+          </div>
+          <div class="card-body">
+            <table class="table-props">
+              <thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td><span class="prop-name">nutrientKey</span><span class="unique-pill">UNIQUE</span></td>
+                  <td><span class="prop-type">String</span></td>
+                  <td class="prop-desc">e.g. 'vitamin_c', 'magnesium', 'total_protein'</td>
+                </tr>
+                <tr>
+                  <td><span class="prop-name">displayName / shortKey</span></td>
+                  <td><span class="prop-type">String</span></td>
+                  <td class="prop-desc">e.g. "Vitamin C" / "Vit C"</td>
+                </tr>
+                <tr>
+                  <td><span class="prop-name">category</span></td>
+                  <td><span class="prop-type">String</span></td>
+                  <td class="prop-desc">'Vitamins', 'Minerals', 'Macronutrients', 'Lipids'</td>
+                </tr>
+                <tr>
+                  <td><span class="prop-name">unit</span></td>
+                  <td><span class="prop-type">String</span></td>
+                  <td class="prop-desc">'mg/day', 'µg/day', 'g/day'</td>
+                </tr>
+                <tr>
+                  <td><span class="prop-name">frequency</span></td>
+                  <td><span class="prop-type">Enum</span></td>
+                  <td class="prop-desc">TrackingFrequency.daily | TrackingFrequency.weekly</td>
+                </tr>
+                <tr>
+                  <td><span class="prop-name">rdaOrAi / ear / ul</span></td>
+                  <td><span class="prop-type">double?</span></td>
+                  <td class="prop-desc">Demographic standard DRI values</td>
+                </tr>
+                <tr>
+                  <td><span class="prop-name">isVisibleOnApp / isTracked</span><span class="index-pill">INDEX</span></td>
+                  <td><span class="prop-type">bool</span></td>
+                  <td class="prop-desc">Display &amp; tracking toggles</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- FoodSourceItem -->
+        <div class="schema-card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <div class="entity-icon icon-food">F</div>
+              <div class="card-title">FoodSourceItem</div>
+            </div>
+            <span class="badge badge-isar">Collection</span>
+          </div>
+          <div class="card-body">
+            <table class="table-props">
+              <thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td><span class="prop-name">foodId</span><span class="unique-pill">UNIQUE</span></td>
+                  <td><span class="prop-type">String</span></td>
+                  <td class="prop-desc">e.g. "fdc_167927" or custom ID</td>
+                </tr>
+                <tr>
+                  <td><span class="prop-name">title / name / category</span><span class="index-pill">INDEX</span></td>
+                  <td><span class="prop-type">String</span></td>
+                  <td class="prop-desc">Searchable names and tags</td>
+                </tr>
+                <tr>
+                  <td><span class="prop-name">isTracked</span><span class="index-pill">INDEX</span></td>
+                  <td><span class="prop-type">bool</span></td>
+                  <td class="prop-desc"><strong>TRUE</strong> if added to user's active routine</td>
+                </tr>
+                <tr>
+                  <td><span class="prop-name">frequency</span><span class="index-pill">INDEX</span></td>
+                  <td><span class="prop-type">Enum</span></td>
+                  <td class="prop-desc">TrackingFrequency.daily | weekly (10% rule)</td>
+                </tr>
+                <tr>
+                  <td><span class="prop-name">trackingFrequencyOverride</span></td>
+                  <td><span class="prop-type">Enum?</span></td>
+                  <td class="prop-desc">User manual override (null = auto-calc)</td>
+                </tr>
+                <tr>
+                  <td><span class="prop-name">plannedDailyGrams</span></td>
+                  <td><span class="prop-type">double</span></td>
+                  <td class="prop-desc">Active target in routine (Weekly = 7x daily)</td>
+                </tr>
+                <tr>
+                  <td><span class="prop-name">proteinIndex</span></td>
+                  <td><span class="prop-type">int (0 or 1)</span></td>
+                  <td class="prop-desc">1 = complete high-quality protein</td>
+                </tr>
+                <tr>
+                  <td><span class="prop-name">nutrients</span></td>
+                  <td><span class="prop-type">List&lt;Embedded&gt;</span></td>
+                  <td class="prop-desc">Array of FoodNutrientValue (key, amountPer100g)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TrackRecordDaily -->
+        <div class="schema-card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <div class="entity-icon icon-daily">D</div>
+              <div class="card-title">TrackRecordDaily</div>
+            </div>
+            <span class="badge badge-isar">Collection (Daily Log)</span>
+          </div>
+          <div class="card-body">
+            <table class="table-props">
+              <thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td><span class="prop-name">date</span><span class="unique-pill">UNIQUE</span></td>
+                  <td><span class="prop-type">DateTime</span></td>
+                  <td class="prop-desc">Normalized YYYY-MM-DD midnight</td>
+                </tr>
+                <tr>
+                  <td><span class="prop-name">loggedFoods</span></td>
+                  <td><span class="prop-type">List&lt;TrackedFoodEntry&gt;</span></td>
+                  <td class="prop-desc">Contains both routine placeholders &amp; logged items</td>
+                </tr>
+                <tr>
+                  <td><span class="prop-name">nutrientSummaries</span></td>
+                  <td><span class="prop-type">List&lt;TrackNutrientSummary&gt;</span></td>
+                  <td class="prop-desc">Total consumed amount vs target per nutrient</td>
+                </tr>
+                <tr>
+                  <td><span class="prop-name">routineAdherencePercent</span></td>
+                  <td><span class="prop-type">double</span></td>
+                  <td class="prop-desc">Adherence % for that day (e.g. 80.0%)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TrackRecordWeekly -->
+        <div class="schema-card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <div class="entity-icon icon-weekly">W</div>
+              <div class="card-title">TrackRecordWeekly</div>
+            </div>
+            <span class="badge badge-isar">Collection (Weekly Rollup)</span>
+          </div>
+          <div class="card-body">
+            <table class="table-props">
+              <thead><tr><th>Property</th><th>Type</th><th>Description</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td><span class="prop-name">weekStartDate</span><span class="unique-pill">UNIQUE</span></td>
+                  <td><span class="prop-type">DateTime</span></td>
+                  <td class="prop-desc">Normalized Monday midnight (YYYY-MM-DD)</td>
+                </tr>
+                <tr>
+                  <td><span class="prop-name">weekKey</span><span class="index-pill">INDEX</span></td>
+                  <td><span class="prop-type">String</span></td>
+                  <td class="prop-desc">e.g. "2026-W36"</td>
+                </tr>
+                <tr>
+                  <td><span class="prop-name">loggedFoods</span></td>
+                  <td><span class="prop-type">List&lt;TrackedFoodEntry&gt;</span></td>
+                  <td class="prop-desc">Accumulated weekly intake vs 7x weekly targets</td>
+                </tr>
+                <tr>
+                  <td><span class="prop-name">nutrientSummaries</span></td>
+                  <td><span class="prop-type">List&lt;TrackNutrientSummary&gt;</span></td>
+                  <td class="prop-desc">Aggregated 7-day nutrient coverage</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Embedded Objects Reference -->
+        <div class="schema-card">
+          <div class="card-header">
+            <div class="card-title-group">
+              <div class="entity-icon" style="background: rgba(236,72,153,0.2); color: var(--accent-pink);">E</div>
+              <div class="card-title">Embedded Objects</div>
+            </div>
+            <span class="badge">Inlined in Isar</span>
+          </div>
+          <div class="card-body">
+            <table class="table-props">
+              <thead><tr><th>Object</th><th>Properties</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td><span class="prop-name">FoodNutrientValue</span></td>
+                  <td class="prop-desc"><span class="prop-type">nutrientKey</span> (String), <span class="prop-type">amountPer100g</span> (double)</td>
+                </tr>
+                <tr>
+                  <td><span class="prop-name">TrackedFoodEntry</span></td>
+                  <td class="prop-desc">
+                    <span class="prop-type">foodId</span>, <span class="prop-type">foodTitle</span>, 
+                    <span class="prop-type">amountConsumedGrams</span>, <span class="prop-type">plannedGrams</span>, 
+                    <span class="prop-type">isFromRoutine</span> (bool), <span class="prop-type">frequency</span> (enum), 
+                    <span class="prop-type">loggedAt</span> (DateTime)
+                  </td>
+                </tr>
+                <tr>
+                  <td><span class="prop-name">TrackNutrientSummary</span></td>
+                  <td class="prop-desc">
+                    <span class="prop-type">nutrientKey</span>, <span class="prop-type">amountConsumed</span>, 
+                    <span class="prop-type">targetAmount</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- TAB 2: ACTION LIFECYCLES (SIMULATOR) -->
+    <section id="tab-actions" class="view-section">
+      <div class="section-head">
+        <h1 class="section-title">Database Action Lifecycles &amp; State Transitions</h1>
+        <p class="section-desc">
+          Click an action on the left to see how database entities mutate, how records synchronize across the 3-day window,
+          and how reactive calculation pipelines update targets and logs.
+        </p>
+      </div>
+
+      <div class="simulator-container">
+        <!-- Action Buttons -->
+        <div class="control-panel">
+          <div class="panel-title">
+            <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+            Trigger Action
+          </div>
+          <div class="action-btn-group">
+            <button class="sim-btn active" onclick="simulateAction('add_routine')">
+              <div class="sim-btn-title">
+                <span>1. Add Food to Routine</span>
+                <span class="badge" style="color:#34d399;">CREATE</span>
+              </div>
+              <div class="sim-btn-desc">User taps '+ Add to Routine' in Add Source / Food Detail</div>
+            </button>
+
+            <button class="sim-btn" onclick="simulateAction('toggle_check')">
+              <div class="sim-btn-title">
+                <span>2. Quick Check Daily Food</span>
+                <span class="badge" style="color:#60a5fa;">UPDATE</span>
+              </div>
+              <div class="sim-btn-desc">User checks a food checkbox on Track Page</div>
+            </button>
+
+            <button class="sim-btn" onclick="simulateAction('adjust_portion')">
+              <div class="sim-btn-title">
+                <span>3. Adjust Planned Grams</span>
+                <span class="badge" style="color:#fbbf24;">MUTATE</span>
+              </div>
+              <div class="sim-btn-desc">User changes portion (e.g. 100g &rarr; 150g) in Routine</div>
+            </button>
+
+            <button class="sim-btn" onclick="simulateAction('override_freq')">
+              <div class="sim-btn-title">
+                <span>4. Frequency Override</span>
+                <span class="badge" style="color:#c084fc;">RE-ROUTE</span>
+              </div>
+              <div class="sim-btn-desc">User manually flips food between Daily &amp; Weekly</div>
+            </button>
+
+            <button class="sim-btn" onclick="simulateAction('remove_routine')">
+              <div class="sim-btn-title">
+                <span>5. Remove from Routine</span>
+                <span class="badge" style="color:#f87171;">DELETE</span>
+              </div>
+              <div class="sim-btn-desc">User removes food from routine (cleans unconsumed placeholders)</div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Stage View -->
+        <div class="visual-stage">
+          <div class="stage-header">
+            <div>
+              <h2 id="stage-action-title" style="font-size:1.2rem; font-weight:700;">Action: Add Food to Routine</h2>
+              <div id="stage-action-subtitle" style="font-size:0.85rem; color:var(--text-muted);">Method: `handleRoutineFoodAdded(foodId)`</div>
+            </div>
+            <div class="stage-step-indicator">
+              <span class="badge badge-isar">Reactive Isar Txn</span>
+            </div>
+          </div>
+
+          <div id="stage-pipeline" class="pipeline">
+            <!-- Populated dynamically by JS -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: LIVE DATA EXPLORER -->
+    <section id="tab-explorer" class="view-section">
+      <div class="section-head">
+        <h1 class="section-title">Interactive Live Database Inspector</h1>
+        <p class="section-desc">
+          Browse actual seed and sample records stored in the Isar database. Click any collection to inspect active properties and relations.
+        </p>
+      </div>
+
+      <div class="db-inspector">
+        <div class="collection-nav">
+          <div class="col-item active" onclick="switchCollection('foods')">
+            <span>FoodSourceItem</span>
+            <span class="badge" id="badge-count-foods">Excluded</span>
+          </div>
+          <div class="col-item" onclick="switchCollection('nutrients')">
+            <span>NutrientInfo</span>
+            <span class="badge" id="badge-count-nutrients">45 items</span>
+          </div>
+          <div class="col-item" onclick="switchCollection('profile')">
+            <span>UserProfile</span>
+            <span class="badge">1 item</span>
+          </div>
+          <div class="col-item" onclick="switchCollection('daily')">
+            <span>TrackRecordDaily</span>
+            <span class="badge" id="badge-count-daily">3 days</span>
+          </div>
+          <div class="col-item" onclick="switchCollection('weekly')">
+            <span>TrackRecordWeekly</span>
+            <span class="badge">1 week</span>
+          </div>
+        </div>
+
+        <div class="inspector-table-container">
+          <div id="explorer-content">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: RULES & MATHEMATICS -->
+    <section id="tab-rules" class="view-section">
+      <div class="section-head">
+        <h1 class="section-title">Core Nutrition &amp; Tracking Qualification Math</h1>
+        <p class="section-desc">
+          These mathematical rules govern target generation, frequency qualification (10% trigger rule), and routine adherence.
+        </p>
+      </div>
+
+      <!-- 10% Trigger Rule -->
+      <div class="formula-card">
+        <div class="formula-title">
+          <svg width="20" height="20" fill="#fbbf24" viewBox="0 0 24 24"><path d="M12 2L1 21h22L12 2zm0 3.99L19.53 19H4.47L12 5.99zM11 10h2v4h-2zm0 6h2v2h-2z"/></svg>
+          1. The 10% Trigger Nutrient Coverage Qualification Rule
+        </div>
+        <div class="formula-explainer">
+          When a food is added to the user's routine, the database evaluates its yield against the user's effective target for the <strong>8 Trigger Nutrients</strong>:
+        </div>
+        <div class="formula-block">
+          Yield = (plannedDailyGrams / 100.0) &times; amountPer100g<br>
+          Coverage % = (Yield / EffectiveTarget) &times; 100.0<br><br>
+          IF ANY Trigger Nutrient Coverage &gt; 10.0% &rarr; Frequency = <span style="color:#818cf8;">DAILY</span><br>
+          ELSE &rarr; Frequency = <span style="color:#fbbf24;">WEEKLY</span>
+        </div>
+        <div class="formula-explainer">
+          <strong>8 Trigger Nutrients:</strong>
+        </div>
+        <div class="trigger-chips">
+          <span class="chip">vitamin_c (Vit C)</span>
+          <span class="chip">collagen (Coll.)</span>
+          <span class="chip">total_fiber (Fiber)</span>
+          <span class="chip">magnesium (Mg)</span>
+          <span class="chip">calcium (Ca)</span>
+          <span class="chip">potassium (K)</span>
+          <span class="chip">creatine (Creat.)</span>
+          <span class="chip">total_protein (Requires proteinIndex == 1)</span>
+        </div>
+      </div>
+
+      <!-- Target Calculation -->
+      <div class="formula-card">
+        <div class="formula-title">
+          <svg width="20" height="20" fill="#38bdf8" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l7.59-7.59L21 8l-9 9z"/></svg>
+          2. Effective Nutrient Target Formula
+        </div>
+        <div class="formula-explainer">
+          Nutrient targets dynamically adjust according to the UserProfile metrics and frequency:
+        </div>
+        <div class="formula-block">
+          For Standard Nutrients: BaseTarget = rawRdaOrAi &times; strictness (e.g. 90%)<br>
+          For Total Protein: BaseTarget = (rawRdaOrAi &lt; 2.0 ? rawRdaOrAi &times; weightKg : rawRdaOrAi) &times; strictness<br><br>
+          EffectiveTarget = isWeekly ? BaseTarget &times; 7.0 : BaseTarget
+        </div>
+      </div>
+
+      <!-- 3-Day Window Synchronization -->
+      <div class="formula-card">
+        <div class="formula-title">
+          <svg width="20" height="20" fill="#34d399" viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/></svg>
+          3. Windowed Synchronization (Gap Backfilling &amp; 3-Day Lookahead)
+        </div>
+        <div class="formula-explainer">
+          Whenever a routine food is added, modified, or the date shifts, Horizon syncs:
+        </div>
+        <div class="formula-block">
+          1. Backfills any missing past dates between oldest record and currentDate.<br>
+          2. Synchronizes 3-Day Daily Window: [Today, Today+1, Today+2].<br>
+          3. Synchronizes Current Week Monday record (e.g. 2026-W36).<br>
+          4. Automatically preserves any logged consumed foods (&gt;0g) while refreshing planned placeholders.
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Tab Switching
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
+
+      event.currentTarget.classList.add('active');
+      document.getElementById('tab-' + tabId).classList.add('active');
+    }
+
+    // Pipeline Data for Simulator
+    const actionsData = {
+      add_routine: {
+        title: "Action: Add Food to Routine",
+        subtitle: "Method: handleRoutineFoodAdded(foodId)",
+        steps: [
+          {
+            title: "1. FoodSourceItem Mutation in Isar",
+            desc: "The item is retrieved by foodId, flagged as active routine member, portion snapped, and frequency mathematically determined.",
+            diff: [
+              { type: 'mod', key: 'isTracked', oldVal: 'false', newVal: 'true' },
+              { type: 'mod', key: 'plannedDailyGrams', oldVal: '0.0', newVal: '100.0 (snapped to step size 10g)' },
+              { type: 'mod', key: 'frequency', oldVal: 'null', newVal: 'TrackingFrequency.daily (Qualified via Vitamin C > 10%)' }
+            ]
+          },
+          {
+            title: "2. Trigger syncTrackRecordsWindow()",
+            desc: "The service queries the 3-day daily window (Today, Today+1, Today+2) and the current weekly record.",
+            diff: [
+              { type: 'add', key: 'TrackRecordDaily [Today]', val: 'Added TrackedFoodEntry(foodId: "fdc_167927", plannedGrams: 100g, consumed: 0g, isFromRoutine: true)' },
+              { type: 'add', key: 'TrackRecordDaily [Today+1]', val: 'Added TrackedFoodEntry(plannedGrams: 100g, consumed: 0g)' },
+              { type: 'add', key: 'TrackRecordDaily [Today+2]', val: 'Added TrackedFoodEntry(plannedGrams: 100g, consumed: 0g)' }
+            ]
+          },
+          {
+            title: "3. Recalculate Summaries & Adherence",
+            desc: "Daily adherence percentage and target nutrient coverage maps are refreshed in-memory and committed in an Isar transaction.",
+            diff: [
+              { type: 'mod', key: 'TrackRecordDaily.routineAdherencePercent', oldVal: '0.0%', newVal: '0.0% (0 / 1 routine foods consumed)' }
+            ]
+          }
+        ]
+      },
+      toggle_check: {
+        title: "Action: Quick Check Daily Food Log",
+        subtitle: "Method: toggleDailyFoodChecked(foodId, isChecked: true)",
+        steps: [
+          {
+            title: "1. Update Today's TrackRecordDaily",
+            desc: "Locates foodId in today's record and sets consumed amount to full planned portion.",
+            diff: [
+              { type: 'mod', key: 'TrackedFoodEntry.amountConsumedGrams', oldVal: '0.0g', newVal: '100.0g (Full portion)' },
+              { type: 'mod', key: 'TrackedFoodEntry.loggedAt', oldVal: '-', newVal: '2026-09-08 15:20:00' }
+            ]
+          },
+          {
+            title: "2. Roll Up Intake to Current TrackRecordWeekly",
+            desc: "Adds the daily portion consumption into the weekly record's accumulated amount for this week.",
+            diff: [
+              { type: 'mod', key: 'TrackRecordWeekly.loggedFoods[foodId].amountConsumedGrams', oldVal: '0.0g', newVal: '100.0g / 700.0g target' }
+            ]
+          },
+          {
+            title: "3. Compute Nutrient Yield & Adherence",
+            desc: "Multiplies portion by nutrient amounts per 100g to update Vitamin C, Fiber, Magnesium, Protein summaries.",
+            diff: [
+              { type: 'mod', key: 'Summary: Vitamin C', oldVal: '0.0 mg (0%)', newVal: '45.0 mg (50% of 90mg target)' },
+              { type: 'mod', key: 'TrackRecordDaily.routineAdherencePercent', oldVal: '0.0%', newVal: '100.0% (1/1 routine items consumed)' }
+            ]
+          }
+        ]
+      },
+      adjust_portion: {
+        title: "Action: Adjust Planned Portion Target",
+        subtitle: "Method: updateFoodPlannedTarget(foodId, newTargetGrams: 150g)",
+        steps: [
+          {
+            title: "1. Update FoodSourceItem Entity",
+            desc: "Updates plannedDailyGrams in FoodSourceItem. Locks frequency if override exists.",
+            diff: [
+              { type: 'mod', key: 'FoodSourceItem.plannedDailyGrams', oldVal: '100.0g', newVal: '150.0g' },
+              { type: 'mod', key: 'FoodSourceItem.plannedWeeklyGrams', oldVal: '700.0g', newVal: '1050.0g' }
+            ]
+          },
+          {
+            title: "2. Propagate to Active Daily & Weekly Records",
+            desc: "Finds the food entry in [Today, Today+1, Today+2] and updates plannedGrams in place without touching consumed amounts.",
+            diff: [
+              { type: 'mod', key: 'TrackRecordDaily[Today].plannedGrams', oldVal: '100.0g', newVal: '150.0g' },
+              { type: 'mod', key: 'TrackRecordWeekly.plannedGrams', oldVal: '700.0g', newVal: '1050.0g' }
+            ]
+          }
+        ]
+      },
+      override_freq: {
+        title: "Action: Frequency Manual Override",
+        subtitle: "Method: setFoodFrequencyOverride(foodId, frequency: weekly)",
+        steps: [
+          {
+            title: "1. Store Override on FoodSourceItem",
+            desc: "Sets trackingFrequencyOverride and frequency to weekly. Prevents automatic recalculation from flipping it back.",
+            diff: [
+              { type: 'mod', key: 'FoodSourceItem.trackingFrequencyOverride', oldVal: 'null', newVal: 'TrackingFrequency.weekly' },
+              { type: 'mod', key: 'FoodSourceItem.frequency', oldVal: 'TrackingFrequency.daily', newVal: 'TrackingFrequency.weekly' }
+            ]
+          },
+          {
+            title: "2. Re-route Records during Window Sync",
+            desc: "Cleans unconsumed daily placeholder from TrackRecordDaily and initializes routine placeholder in TrackRecordWeekly.",
+            diff: [
+              { type: 'del', key: 'TrackRecordDaily [Today]', val: 'Removed 0g placeholder from Daily list' },
+              { type: 'add', key: 'TrackRecordWeekly', val: 'Added Weekly TrackedFoodEntry(target: 700g, consumed: 0g)' }
+            ]
+          }
+        ]
+      },
+      remove_routine: {
+        title: "Action: Remove Food from Routine",
+        subtitle: "Method: handleRoutineFoodRemoved(foodId)",
+        steps: [
+          {
+            title: "1. Reset FoodSourceItem",
+            desc: "Sets isTracked = false and resets trackingFrequencyOverride to null.",
+            diff: [
+              { type: 'mod', key: 'FoodSourceItem.isTracked', oldVal: 'true', newVal: 'false' },
+              { type: 'mod', key: 'FoodSourceItem.trackingFrequencyOverride', oldVal: 'TrackingFrequency.weekly', newVal: 'null' }
+            ]
+          },
+          {
+            title: "2. Clean Unconsumed Placeholders",
+            desc: "For today & future records: if amountConsumedGrams == 0, entry is deleted. If > 0, entry is kept but marked isFromRoutine = false.",
+            diff: [
+              { type: 'del', key: 'TrackRecordDaily[Today+1, Today+2]', val: 'Deleted future unconsumed placeholders' },
+              { type: 'mod', key: 'TrackRecordDaily[Today].isFromRoutine', oldVal: 'true', newVal: 'false (Preserves past consumption history!)' }
+            ]
+          }
+        ]
+      }
+    };
+
+    function simulateAction(actionKey) {
+      document.querySelectorAll('.sim-btn').forEach(btn => btn.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+
+      const data = actionsData[actionKey];
+      document.getElementById('stage-action-title').innerText = data.title;
+      document.getElementById('stage-action-subtitle').innerText = data.subtitle;
+
+      const pipelineContainer = document.getElementById('stage-pipeline');
+      pipelineContainer.innerHTML = '';
+
+      data.steps.forEach((step, idx) => {
+        const stepEl = document.createElement('div');
+        stepEl.className = 'pipe-step highlight';
+
+        let diffHtml = '<div class="diff-box">';
+        step.diff.forEach(d => {
+          if (d.type === 'mod') {
+            diffHtml += `<div class="diff-line"><span class="diff-mod">&Delta; MOD</span> <span class="diff-key">${d.key}:</span> <span style="text-decoration:line-through; color:#9ca3af;">${d.oldVal}</span> &rarr; <span class="diff-val">${d.newVal}</span></div>`;
+          } else if (d.type === 'add') {
+            diffHtml += `<div class="diff-line"><span class="diff-add">+ ADD</span> <span class="diff-key">${d.key}:</span> <span class="diff-val">${d.val}</span></div>`;
+          } else if (d.type === 'del') {
+            diffHtml += `<div class="diff-line"><span class="diff-del">- DEL</span> <span class="diff-key">${d.key}:</span> <span class="diff-val">${d.val}</span></div>`;
+          }
+        });
+        diffHtml += '</div>';
+
+        stepEl.innerHTML = `
+          <div class="pipe-step-header">
+            <div class="pipe-step-num">${idx + 1}</div>
+            <div class="pipe-step-title">${step.title}</div>
+          </div>
+          <div class="pipe-step-detail">${step.desc}</div>
+          ${diffHtml}
+        `;
+        pipelineContainer.appendChild(stepEl);
+      });
+    }
+
+    // Explorer Data Mock
+    const mockData = {
+      foods: [
+        { foodId: "fdc_167927", title: "Avocado, raw", isTracked: true, frequency: "daily", plannedDailyGrams: 100, calories: 160, proteinIndex: 0, nutrients: "Vit C (10mg), Fiber (6.7g), Mg (29mg), K (485mg)" },
+        { foodId: "fdc_171287", title: "Egg, whole, raw", isTracked: true, frequency: "daily", plannedDailyGrams: 100, calories: 143, proteinIndex: 1, nutrients: "Protein (12.6g), Vit A (160µg), Vit B12 (0.89µg), Choline (294mg)" },
+        { foodId: "fdc_175168", title: "Salmon, wild, raw", isTracked: false, frequency: "weekly", plannedDailyGrams: 150, calories: 142, proteinIndex: 1, nutrients: "Protein (20g), Omega-3 EPA/DHA (2.0g), Vit D (11µg), Selenium (36µg)" },
+        { foodId: "fdc_169097", title: "Oranges, raw", isTracked: false, frequency: "daily", plannedDailyGrams: 130, calories: 47, proteinIndex: 0, nutrients: "Vit C (53mg), Folate (30µg), Calcium (40mg)" }
+      ],
+      nutrients: [
+      {
+            "nutrientKey": "vitamin_a",
+            "shortKey": "Vit A",
+            "displayName": "Vitamin A",
+            "category": "Vitamins",
+            "unit": "µg RAE/day",
+            "isVisibleOnApp": true,
+            "isTracked": true,
+            "frequency": "weekly",
+            "ear": 625,
+            "rdaOrAi": 900,
+            "ul": 3000,
+            "effectiveDailyTarget": 810,
+            "effectiveTarget": 5670
+      },
+      {
+            "nutrientKey": "vitamin_d",
+            "shortKey": "Vit D",
+            "displayName": "Vitamin D",
+            "category": "Vitamins",
+            "unit": "µg/day",
+            "isVisibleOnApp": true,
+            "isTracked": true,
+            "frequency": "weekly",
+            "ear": 10,
+            "rdaOrAi": 15,
+            "ul": 100,
+            "effectiveDailyTarget": 13.5,
+            "effectiveTarget": 94.5
+      },
+      {
+            "nutrientKey": "vitamin_e",
+            "shortKey": "Vit E",
+            "displayName": "Vitamin E",
+            "category": "Vitamins",
+            "unit": "mg/day",
+            "isVisibleOnApp": true,
+            "isTracked": true,
+            "frequency": "weekly",
+            "ear": 12,
+            "rdaOrAi": 15,
+            "ul": 1000,
+            "effectiveDailyTarget": 13.5,
+            "effectiveTarget": 94.5
+      },
+      {
+            "nutrientKey": "vitamin_k",
+            "shortKey": "Vit K",
+            "displayName": "Vitamin K",
+            "category": "Vitamins",
+            "unit": "µg/day",
+            "isVisibleOnApp": true,
+            "isTracked": true,
+            "frequency": "weekly",
+            "ear": null,
+            "rdaOrAi": 120,
+            "ul": null,
+            "effectiveDailyTarget": 108,
+            "effectiveTarget": 756
+      },
+      {
+            "nutrientKey": "vitamin_c",
+            "shortKey": "Vit C",
+            "displayName": "Vitamin C",
+            "category": "Vitamins",
+            "unit": "mg/day",
+            "isVisibleOnApp": true,
+            "isTracked": true,
+            "frequency": "daily",
+            "ear": 75,
+            "rdaOrAi": 90,
+            "ul": 2000,
+            "effectiveDailyTarget": 81,
+            "effectiveTarget": 81
+      },
+      {
+            "nutrientKey": "thiamin",
+            "shortKey": "B1",
+            "displayName": "Thiamin",
+            "category": "Vitamins",
+            "unit": "mg/day",
+            "isVisibleOnApp": false,
+            "isTracked": false,
+            "frequency": "weekly",
+            "ear": 1,
+            "rdaOrAi": 1.2,
+            "ul": null,
+            "effectiveDailyTarget": 1.08,
+            "effectiveTarget": 7.5600000000000005
+      },
+      {
+            "nutrientKey": "riboflavin",
+            "shortKey": "B2",
+            "displayName": "Riboflavin",
+            "category": "Vitamins",
+            "unit": "mg/day",
+            "isVisibleOnApp": false,
+            "isTracked": false,
+            "frequency": "weekly",
+            "ear": 1.1,
+            "rdaOrAi": 1.3,
+            "ul": null,
+            "effectiveDailyTarget": 1.1700000000000002,
+            "effectiveTarget": 8.190000000000001
+      },
+      {
+            "nutrientKey": "niacin",
+            "shortKey": "B3",
+            "displayName": "Niacin",
+            "category": "Vitamins",
+            "unit": "mg NE/day",
+            "isVisibleOnApp": false,
+            "isTracked": false,
+            "frequency": "weekly",
+            "ear": 12,
+            "rdaOrAi": 16,
+            "ul": 35,
+            "effectiveDailyTarget": 14.4,
+            "effectiveTarget": 100.8
+      },
+      {
+            "nutrientKey": "vitamin_b6",
+            "shortKey": "B6",
+            "displayName": "Vitamin B6",
+            "category": "Vitamins",
+            "unit": "mg/day",
+            "isVisibleOnApp": false,
+            "isTracked": false,
+            "frequency": "weekly",
+            "ear": 1.1,
+            "rdaOrAi": 1.3,
+            "ul": 100,
+            "effectiveDailyTarget": 1.1700000000000002,
+            "effectiveTarget": 8.190000000000001
+      },
+      {
+            "nutrientKey": "folate",
+            "shortKey": "Folate",
+            "displayName": "Folate",
+            "category": "Vitamins",
+            "unit": "µg DFE/day",
+            "isVisibleOnApp": true,
+            "isTracked": true,
+            "frequency": "weekly",
+            "ear": 320,
+            "rdaOrAi": 400,
+            "ul": 1000,
+            "effectiveDailyTarget": 360,
+            "effectiveTarget": 2520
+      },
+      {
+            "nutrientKey": "vitamin_b12",
+            "shortKey": "V B12",
+            "displayName": "Vitamin B12",
+            "category": "Vitamins",
+            "unit": "µg/day",
+            "isVisibleOnApp": true,
+            "isTracked": true,
+            "frequency": "weekly",
+            "ear": 2,
+            "rdaOrAi": 2.4,
+            "ul": null,
+            "effectiveDailyTarget": 2.16,
+            "effectiveTarget": 15.120000000000001
+      },
+      {
+            "nutrientKey": "pantothenic_acid",
+            "shortKey": "B5",
+            "displayName": "Pantothenic Acid",
+            "category": "Vitamins",
+            "unit": "mg/day",
+            "isVisibleOnApp": false,
+            "isTracked": false,
+            "frequency": "weekly",
+            "ear": null,
+            "rdaOrAi": 5,
+            "ul": null,
+            "effectiveDailyTarget": 4.5,
+            "effectiveTarget": 31.5
+      },
+      {
+            "nutrientKey": "biotin",
+            "shortKey": "B7",
+            "displayName": "Biotin",
+            "category": "Vitamins",
+            "unit": "µg/day",
+            "isVisibleOnApp": false,
+            "isTracked": false,
+            "frequency": "weekly",
+            "ear": null,
+            "rdaOrAi": 30,
+            "ul": null,
+            "effectiveDailyTarget": 27,
+            "effectiveTarget": 189
+      },
+      {
+            "nutrientKey": "choline",
+            "shortKey": "Choline",
+            "displayName": "Choline",
+            "category": "Vitamins",
+            "unit": "mg/day",
+            "isVisibleOnApp": false,
+            "isTracked": false,
+            "frequency": "weekly",
+            "ear": null,
+            "rdaOrAi": 550,
+            "ul": 3500,
+            "effectiveDailyTarget": 495,
+            "effectiveTarget": 3465
+      },
+      {
+            "nutrientKey": "arsenic",
+            "shortKey": "As",
+            "displayName": "Arsenic",
+            "category": "Minerals",
+            "unit": "N/A",
+            "isVisibleOnApp": false,
+            "isTracked": false,
+            "frequency": "weekly",
+            "ear": null,
+            "rdaOrAi": null,
+            "ul": null,
+            "effectiveDailyTarget": null,
+            "effectiveTarget": 0
+      },
+      {
+            "nutrientKey": "boron",
+            "shortKey": "B",
+            "displayName": "Boron",
+            "category": "Minerals",
+            "unit": "mg/day",
+            "isVisibleOnApp": false,
+            "isTracked": false,
+            "frequency": "weekly",
+            "ear": null,
+            "rdaOrAi": null,
+            "ul": 20,
+            "effectiveDailyTarget": null,
+            "effectiveTarget": 0
+      },
+      {
+            "nutrientKey": "calcium",
+            "shortKey": "Ca",
+            "displayName": "Calcium",
+            "category": "Minerals",
+            "unit": "mg/day",
+            "isVisibleOnApp": true,
+            "isTracked": true,
+            "frequency": "daily",
+            "ear": 800,
+            "rdaOrAi": 1000,
+            "ul": 2500,
+            "effectiveDailyTarget": 900,
+            "effectiveTarget": 900
+      },
+      {
+            "nutrientKey": "chromium",
+            "shortKey": "Cr",
+            "displayName": "Chromium",
+            "category": "Minerals",
+            "unit": "µg/day",
+            "isVisibleOnApp": false,
+            "isTracked": false,
+            "frequency": "weekly",
+            "ear": null,
+            "rdaOrAi": 35,
+            "ul": null,
+            "effectiveDailyTarget": 31.5,
+            "effectiveTarget": 220.5
+      },
+      {
+            "nutrientKey": "copper",
+            "shortKey": "Cu",
+            "displayName": "Copper",
+            "category": "Minerals",
+            "unit": "µg/day",
+            "isVisibleOnApp": false,
+            "isTracked": false,
+            "frequency": "weekly",
+            "ear": 700,
+            "rdaOrAi": 900,
+            "ul": 10000,
+            "effectiveDailyTarget": 810,
+            "effectiveTarget": 5670
+      },
+      {
+            "nutrientKey": "fluoride",
+            "shortKey": "F",
+            "displayName": "Fluoride",
+            "category": "Minerals",
+            "unit": "mg/day",
+            "isVisibleOnApp": false,
+            "isTracked": false,
+            "frequency": "weekly",
+            "ear": null,
+            "rdaOrAi": 4,
+            "ul": 10,
+            "effectiveDailyTarget": 3.6,
+            "effectiveTarget": 25.2
+      },
+      {
+            "nutrientKey": "iodine",
+            "shortKey": "Iodine",
+            "displayName": "Iodine",
+            "category": "Minerals",
+            "unit": "µg/day",
+            "isVisibleOnApp": true,
+            "isTracked": true,
+            "frequency": "weekly",
+            "ear": 95,
+            "rdaOrAi": 150,
+            "ul": 1100,
+            "effectiveDailyTarget": 135,
+            "effectiveTarget": 945
+      },
+      {
+            "nutrientKey": "iron",
+            "shortKey": "Iron",
+            "displayName": "Iron",
+            "category": "Minerals",
+            "unit": "mg/day",
+            "isVisibleOnApp": true,
+            "isTracked": true,
+            "frequency": "weekly",
+            "ear": 6,
+            "rdaOrAi": 8,
+            "ul": 45,
+            "effectiveDailyTarget": 7.2,
+            "effectiveTarget": 50.4
+      },
+      {
+            "nutrientKey": "magnesium",
+            "shortKey": "Mg",
+            "displayName": "Magnesium",
+            "category": "Minerals",
+            "unit": "mg/day",
+            "isVisibleOnApp": true,
+            "isTracked": true,
+            "frequency": "daily",
+            "ear": 330,
+            "rdaOrAi": 400,
+            "ul": 350,
+            "effectiveDailyTarget": 360,
+            "effectiveTarget": 360
+      },
+      {
+            "nutrientKey": "manganese",
+            "shortKey": "Mn",
+            "displayName": "Manganese",
+            "category": "Minerals",
+            "unit": "mg/day",
+            "isVisibleOnApp": false,
+            "isTracked": false,
+            "frequency": "weekly",
+            "ear": null,
+            "rdaOrAi": 2.3,
+            "ul": 11,
+            "effectiveDailyTarget": 2.07,
+            "effectiveTarget": 14.489999999999998
+      },
+      {
+            "nutrientKey": "molybdenum",
+            "shortKey": "Mo",
+            "displayName": "Molybdenum",
+            "category": "Minerals",
+            "unit": "µg/day",
+            "isVisibleOnApp": false,
+            "isTracked": false,
+            "frequency": "weekly",
+            "ear": 34,
+            "rdaOrAi": 45,
+            "ul": 2000,
+            "effectiveDailyTarget": 40.5,
+            "effectiveTarget": 283.5
+      },
+      {
+            "nutrientKey": "nickel",
+            "shortKey": "Ni",
+            "displayName": "Nickel",
+            "category": "Minerals",
+            "unit": "mg/day",
+            "isVisibleOnApp": false,
+            "isTracked": false,
+            "frequency": "weekly",
+            "ear": null,
+            "rdaOrAi": null,
+            "ul": 1,
+            "effectiveDailyTarget": null,
+            "effectiveTarget": 0
+      },
+      {
+            "nutrientKey": "phosphorus",
+            "shortKey": "P",
+            "displayName": "Phosphorus",
+            "category": "Minerals",
+            "unit": "mg/day",
+            "isVisibleOnApp": false,
+            "isTracked": false,
+            "frequency": "weekly",
+            "ear": 580,
+            "rdaOrAi": 700,
+            "ul": 4000,
+            "effectiveDailyTarget": 630,
+            "effectiveTarget": 4410
+      },
+      {
+            "nutrientKey": "selenium",
+            "shortKey": "Se",
+            "displayName": "Selenium",
+            "category": "Minerals",
+            "unit": "µg/day",
+            "isVisibleOnApp": true,
+            "isTracked": true,
+            "frequency": "weekly",
+            "ear": 45,
+            "rdaOrAi": 55,
+            "ul": 400,
+            "effectiveDailyTarget": 49.5,
+            "effectiveTarget": 346.5
+      },
+      {
+            "nutrientKey": "silicon",
+            "shortKey": "Si",
+            "displayName": "Silicon",
+            "category": "Minerals",
+            "unit": "N/A",
+            "isVisibleOnApp": false,
+            "isTracked": false,
+            "frequency": "weekly",
+            "ear": null,
+            "rdaOrAi": null,
+            "ul": null,
+            "effectiveDailyTarget": null,
+            "effectiveTarget": 0
+      },
+      {
+            "nutrientKey": "vanadium",
+            "shortKey": "V",
+            "displayName": "Vanadium",
+            "category": "Minerals",
+            "unit": "mg/day",
+            "isVisibleOnApp": false,
+            "isTracked": false,
+            "frequency": "weekly",
+            "ear": null,
+            "rdaOrAi": null,
+            "ul": 1.8,
+            "effectiveDailyTarget": null,
+            "effectiveTarget": 0
+      },
+      {
+            "nutrientKey": "zinc",
+            "shortKey": "Zinc",
+            "displayName": "Zinc",
+            "category": "Minerals",
+            "unit": "mg/day",
+            "isVisibleOnApp": true,
+            "isTracked": true,
+            "frequency": "weekly",
+            "ear": 9.4,
+            "rdaOrAi": 11,
+            "ul": 40,
+            "effectiveDailyTarget": 9.9,
+            "effectiveTarget": 69.3
+      },
+      {
+            "nutrientKey": "potassium",
+            "shortKey": "K",
+            "displayName": "Potassium",
+            "category": "Minerals",
+            "unit": "mg/day",
+            "isVisibleOnApp": true,
+            "isTracked": true,
+            "frequency": "daily",
+            "ear": null,
+            "rdaOrAi": 4700,
+            "ul": null,
+            "effectiveDailyTarget": 4230,
+            "effectiveTarget": 4230
+      },
+      {
+            "nutrientKey": "sodium",
+            "shortKey": "Na",
+            "displayName": "Sodium",
+            "category": "Minerals",
+            "unit": "mg/day",
+            "isVisibleOnApp": false,
+            "isTracked": false,
+            "frequency": "weekly",
+            "ear": null,
+            "rdaOrAi": 1500,
+            "ul": 2300,
+            "effectiveDailyTarget": 1350,
+            "effectiveTarget": 9450
+      },
+      {
+            "nutrientKey": "chloride",
+            "shortKey": "Cl",
+            "displayName": "Chloride",
+            "category": "Minerals",
+            "unit": "mg/day",
+            "isVisibleOnApp": false,
+            "isTracked": false,
+            "frequency": "weekly",
+            "ear": null,
+            "rdaOrAi": 2300,
+            "ul": 3600,
+            "effectiveDailyTarget": 2070,
+            "effectiveTarget": 14490
+      },
+      {
+            "nutrientKey": "sulfate",
+            "shortKey": "SO4",
+            "displayName": "Sulfate",
+            "category": "Minerals",
+            "unit": "N/A",
+            "isVisibleOnApp": false,
+            "isTracked": false,
+            "frequency": "weekly",
+            "ear": null,
+            "rdaOrAi": null,
+            "ul": null,
+            "effectiveDailyTarget": null,
+            "effectiveTarget": 0
+      },
+      {
+            "nutrientKey": "total_protein",
+            "shortKey": "Prot.",
+            "displayName": "Total Protein",
+            "category": "Macronutrients",
+            "unit": "g/kg/day",
+            "isVisibleOnApp": true,
+            "isTracked": true,
+            "frequency": "daily",
+            "ear": null,
+            "rdaOrAi": 0.8,
+            "ul": null,
+            "effectiveDailyTarget": 50.4,
+            "effectiveTarget": 50.4
+      },
+      {
+            "nutrientKey": "carbohydrate",
+            "shortKey": "Carb",
+            "displayName": "Carbohydrate",
+            "category": "Macronutrients",
+            "unit": "g/day",
+            "isVisibleOnApp": false,
+            "isTracked": false,
+            "frequency": "weekly",
+            "ear": null,
+            "rdaOrAi": 130,
+            "ul": null,
+            "effectiveDailyTarget": 117,
+            "effectiveTarget": 819
+      },
+      {
+            "nutrientKey": "total_fiber",
+            "shortKey": "Fiber",
+            "displayName": "Total Fiber",
+            "category": "Macronutrients",
+            "unit": "g/day",
+            "isVisibleOnApp": true,
+            "isTracked": true,
+            "frequency": "daily",
+            "ear": null,
+            "rdaOrAi": 38,
+            "ul": null,
+            "effectiveDailyTarget": 34.2,
+            "effectiveTarget": 34.2
+      },
+      {
+            "nutrientKey": "water",
+            "shortKey": "Water",
+            "displayName": "Water",
+            "category": "Macronutrients",
+            "unit": "L/day",
+            "isVisibleOnApp": false,
+            "isTracked": false,
+            "frequency": "weekly",
+            "ear": null,
+            "rdaOrAi": 3.7,
+            "ul": null,
+            "effectiveDailyTarget": 3.33,
+            "effectiveTarget": 23.310000000000002
+      },
+      {
+            "nutrientKey": "linoleic_acid_omega_6",
+            "shortKey": "Om6",
+            "displayName": "Linoleic Acid Omega 6",
+            "category": "Lipids",
+            "unit": "g/day",
+            "isVisibleOnApp": true,
+            "isTracked": true,
+            "frequency": "weekly",
+            "ear": null,
+            "rdaOrAi": 17,
+            "ul": null,
+            "effectiveDailyTarget": 15.3,
+            "effectiveTarget": 107.10000000000001
+      },
+      {
+            "nutrientKey": "alpha_linolenic_acid_omega_3",
+            "shortKey": "ALA",
+            "displayName": "Alpha Linolenic Acid Omega 3",
+            "category": "Lipids",
+            "unit": "g/day",
+            "isVisibleOnApp": true,
+            "isTracked": true,
+            "frequency": "weekly",
+            "ear": null,
+            "rdaOrAi": 1.6,
+            "ul": null,
+            "effectiveDailyTarget": 1.4400000000000002,
+            "effectiveTarget": 10.080000000000002
+      },
+      {
+            "nutrientKey": "collagen",
+            "shortKey": "Coll.",
+            "displayName": "Collagen",
+            "category": "Macronutrients",
+            "unit": "g/day",
+            "isVisibleOnApp": true,
+            "isTracked": true,
+            "frequency": "daily",
+            "ear": null,
+            "rdaOrAi": 10,
+            "ul": null,
+            "effectiveDailyTarget": 9,
+            "effectiveTarget": 9
+      },
+      {
+            "nutrientKey": "omega_3_epa_dha",
+            "shortKey": "Om3",
+            "displayName": "Omega 3 Epa Dha",
+            "category": "Lipids",
+            "unit": "mg/day",
+            "isVisibleOnApp": true,
+            "isTracked": true,
+            "frequency": "weekly",
+            "ear": null,
+            "rdaOrAi": 250,
+            "ul": null,
+            "effectiveDailyTarget": 225,
+            "effectiveTarget": 1575
+      },
+      {
+            "nutrientKey": "creatine",
+            "shortKey": "Creat.",
+            "displayName": "Creatine",
+            "category": "Macronutrients",
+            "unit": "g/day",
+            "isVisibleOnApp": true,
+            "isTracked": true,
+            "frequency": "daily",
+            "ear": null,
+            "rdaOrAi": 3,
+            "ul": null,
+            "effectiveDailyTarget": 2.7,
+            "effectiveTarget": 2.7
+      },
+      {
+            "nutrientKey": "energy",
+            "shortKey": "Cal",
+            "displayName": "Energy",
+            "category": "Macronutrients",
+            "unit": "kcal/day",
+            "isVisibleOnApp": false,
+            "isTracked": false,
+            "frequency": "weekly",
+            "ear": null,
+            "rdaOrAi": 2200,
+            "ul": null,
+            "effectiveDailyTarget": 1980,
+            "effectiveTarget": 13860
+      }
+],
+      profile: [
+        {
+          id: 1,
+          name: "Vayu",
+          age: 25,
+          sex: "male",
+          goal: "maintain",
+          isPregnant: false,
+          isLactating: false,
+          weightKg: 70.0,
+          heightCm: 175.0,
+          strictness: 0.9,
+          nutrientTargets: [
+            "vitamin_c", "collagen", "total_fiber", "magnesium", "calcium", "potassium", "creatine",
+            "total_protein", "vitamin_a", "vitamin_e", "vitamin_b12", "selenium", "zinc", "iron",
+            "iodine", "vitamin_k", "folate", "vitamin_d", "linoleic_acid_omega_6",
+            "alpha_linolenic_acid_omega_3", "omega_3_epa_dha"
+          ],
+          lastUpdated: "2026-09-08T15:20:00.000Z"
+        }
+      ],
+      daily: [
+        {
+          id: 1,
+          date: "2026-09-08 (Today)",
+          loggedFoods: [
+            { foodId: "fdc_167927", foodTitle: "Avocado, raw", amountConsumedGrams: 100.0, plannedGrams: 100.0, isFromRoutine: true, frequency: "daily" },
+            { foodId: "fdc_171287", foodTitle: "Egg, whole, raw", amountConsumedGrams: 100.0, plannedGrams: 100.0, isFromRoutine: true, frequency: "daily" }
+          ],
+          nutrientSummaries: [
+            { nutrientKey: "vitamin_c", amountConsumed: 55.0, targetAmount: 81.0 },
+            { nutrientKey: "total_protein", amountConsumed: 12.6, targetAmount: 50.4 },
+            { nutrientKey: "magnesium", amountConsumed: 39.0, targetAmount: 378.0 }
+          ],
+          routineAdherencePercent: 100.0,
+          isSynced: true
+        },
+        {
+          id: 2,
+          date: "2026-09-09 (Tomorrow)",
+          loggedFoods: [
+            { foodId: "fdc_167927", foodTitle: "Avocado, raw", amountConsumedGrams: 0.0, plannedGrams: 100.0, isFromRoutine: true, frequency: "daily" },
+            { foodId: "fdc_171287", foodTitle: "Egg, whole, raw", amountConsumedGrams: 0.0, plannedGrams: 100.0, isFromRoutine: true, frequency: "daily" }
+          ],
+          nutrientSummaries: [
+            { nutrientKey: "vitamin_c", amountConsumed: 0.0, targetAmount: 81.0 },
+            { nutrientKey: "total_protein", amountConsumed: 0.0, targetAmount: 50.4 }
+          ],
+          routineAdherencePercent: 0.0,
+          isSynced: false
+        },
+        {
+          id: 3,
+          date: "2026-09-10 (Day 3)",
+          loggedFoods: [
+            { foodId: "fdc_167927", foodTitle: "Avocado, raw", amountConsumedGrams: 0.0, plannedGrams: 100.0, isFromRoutine: true, frequency: "daily" },
+            { foodId: "fdc_171287", foodTitle: "Egg, whole, raw", amountConsumedGrams: 0.0, plannedGrams: 100.0, isFromRoutine: true, frequency: "daily" }
+          ],
+          nutrientSummaries: [
+            { nutrientKey: "vitamin_c", amountConsumed: 0.0, targetAmount: 81.0 },
+            { nutrientKey: "total_protein", amountConsumed: 0.0, targetAmount: 50.4 }
+          ],
+          routineAdherencePercent: 0.0,
+          isSynced: false
+        }
+      ],
+      weekly: [
+        {
+          id: 1,
+          weekStartDate: "2026-09-07T00:00:00.000Z",
+          weekKey: "2026-W36",
+          loggedFoods: [
+            { foodId: "fdc_167927", foodTitle: "Avocado, raw", amountConsumedGrams: 100.0, plannedGrams: 700.0, isFromRoutine: true, frequency: "daily" },
+            { foodId: "fdc_171287", foodTitle: "Egg, whole, raw", amountConsumedGrams: 100.0, plannedGrams: 700.0, isFromRoutine: true, frequency: "daily" }
+          ],
+          nutrientSummaries: [
+            { nutrientKey: "vitamin_c", amountConsumed: 55.0, targetAmount: 567.0 },
+            { nutrientKey: "total_protein", amountConsumed: 12.6, targetAmount: 352.8 }
+          ],
+          routineAdherencePercent: 14.3,
+          isSynced: true
+        }
+      ]
+    };
+
+    function switchCollection(colKey) {
+      document.querySelectorAll('.col-item').forEach(item => item.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+
+      const container = document.getElementById('explorer-content');
+
+      if (colKey === 'foods') {
+        let html = `
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1rem; flex-wrap:wrap; gap:1rem;">
+            <div>
+              <h3 style="font-size:1.1rem; color:#fff;">FoodSourceItem Collection Schema</h3>
+              <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.25rem;">
+                <em>(Individual food rows excluded from raw display as requested: >1,000+ items in database).</em>
+              </p>
+            </div>
+            <span class="badge badge-isar">Indexed NoSQL Collection</span>
+          </div>
+
+          <div style="background:var(--bg-base); border:1px solid var(--border-subtle); border-radius:10px; padding:1.25rem; margin-bottom:1.5rem;">
+            <div style="font-weight:600; color:#38bdf8; margin-bottom:0.5rem; font-size:0.9rem;">Entity Schema &amp; Storage Structure</div>
+            <table class="data-table">
+              <thead>
+                <tr><th>Field</th><th>Isar Type</th><th>Index</th><th>Purpose &amp; Constraints</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><span style="color:#38bdf8;">id</span></td><td>Id</td><td>Primary Key</td><td>AutoIncrement internal ID</td></tr>
+                <tr><td><span style="color:#38bdf8;">foodId</span></td><td>String</td><td><span class="unique-pill">UNIQUE</span></td><td>e.g. 'fdc_167927' (USDA / Custom food key)</td></tr>
+                <tr><td><span style="color:#38bdf8;">title / name</span></td><td>String</td><td><span class="index-pill">INDEX</span></td><td>Display title and searchable normalized name</td></tr>
+                <tr><td><span style="color:#38bdf8;">category</span></td><td>String</td><td><span class="index-pill">INDEX</span></td><td>Category filter (e.g. Fruits, Meats, Dairy)</td></tr>
+                <tr><td><span style="color:#38bdf8;">isVisibleOnApp</span></td><td>bool</td><td><span class="index-pill">INDEX</span></td><td>Controls app catalog visibility</td></tr>
+                <tr><td><span style="color:#38bdf8;">isTracked</span></td><td>bool</td><td><span class="index-pill">INDEX</span></td><td><strong>TRUE</strong> when added to user's daily/weekly routine</td></tr>
+                <tr><td><span style="color:#38bdf8;">frequency</span></td><td>Enum</td><td><span class="index-pill">INDEX</span></td><td>'daily' or 'weekly' (Evaluated via 10% trigger qualification rule)</td></tr>
+                <tr><td><span style="color:#38bdf8;">trackingFrequencyOverride</span></td><td>Enum?</td><td>-</td><td>User manual override (null = auto-calc via math)</td></tr>
+                <tr><td><span style="color:#38bdf8;">defaultPortionGrams</span></td><td>double</td><td>-</td><td>Food reference portion grams (e.g. 100g, 150g)</td></tr>
+                <tr><td><span style="color:#38bdf8;">plannedDailyGrams</span></td><td>double</td><td>-</td><td>Planned daily intake in routine (Weekly = plannedDailyGrams * 7)</td></tr>
+                <tr><td><span style="color:#38bdf8;">energy</span></td><td>double</td><td>-</td><td>kcal per 100g edible portion</td></tr>
+                <tr><td><span style="color:#38bdf8;">proteinIndex</span></td><td>int</td><td>-</td><td><strong>1</strong> for complete/high-quality protein, 0 otherwise</td></tr>
+                <tr><td><span style="color:#38bdf8;">nutrients</span></td><td>List&lt;Embedded&gt;</td><td>-</td><td>Array of FoodNutrientValue { nutrientKey, amountPer100g }</td></tr>
+              </tbody>
+            </table>
+          </div>
+        `;
+        container.innerHTML = html;
+      } else if (colKey === 'nutrients') {
+        renderNutrientsView('all');
+        return;
+      } else if (colKey === 'profile') {
+        const p = mockData.profile[0];
+        const targetsPreview = p.nutrientTargets.join(', ');
+        container.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+            <h3 style="font-size:1.1rem; color:#fff;">UserProfile Collection (Singleton Record)</h3>
+            <span class="badge badge-isar">Singleton (id: 1)</span>
+          </div>
+          <div style="overflow-x:auto; width:100%; border:1px solid var(--border-subtle); border-radius:10px;">
+            <table class="data-table" style="min-width:1100px;">
+              <thead>
+                <tr>
+                  <th>id</th>
+                  <th>name</th>
+                  <th>age</th>
+                  <th>sex</th>
+                  <th>goal</th>
+                  <th>isPregnant</th>
+                  <th>isLactating</th>
+                  <th>weightKg</th>
+                  <th>heightCm</th>
+                  <th>strictness</th>
+                  <th>nutrientTargets (List&lt;String&gt;)</th>
+                  <th>lastUpdated</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span style="color:#38bdf8; font-weight:600;">${p.id}</span></td>
+                  <td><span style="font-weight:600; color:#fff;">'${p.name}'</span></td>
+                  <td>${p.age}</td>
+                  <td><span style="color:#e2e8f0; font-weight:600;">'${p.sex}'</span></td>
+                  <td><span class="badge" style="background:rgba(99,102,241,0.2); color:#818cf8; font-weight:600;">${p.goal.toUpperCase()}</span></td>
+                  <td>${p.isPregnant ? '<span class="tag-true">true</span>' : '<span class="tag-false">false</span>'}</td>
+                  <td>${p.isLactating ? '<span class="tag-true">true</span>' : '<span class="tag-false">false</span>'}</td>
+                  <td style="color:#38bdf8; font-weight:600;">${p.weightKg} kg</td>
+                  <td style="color:#38bdf8; font-weight:600;">${p.heightCm} cm</td>
+                  <td><span style="color:#fbbf24; font-weight:600;">${p.strictness}</span> (90%)</td>
+                  <td style="font-size:0.75rem; color:#9ca3af; max-width:280px; word-break:break-word;">${targetsPreview}</td>
+                  <td style="color:#9ca3af; font-size:0.75rem;">${p.lastUpdated}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div style="margin-top:1.5rem; background:var(--code-bg); padding:1rem; border-radius:8px; font-family:var(--font-mono); font-size:0.8rem; border:1px solid rgba(255,255,255,0.05);">
+            <span style="color:#9ca3af;">// In-memory UserProfile Document:</span><br>
+            <pre style="color:#38bdf8; margin-top:0.5rem;">${JSON.stringify(p, null, 2)}</pre>
+          </div>
+        `;
+      } else if (colKey === 'daily') {
+        let html = `
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+            <h3 style="font-size:1.1rem; color:#fff;">TrackRecordDaily Collection (3-Day Synchronized Window)</h3>
+            <span class="badge badge-isar">Indexed by date (Unique)</span>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>id</th>
+                <th>date</th>
+                <th>loggedFoods (List&lt;TrackedFoodEntry&gt;)</th>
+                <th>nutrientSummaries (List&lt;TrackNutrientSummary&gt;)</th>
+                <th>routineAdherencePercent</th>
+                <th>isSynced</th>
+              </tr>
+            </thead>
+            <tbody>`;
+        mockData.daily.forEach(d => {
+          const foodsPreview = d.loggedFoods.map(f => `${f.foodTitle} (${f.amountConsumedGrams}g/${f.plannedGrams}g)`).join(', ');
+          const nutrientsPreview = d.nutrientSummaries.map(n => `${n.nutrientKey}: ${n.amountConsumed}/${n.targetAmount}`).join(' • ');
+          html += `
+            <tr>
+              <td><span style="color:#38bdf8;">${d.id}</span></td>
+              <td><span style="color:#818cf8; font-weight:600;">${d.date}</span></td>
+              <td style="font-size:0.75rem; color:#e2e8f0; max-width:320px;">${foodsPreview}</td>
+              <td style="font-size:0.75rem; color:#9ca3af; max-width:300px;">${nutrientsPreview}</td>
+              <td><span class="${d.routineAdherencePercent === 100.0 ? 'tag-true' : 'tag-false'}">${d.routineAdherencePercent.toFixed(1)}%</span></td>
+              <td>${d.isSynced ? '<span class="tag-true">true</span>' : '<span class="tag-false">false</span>'}</td>
+            </tr>`;
+        });
+        html += `</tbody></table>`;
+        container.innerHTML = html;
+      } else if (colKey === 'weekly') {
+        const w = mockData.weekly[0];
+        const foodsPreview = w.loggedFoods.map(f => `${f.foodTitle} (${f.amountConsumedGrams}g / ${f.plannedGrams}g)`).join(', ');
+        const nutrientsPreview = w.nutrientSummaries.map(n => `${n.nutrientKey}: ${n.amountConsumed} / ${n.targetAmount}`).join(' • ');
+        container.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+            <h3 style="font-size:1.1rem; color:#fff;">TrackRecordWeekly Collection</h3>
+            <span class="badge badge-isar">Indexed by weekStartDate (Unique)</span>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>id</th>
+                <th>weekStartDate</th>
+                <th>weekKey</th>
+                <th>loggedFoods (List&lt;TrackedFoodEntry&gt;)</th>
+                <th>nutrientSummaries (List&lt;TrackNutrientSummary&gt;)</th>
+                <th>routineAdherencePercent</th>
+                <th>isSynced</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span style="color:#38bdf8;">${w.id}</span></td>
+                <td><span style="color:#fbbf24; font-weight:600;">${w.weekStartDate}</span></td>
+                <td><span class="badge">${w.weekKey}</span></td>
+                <td style="font-size:0.75rem; color:#e2e8f0; max-width:320px;">${foodsPreview}</td>
+                <td style="font-size:0.75rem; color:#9ca3af; max-width:300px;">${nutrientsPreview}</td>
+                <td><span class="tag-true">${w.routineAdherencePercent.toFixed(1)}%</span></td>
+                <td>${w.isSynced ? '<span class="tag-true">true</span>' : '<span class="tag-false">false</span>'}</td>
+              </tr>
+            </tbody>
+          </table>
+        `;
+      }
+    }
+
+    // Initialize Default View
+    window.addEventListener('DOMContentLoaded', () => {
+      simulateAction('add_routine');
+      switchCollection('foods');
+    });
+
+    const colFilters = {
+      nutrientKey: '',
+      displayName: '',
+      shortKey: '',
+      category: '',
+      unit: '',
+      frequency: '',
+      isVisibleOnApp: '',
+      isTracked: '',
+      rdaOrAi: '',
+      ear: '',
+      ul: '',
+      effectiveTarget: ''
+    };
+
+    function updateColFilter(col, val) {
+      colFilters[col] = val.trim();
+      renderNutrientsRows();
+    }
+
+    function resetNutrientFilters() {
+      Object.keys(colFilters).forEach(k => colFilters[k] = '');
+      document.querySelectorAll('.col-filter-input').forEach(input => input.value = '');
+      document.querySelectorAll('.col-filter-select').forEach(select => select.value = '');
+      renderNutrientsRows();
+    }
+
+    function renderNutrientsView() {
+      const container = document.getElementById('explorer-content');
+      container.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:1rem;">
+          <div>
+            <h3 style="font-size:1.1rem; color:#fff;">NutrientInfo Collection (45 DRI Nutrients)</h3>
+            <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0.25rem;">
+              Filter each property directly below its column header. Matches update in real time.
+            </p>
+          </div>
+          <button onclick="resetNutrientFilters()" style="background:var(--bg-surface-elevated); border:1px solid var(--border-subtle); color:var(--text-muted); padding:0.4rem 0.85rem; border-radius:8px; font-size:0.8rem; cursor:pointer; display:flex; align-items:center; gap:0.4rem;">
+            <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+            Reset Filters
+          </button>
+        </div>
+
+        <div style="margin-bottom:0.6rem; font-size:0.8rem; color:var(--text-muted); display:flex; justify-content:space-between; align-items:center;">
+          <span id="nutrient-count-label">Showing 45 of 45 nutrients</span>
+          <span style="font-size:0.75rem; color:var(--secondary); font-family:var(--font-mono);">Column-Level Filtering Active</span>
+        </div>
+
+        <div style="overflow-x:auto; width:100%; border:1px solid var(--border-subtle); border-radius:10px;">
+          <table class="data-table" style="min-width:1300px;">
+            <thead>
+              <tr style="border-bottom:1px solid var(--border-subtle);">
+                <th class="pinned-col-header" style="min-width:170px;">nutrientKey 📌</th>
+                <th style="min-width:140px;">displayName</th>
+                <th style="min-width:90px;">shortKey</th>
+                <th style="min-width:120px;">category</th>
+                <th style="min-width:90px;">unit</th>
+                <th style="min-width:95px;">frequency</th>
+                <th style="min-width:105px;">isVisibleOnApp</th>
+                <th style="min-width:95px;">isTracked</th>
+                <th style="min-width:85px;">rdaOrAi</th>
+                <th style="min-width:80px;">ear</th>
+                <th style="min-width:80px;">ul</th>
+                <th style="min-width:180px;">calculateEffectiveTarget(profile)</th>
+              </tr>
+              <tr class="header-filter-row">
+                <th class="pinned-col-filter">
+                  <input type="text" class="col-filter-input" placeholder="Filter key..." value="${colFilters.nutrientKey}" oninput="updateColFilter('nutrientKey', this.value)" />
+                </th>
+                <th>
+                  <input type="text" class="col-filter-input" placeholder="Filter name..." value="${colFilters.displayName}" oninput="updateColFilter('displayName', this.value)" />
+                </th>
+                <th>
+                  <input type="text" class="col-filter-input" placeholder="shortKey..." value="${colFilters.shortKey}" oninput="updateColFilter('shortKey', this.value)" />
+                </th>
+                <th>
+                  <select class="col-filter-select" onchange="updateColFilter('category', this.value)">
+                    <option value="" ${colFilters.category === '' ? 'selected' : ''}>All</option>
+                    <option value="Vitamins" ${colFilters.category === 'Vitamins' ? 'selected' : ''}>Vitamins</option>
+                    <option value="Minerals" ${colFilters.category === 'Minerals' ? 'selected' : ''}>Minerals</option>
+                    <option value="Macronutrients" ${colFilters.category === 'Macronutrients' ? 'selected' : ''}>Macronutrients</option>
+                    <option value="Lipids" ${colFilters.category === 'Lipids' ? 'selected' : ''}>Lipids</option>
+                  </select>
+                </th>
+                <th>
+                  <input type="text" class="col-filter-input" placeholder="unit..." value="${colFilters.unit}" oninput="updateColFilter('unit', this.value)" />
+                </th>
+                <th>
+                  <select class="col-filter-select" onchange="updateColFilter('frequency', this.value)">
+                    <option value="" ${colFilters.frequency === '' ? 'selected' : ''}>All</option>
+                    <option value="daily" ${colFilters.frequency === 'daily' ? 'selected' : ''}>daily</option>
+                    <option value="weekly" ${colFilters.frequency === 'weekly' ? 'selected' : ''}>weekly</option>
+                  </select>
+                </th>
+                <th>
+                  <select class="col-filter-select" onchange="updateColFilter('isVisibleOnApp', this.value)">
+                    <option value="" ${colFilters.isVisibleOnApp === '' ? 'selected' : ''}>All</option>
+                    <option value="true" ${colFilters.isVisibleOnApp === 'true' ? 'selected' : ''}>true</option>
+                    <option value="false" ${colFilters.isVisibleOnApp === 'false' ? 'selected' : ''}>false</option>
+                  </select>
+                </th>
+                <th>
+                  <select class="col-filter-select" onchange="updateColFilter('isTracked', this.value)">
+                    <option value="" ${colFilters.isTracked === '' ? 'selected' : ''}>All</option>
+                    <option value="true" ${colFilters.isTracked === 'true' ? 'selected' : ''}>true</option>
+                    <option value="false" ${colFilters.isTracked === 'false' ? 'selected' : ''}>false</option>
+                  </select>
+                </th>
+                <th>
+                  <input type="text" class="col-filter-input" placeholder="RDA..." value="${colFilters.rdaOrAi}" oninput="updateColFilter('rdaOrAi', this.value)" />
+                </th>
+                <th>
+                  <input type="text" class="col-filter-input" placeholder="EAR..." value="${colFilters.ear}" oninput="updateColFilter('ear', this.value)" />
+                </th>
+                <th>
+                  <input type="text" class="col-filter-input" placeholder="UL..." value="${colFilters.ul}" oninput="updateColFilter('ul', this.value)" />
+                </th>
+                <th>
+                  <input type="text" class="col-filter-input" placeholder="Target..." value="${colFilters.effectiveTarget}" oninput="updateColFilter('effectiveTarget', this.value)" />
+                </th>
+              </tr>
+            </thead>
+            <tbody id="nutrient-tbody"></tbody>
+          </table>
+        </div>
+      `;
+      renderNutrientsRows();
+    }
+
+    function renderNutrientsRows() {
+      const tbody = document.getElementById('nutrient-tbody');
+      const countLabel = document.getElementById('nutrient-count-label');
+      if (!tbody) return;
+
+      const triggerKeys = new Set(['vitamin_c', 'collagen', 'total_fiber', 'magnesium', 'calcium', 'potassium', 'creatine', 'total_protein']);
+
+      let filtered = mockData.nutrients.filter(n => {
+        if (colFilters.nutrientKey && !n.nutrientKey.toLowerCase().includes(colFilters.nutrientKey.toLowerCase())) return false;
+        if (colFilters.displayName && !n.displayName.toLowerCase().includes(colFilters.displayName.toLowerCase())) return false;
+        if (colFilters.shortKey && (!n.shortKey || !n.shortKey.toLowerCase().includes(colFilters.shortKey.toLowerCase()))) return false;
+        if (colFilters.category && n.category !== colFilters.category) return false;
+        if (colFilters.unit && (!n.unit || !n.unit.toLowerCase().includes(colFilters.unit.toLowerCase()))) return false;
+        if (colFilters.frequency && n.frequency !== colFilters.frequency) return false;
+        if (colFilters.isVisibleOnApp && String(n.isVisibleOnApp) !== colFilters.isVisibleOnApp) return false;
+        if (colFilters.isTracked && String(n.isTracked) !== colFilters.isTracked) return false;
+        if (colFilters.rdaOrAi && (n.rdaOrAi == null || !String(n.rdaOrAi).includes(colFilters.rdaOrAi))) return false;
+        if (colFilters.ear && (n.ear == null || !String(n.ear).includes(colFilters.ear))) return false;
+        if (colFilters.ul && (n.ul == null || !String(n.ul).includes(colFilters.ul))) return false;
+        if (colFilters.effectiveTarget && (n.effectiveTarget == null || !String(n.effectiveTarget).includes(colFilters.effectiveTarget))) return false;
+        return true;
+      });
+
+      if (countLabel) {
+        countLabel.innerText = `Showing ${filtered.length} of ${mockData.nutrients.length} nutrients`;
+      }
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="12" style="text-align:center; padding:2rem; color:var(--text-muted);">
+              No nutrients match the current column filters.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      let html = '';
+      filtered.forEach(n => {
+        const isTrigger = triggerKeys.has(n.nutrientKey);
+        html += `
+          <tr>
+            <td class="pinned-col-cell">
+              <span style="color:#38bdf8; font-weight:600;">${n.nutrientKey}</span>
+              ${isTrigger ? '<span style="font-size:0.65rem; background:rgba(236,72,153,0.2); color:#f472b6; padding:0.1rem 0.35rem; border-radius:4px; margin-left:0.3rem;">10% Trigger</span>' : ''}
+            </td>
+            <td style="font-weight:600; color:#fff;">${n.displayName}</td>
+            <td><span style="color:#9ca3af;">${n.shortKey || '-'}</span></td>
+            <td><span class="badge">${n.category}</span></td>
+            <td><span style="color:#94a3b8; font-size:0.75rem;">${n.unit || '-'}</span></td>
+            <td><span class="${n.frequency === 'daily' ? 'tag-freq-daily' : 'tag-freq-weekly'}">${n.frequency}</span></td>
+            <td>${n.isVisibleOnApp ? '<span class="tag-true">true</span>' : '<span class="tag-false">false</span>'}</td>
+            <td>${n.isTracked ? '<span class="tag-true">true</span>' : '<span class="tag-false">false</span>'}</td>
+            <td>${n.rdaOrAi != null ? n.rdaOrAi : '<span style="color:#6b7280;">null</span>'}</td>
+            <td>${n.ear != null ? n.ear : '<span style="color:#6b7280;">null</span>'}</td>
+            <td>${n.ul != null ? n.ul : '<span style="color:#6b7280;">null</span>'}</td>
+            <td style="color:#34d399; font-weight:600;">
+              ${n.effectiveTarget != null && n.effectiveTarget > 0 ? (n.effectiveTarget >= 10 ? Math.round(n.effectiveTarget) : Number(n.effectiveTarget.toFixed(1))) : '<span style="color:#6b7280;">0.0</span>'}
+            </td>
+          </tr>
+        `;
+      });
+
+      tbody.innerHTML = html;
+    }
+
+  </script>
+</body>
+</html>

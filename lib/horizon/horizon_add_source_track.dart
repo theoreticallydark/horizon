@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../alter/alter.dart';
+import 'package:alter/alter.dart';
 import '../data/models/food_source_item.dart';
 import '../data/services/nutrition_tracking_service.dart';
 import 'horizon_list_item.dart';
@@ -180,9 +180,9 @@ class _HorizonAddSourceTrackState extends State<HorizonAddSourceTrack> {
 
                 // Dynamic Search Insertion (between List and Action Bar)
                 if (_isSearchActive) ...[
-                  Search(
+                  SearchInput(
                     controller: _searchController,
-                    hintText: 'Search food sources...',
+                    placeholder: 'Search food sources...',
                     autofocus: true,
                   ),
                   const SizedBox(height: 16),

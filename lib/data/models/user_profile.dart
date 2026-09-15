@@ -6,17 +6,59 @@ part 'user_profile.g.dart';
 class UserProfile {
   Id id = 1; // Singleton record (id always 1)
 
-  int age = 25; // Default age
+  String name = 'User';
+
+  DateTime dateOfBirth = DateTime(2001, 1, 1); // Default reference DOB
   String sex = 'male'; // 'male' | 'female' | 'both'
   bool isPregnant = false;
   bool isLactating = false;
 
+  /// Computed age in years derived dynamically from dateOfBirth
+  int get age {
+    final now = DateTime.now();
+    int calculatedAge = now.year - dateOfBirth.year;
+    if (now.month < dateOfBirth.month ||
+        (now.month == dateOfBirth.month && now.day < dateOfBirth.day)) {
+      calculatedAge--;
+    }
+    return calculatedAge;
+  }
+
   /// User body metrics
   double weightKg = 70.0; // Default reference weight: 70kg
-  double heightCm = 175.0; // Default reference height: 175cm
+  double heightCm = 175.0; // Default reference height in cm
+
+  /// User goal: 'bulk' | 'cut' | 'maintain'
+  @Enumerated(EnumType.name)
+  UserGoal goal = UserGoal.maintain;
 
   /// Multiplier applied to RDA (0.0 to 1.0, default 0.9)
   double strictness = 0.9;
+
+  /// List of nutrient keys the user actively wants to track
+  List<String> nutrientTargets = [
+    'vitamin_c',
+    'collagen',
+    'total_fiber',
+    'magnesium',
+    'calcium',
+    'potassium',
+    'creatine',
+    'total_protein',
+    'vitamin_a',
+    'vitamin_e',
+    'vitamin_b12',
+    'selenium',
+    'zinc',
+    'iron',
+    'iodine',
+    'vitamin_k',
+    'folate',
+    'vitamin_d',
+    'linoleic_acid_omega_6',
+    'alpha_linolenic_acid_omega_3',
+    'omega_3_epa_dha',
+  ];
 
   DateTime lastUpdated = DateTime.now();
 
@@ -39,3 +81,5 @@ class UserProfile {
     return isWeekly ? baseTarget * 7.0 : baseTarget;
   }
 }
+
+enum UserGoal { bulk, cut, maintain }

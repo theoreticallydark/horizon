@@ -94,13 +94,23 @@ const FoodSourceItemSchema = CollectionSchema(
       name: r'proteinIndex',
       type: IsarType.long,
     ),
-    r'title': PropertySchema(
+    r'snappedPortionGrams': PropertySchema(
       id: 15,
+      name: r'snappedPortionGrams',
+      type: IsarType.double,
+    ),
+    r'stepGrams': PropertySchema(
+      id: 16,
+      name: r'stepGrams',
+      type: IsarType.double,
+    ),
+    r'title': PropertySchema(
+      id: 17,
       name: r'title',
       type: IsarType.string,
     ),
     r'trackingFrequencyOverride': PropertySchema(
-      id: 16,
+      id: 18,
       name: r'trackingFrequencyOverride',
       type: IsarType.string,
       enumMap: _FoodSourceItemtrackingFrequencyOverrideEnumValueMap,
@@ -292,8 +302,10 @@ void _foodSourceItemSerialize(
   writer.writeDouble(offsets[12], object.plannedDailyGrams);
   writer.writeDouble(offsets[13], object.plannedWeeklyGrams);
   writer.writeLong(offsets[14], object.proteinIndex);
-  writer.writeString(offsets[15], object.title);
-  writer.writeString(offsets[16], object.trackingFrequencyOverride?.name);
+  writer.writeDouble(offsets[15], object.snappedPortionGrams);
+  writer.writeDouble(offsets[16], object.stepGrams);
+  writer.writeString(offsets[17], object.title);
+  writer.writeString(offsets[18], object.trackingFrequencyOverride?.name);
 }
 
 FoodSourceItem _foodSourceItemDeserialize(
@@ -326,10 +338,10 @@ FoodSourceItem _foodSourceItemDeserialize(
       [];
   object.plannedDailyGrams = reader.readDouble(offsets[12]);
   object.proteinIndex = reader.readLong(offsets[14]);
-  object.title = reader.readString(offsets[15]);
+  object.title = reader.readString(offsets[17]);
   object.trackingFrequencyOverride =
       _FoodSourceItemtrackingFrequencyOverrideValueEnumMap[
-          reader.readStringOrNull(offsets[16])];
+          reader.readStringOrNull(offsets[18])];
   return object;
 }
 
@@ -379,8 +391,12 @@ P _foodSourceItemDeserializeProp<P>(
     case 14:
       return (reader.readLong(offset)) as P;
     case 15:
-      return (reader.readString(offset)) as P;
+      return (reader.readDouble(offset)) as P;
     case 16:
+      return (reader.readDouble(offset)) as P;
+    case 17:
+      return (reader.readString(offset)) as P;
+    case 18:
       return (_FoodSourceItemtrackingFrequencyOverrideValueEnumMap[
           reader.readStringOrNull(offset)]) as P;
     default:
@@ -2492,6 +2508,138 @@ extension FoodSourceItemQueryFilter
   }
 
   QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterFilterCondition>
+      snappedPortionGramsEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'snappedPortionGrams',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterFilterCondition>
+      snappedPortionGramsGreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'snappedPortionGrams',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterFilterCondition>
+      snappedPortionGramsLessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'snappedPortionGrams',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterFilterCondition>
+      snappedPortionGramsBetween(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'snappedPortionGrams',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterFilterCondition>
+      stepGramsEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'stepGrams',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterFilterCondition>
+      stepGramsGreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'stepGrams',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterFilterCondition>
+      stepGramsLessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'stepGrams',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterFilterCondition>
+      stepGramsBetween(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'stepGrams',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterFilterCondition>
       titleEqualTo(
     String value, {
     bool caseSensitive = true,
@@ -2987,6 +3135,33 @@ extension FoodSourceItemQuerySortBy
     });
   }
 
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterSortBy>
+      sortBySnappedPortionGrams() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'snappedPortionGrams', Sort.asc);
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterSortBy>
+      sortBySnappedPortionGramsDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'snappedPortionGrams', Sort.desc);
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterSortBy> sortByStepGrams() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'stepGrams', Sort.asc);
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterSortBy>
+      sortByStepGramsDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'stepGrams', Sort.desc);
+    });
+  }
+
   QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterSortBy> sortByTitle() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'title', Sort.asc);
@@ -3216,6 +3391,33 @@ extension FoodSourceItemQuerySortThenBy
     });
   }
 
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterSortBy>
+      thenBySnappedPortionGrams() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'snappedPortionGrams', Sort.asc);
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterSortBy>
+      thenBySnappedPortionGramsDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'snappedPortionGrams', Sort.desc);
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterSortBy> thenByStepGrams() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'stepGrams', Sort.asc);
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterSortBy>
+      thenByStepGramsDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'stepGrams', Sort.desc);
+    });
+  }
+
   QueryBuilder<FoodSourceItem, FoodSourceItem, QAfterSortBy> thenByTitle() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'title', Sort.asc);
@@ -3343,6 +3545,20 @@ extension FoodSourceItemQueryWhereDistinct
     });
   }
 
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QDistinct>
+      distinctBySnappedPortionGrams() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'snappedPortionGrams');
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, FoodSourceItem, QDistinct>
+      distinctByStepGrams() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'stepGrams');
+    });
+  }
+
   QueryBuilder<FoodSourceItem, FoodSourceItem, QDistinct> distinctByTitle(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -3461,6 +3677,19 @@ extension FoodSourceItemQueryProperty
   QueryBuilder<FoodSourceItem, int, QQueryOperations> proteinIndexProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'proteinIndex');
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, double, QQueryOperations>
+      snappedPortionGramsProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'snappedPortionGrams');
+    });
+  }
+
+  QueryBuilder<FoodSourceItem, double, QQueryOperations> stepGramsProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'stepGrams');
     });
   }
 

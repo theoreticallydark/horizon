@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../alter/alter.dart';
+import 'package:alter/alter.dart';
 
 class HorizonBottomNavigationBarAction extends StatelessWidget {
   final int selectedIndex;
