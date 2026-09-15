@@ -22,54 +22,59 @@ const UserProfileSchema = CollectionSchema(
       name: r'age',
       type: IsarType.long,
     ),
-    r'goal': PropertySchema(
+    r'dateOfBirth': PropertySchema(
       id: 1,
+      name: r'dateOfBirth',
+      type: IsarType.dateTime,
+    ),
+    r'goal': PropertySchema(
+      id: 2,
       name: r'goal',
       type: IsarType.string,
       enumMap: _UserProfilegoalEnumValueMap,
     ),
     r'heightCm': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'heightCm',
       type: IsarType.double,
     ),
     r'isLactating': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'isLactating',
       type: IsarType.bool,
     ),
     r'isPregnant': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'isPregnant',
       type: IsarType.bool,
     ),
     r'lastUpdated': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'lastUpdated',
       type: IsarType.dateTime,
     ),
     r'name': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'name',
       type: IsarType.string,
     ),
     r'nutrientTargets': PropertySchema(
-      id: 7,
+      id: 8,
       name: r'nutrientTargets',
       type: IsarType.stringList,
     ),
     r'sex': PropertySchema(
-      id: 8,
+      id: 9,
       name: r'sex',
       type: IsarType.string,
     ),
     r'strictness': PropertySchema(
-      id: 9,
+      id: 10,
       name: r'strictness',
       type: IsarType.double,
     ),
     r'weightKg': PropertySchema(
-      id: 10,
+      id: 11,
       name: r'weightKg',
       type: IsarType.double,
     )
@@ -114,16 +119,17 @@ void _userProfileSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeLong(offsets[0], object.age);
-  writer.writeString(offsets[1], object.goal.name);
-  writer.writeDouble(offsets[2], object.heightCm);
-  writer.writeBool(offsets[3], object.isLactating);
-  writer.writeBool(offsets[4], object.isPregnant);
-  writer.writeDateTime(offsets[5], object.lastUpdated);
-  writer.writeString(offsets[6], object.name);
-  writer.writeStringList(offsets[7], object.nutrientTargets);
-  writer.writeString(offsets[8], object.sex);
-  writer.writeDouble(offsets[9], object.strictness);
-  writer.writeDouble(offsets[10], object.weightKg);
+  writer.writeDateTime(offsets[1], object.dateOfBirth);
+  writer.writeString(offsets[2], object.goal.name);
+  writer.writeDouble(offsets[3], object.heightCm);
+  writer.writeBool(offsets[4], object.isLactating);
+  writer.writeBool(offsets[5], object.isPregnant);
+  writer.writeDateTime(offsets[6], object.lastUpdated);
+  writer.writeString(offsets[7], object.name);
+  writer.writeStringList(offsets[8], object.nutrientTargets);
+  writer.writeString(offsets[9], object.sex);
+  writer.writeDouble(offsets[10], object.strictness);
+  writer.writeDouble(offsets[11], object.weightKg);
 }
 
 UserProfile _userProfileDeserialize(
@@ -133,20 +139,20 @@ UserProfile _userProfileDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = UserProfile();
-  object.age = reader.readLong(offsets[0]);
+  object.dateOfBirth = reader.readDateTime(offsets[1]);
   object.goal =
-      _UserProfilegoalValueEnumMap[reader.readStringOrNull(offsets[1])] ??
+      _UserProfilegoalValueEnumMap[reader.readStringOrNull(offsets[2])] ??
           UserGoal.bulk;
-  object.heightCm = reader.readDouble(offsets[2]);
+  object.heightCm = reader.readDouble(offsets[3]);
   object.id = id;
-  object.isLactating = reader.readBool(offsets[3]);
-  object.isPregnant = reader.readBool(offsets[4]);
-  object.lastUpdated = reader.readDateTime(offsets[5]);
-  object.name = reader.readString(offsets[6]);
-  object.nutrientTargets = reader.readStringList(offsets[7]) ?? [];
-  object.sex = reader.readString(offsets[8]);
-  object.strictness = reader.readDouble(offsets[9]);
-  object.weightKg = reader.readDouble(offsets[10]);
+  object.isLactating = reader.readBool(offsets[4]);
+  object.isPregnant = reader.readBool(offsets[5]);
+  object.lastUpdated = reader.readDateTime(offsets[6]);
+  object.name = reader.readString(offsets[7]);
+  object.nutrientTargets = reader.readStringList(offsets[8]) ?? [];
+  object.sex = reader.readString(offsets[9]);
+  object.strictness = reader.readDouble(offsets[10]);
+  object.weightKg = reader.readDouble(offsets[11]);
   return object;
 }
 
@@ -160,25 +166,27 @@ P _userProfileDeserializeProp<P>(
     case 0:
       return (reader.readLong(offset)) as P;
     case 1:
+      return (reader.readDateTime(offset)) as P;
+    case 2:
       return (_UserProfilegoalValueEnumMap[reader.readStringOrNull(offset)] ??
           UserGoal.bulk) as P;
-    case 2:
-      return (reader.readDouble(offset)) as P;
     case 3:
-      return (reader.readBool(offset)) as P;
+      return (reader.readDouble(offset)) as P;
     case 4:
       return (reader.readBool(offset)) as P;
     case 5:
-      return (reader.readDateTime(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 6:
-      return (reader.readString(offset)) as P;
+      return (reader.readDateTime(offset)) as P;
     case 7:
-      return (reader.readStringList(offset) ?? []) as P;
-    case 8:
       return (reader.readString(offset)) as P;
+    case 8:
+      return (reader.readStringList(offset) ?? []) as P;
     case 9:
-      return (reader.readDouble(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 10:
+      return (reader.readDouble(offset)) as P;
+    case 11:
       return (reader.readDouble(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -334,6 +342,62 @@ extension UserProfileQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
         property: r'age',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+      dateOfBirthEqualTo(DateTime value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'dateOfBirth',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+      dateOfBirthGreaterThan(
+    DateTime value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'dateOfBirth',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+      dateOfBirthLessThan(
+    DateTime value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'dateOfBirth',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+      dateOfBirthBetween(
+    DateTime lower,
+    DateTime upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'dateOfBirth',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
@@ -1306,6 +1370,18 @@ extension UserProfileQuerySortBy
     });
   }
 
+  QueryBuilder<UserProfile, UserProfile, QAfterSortBy> sortByDateOfBirth() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dateOfBirth', Sort.asc);
+    });
+  }
+
+  QueryBuilder<UserProfile, UserProfile, QAfterSortBy> sortByDateOfBirthDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dateOfBirth', Sort.desc);
+    });
+  }
+
   QueryBuilder<UserProfile, UserProfile, QAfterSortBy> sortByGoal() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'goal', Sort.asc);
@@ -1426,6 +1502,18 @@ extension UserProfileQuerySortThenBy
   QueryBuilder<UserProfile, UserProfile, QAfterSortBy> thenByAgeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'age', Sort.desc);
+    });
+  }
+
+  QueryBuilder<UserProfile, UserProfile, QAfterSortBy> thenByDateOfBirth() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dateOfBirth', Sort.asc);
+    });
+  }
+
+  QueryBuilder<UserProfile, UserProfile, QAfterSortBy> thenByDateOfBirthDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dateOfBirth', Sort.desc);
     });
   }
 
@@ -1558,6 +1646,12 @@ extension UserProfileQueryWhereDistinct
     });
   }
 
+  QueryBuilder<UserProfile, UserProfile, QDistinct> distinctByDateOfBirth() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'dateOfBirth');
+    });
+  }
+
   QueryBuilder<UserProfile, UserProfile, QDistinct> distinctByGoal(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -1634,6 +1728,12 @@ extension UserProfileQueryProperty
   QueryBuilder<UserProfile, int, QQueryOperations> ageProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'age');
+    });
+  }
+
+  QueryBuilder<UserProfile, DateTime, QQueryOperations> dateOfBirthProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'dateOfBirth');
     });
   }
 

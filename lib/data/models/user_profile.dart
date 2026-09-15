@@ -8,10 +8,21 @@ class UserProfile {
 
   String name = 'User';
 
-  int age = 25; // Default age
+  DateTime dateOfBirth = DateTime(2001, 1, 1); // Default reference DOB
   String sex = 'male'; // 'male' | 'female' | 'both'
   bool isPregnant = false;
   bool isLactating = false;
+
+  /// Computed age in years derived dynamically from dateOfBirth
+  int get age {
+    final now = DateTime.now();
+    int calculatedAge = now.year - dateOfBirth.year;
+    if (now.month < dateOfBirth.month ||
+        (now.month == dateOfBirth.month && now.day < dateOfBirth.day)) {
+      calculatedAge--;
+    }
+    return calculatedAge;
+  }
 
   /// User body metrics
   double weightKg = 70.0; // Default reference weight: 70kg

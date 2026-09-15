@@ -153,6 +153,8 @@
 - **2026-09-08 03:13 PM** - Migrated all Horizon widgets (`lib/horizon/`), pages (`lib/pages/`), and shell (`lib/main.dart`) to consume `package:alter/alter.dart`, removed local `lib/alter/` directory and redundant font asset mappings in `pubspec.yaml`.
 - **2026-09-15 03:05 PM** - Upgraded `alter` package to `^2.0.0` in `pubspec.yaml`, migrated search components in `HorizonAddSource` and `HorizonAddSourceTrack` to use `SearchInput`, and verified with `flutter analyze` and unit tests.
 - **2026-09-15 03:14 PM** - Upgraded `HorizonTitleBar` to `v1.3.0`: updated title typography to `AlterTypography.hStyle` (`AlterTypography.h1Serif`).
+- **2026-09-15 03:39 PM** - Replaced `age` with `DateTime dateOfBirth` in `UserProfile` model (`lib/data/models/user_profile.dart`), added dynamically calculated `age` getter, regenerated Isar schema with `build_runner`, and verified tests.
+
 
 
 

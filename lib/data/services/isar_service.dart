@@ -50,7 +50,7 @@ class IsarService {
     if (profile == null) {
       profile = UserProfile()
         ..id = 1
-        ..age = 25
+        ..dateOfBirth = DateTime(2001, 1, 1)
         ..sex = 'male'
         ..isPregnant = false
         ..isLactating = false
