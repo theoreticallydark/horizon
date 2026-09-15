@@ -6,27 +6,28 @@ part 'user_profile.g.dart';
 class UserProfile {
   Id id = 1; // Singleton record (id always 1)
 
-  String name = 'User';
+  String name = '';
 
-  DateTime dateOfBirth = DateTime(2001, 1, 1); // Default reference DOB
-  String sex = 'male'; // 'male' | 'female' | 'both'
+  DateTime? dateOfBirth;
+  String? sex; // 'male' | 'female' | 'both'
   bool isPregnant = false;
   bool isLactating = false;
 
   /// Computed age in years derived dynamically from dateOfBirth
-  int get age {
+  int? get age {
+    if (dateOfBirth == null) return null;
     final now = DateTime.now();
-    int calculatedAge = now.year - dateOfBirth.year;
-    if (now.month < dateOfBirth.month ||
-        (now.month == dateOfBirth.month && now.day < dateOfBirth.day)) {
+    int calculatedAge = now.year - dateOfBirth!.year;
+    if (now.month < dateOfBirth!.month ||
+        (now.month == dateOfBirth!.month && now.day < dateOfBirth!.day)) {
       calculatedAge--;
     }
     return calculatedAge;
   }
 
-  /// User body metrics
-  double weightKg = 70.0; // Default reference weight: 70kg
-  double heightCm = 175.0; // Default reference height in cm
+  /// User body metrics (unpopulated by default)
+  double? weightKg;
+  double? heightCm;
 
   /// User goal: 'bulk' | 'cut' | 'maintain'
   @Enumerated(EnumType.name)
@@ -72,8 +73,8 @@ class UserProfile {
     double baseTarget;
 
     if (nutrientKey == 'total_protein') {
-      // If raw RDA is in g/kg/d (e.g. 0.8), multiply by user body weight in kg
-      baseTarget = (raw < 2.0 ? raw * weightKg : raw) * strictness;
+      final effWeight = weightKg ?? 70.0;
+      baseTarget = (raw < 2.0 ? raw * effWeight : raw) * strictness;
     } else {
       baseTarget = raw * strictness;
     }

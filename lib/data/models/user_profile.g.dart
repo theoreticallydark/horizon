@@ -108,7 +108,12 @@ int _userProfileEstimateSize(
       bytesCount += value.length * 3;
     }
   }
-  bytesCount += 3 + object.sex.length * 3;
+  {
+    final value = object.sex;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   return bytesCount;
 }
 
@@ -139,20 +144,20 @@ UserProfile _userProfileDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = UserProfile();
-  object.dateOfBirth = reader.readDateTime(offsets[1]);
+  object.dateOfBirth = reader.readDateTimeOrNull(offsets[1]);
   object.goal =
       _UserProfilegoalValueEnumMap[reader.readStringOrNull(offsets[2])] ??
           UserGoal.bulk;
-  object.heightCm = reader.readDouble(offsets[3]);
+  object.heightCm = reader.readDoubleOrNull(offsets[3]);
   object.id = id;
   object.isLactating = reader.readBool(offsets[4]);
   object.isPregnant = reader.readBool(offsets[5]);
   object.lastUpdated = reader.readDateTime(offsets[6]);
   object.name = reader.readString(offsets[7]);
   object.nutrientTargets = reader.readStringList(offsets[8]) ?? [];
-  object.sex = reader.readString(offsets[9]);
+  object.sex = reader.readStringOrNull(offsets[9]);
   object.strictness = reader.readDouble(offsets[10]);
-  object.weightKg = reader.readDouble(offsets[11]);
+  object.weightKg = reader.readDoubleOrNull(offsets[11]);
   return object;
 }
 
@@ -164,14 +169,14 @@ P _userProfileDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readLong(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 1:
-      return (reader.readDateTime(offset)) as P;
+      return (reader.readDateTimeOrNull(offset)) as P;
     case 2:
       return (_UserProfilegoalValueEnumMap[reader.readStringOrNull(offset)] ??
           UserGoal.bulk) as P;
     case 3:
-      return (reader.readDouble(offset)) as P;
+      return (reader.readDoubleOrNull(offset)) as P;
     case 4:
       return (reader.readBool(offset)) as P;
     case 5:
@@ -183,11 +188,11 @@ P _userProfileDeserializeProp<P>(
     case 8:
       return (reader.readStringList(offset) ?? []) as P;
     case 9:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 10:
       return (reader.readDouble(offset)) as P;
     case 11:
-      return (reader.readDouble(offset)) as P;
+      return (reader.readDoubleOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -297,8 +302,24 @@ extension UserProfileQueryWhere
 
 extension UserProfileQueryFilter
     on QueryBuilder<UserProfile, UserProfile, QFilterCondition> {
+  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition> ageIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'age',
+      ));
+    });
+  }
+
+  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition> ageIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'age',
+      ));
+    });
+  }
+
   QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition> ageEqualTo(
-      int value) {
+      int? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'age',
@@ -308,7 +329,7 @@ extension UserProfileQueryFilter
   }
 
   QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition> ageGreaterThan(
-    int value, {
+    int? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -321,7 +342,7 @@ extension UserProfileQueryFilter
   }
 
   QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition> ageLessThan(
-    int value, {
+    int? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -334,8 +355,8 @@ extension UserProfileQueryFilter
   }
 
   QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition> ageBetween(
-    int lower,
-    int upper, {
+    int? lower,
+    int? upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
@@ -351,7 +372,25 @@ extension UserProfileQueryFilter
   }
 
   QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
-      dateOfBirthEqualTo(DateTime value) {
+      dateOfBirthIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'dateOfBirth',
+      ));
+    });
+  }
+
+  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+      dateOfBirthIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'dateOfBirth',
+      ));
+    });
+  }
+
+  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+      dateOfBirthEqualTo(DateTime? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'dateOfBirth',
@@ -362,7 +401,7 @@ extension UserProfileQueryFilter
 
   QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
       dateOfBirthGreaterThan(
-    DateTime value, {
+    DateTime? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -376,7 +415,7 @@ extension UserProfileQueryFilter
 
   QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
       dateOfBirthLessThan(
-    DateTime value, {
+    DateTime? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -390,8 +429,8 @@ extension UserProfileQueryFilter
 
   QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
       dateOfBirthBetween(
-    DateTime lower,
-    DateTime upper, {
+    DateTime? lower,
+    DateTime? upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
@@ -537,8 +576,26 @@ extension UserProfileQueryFilter
     });
   }
 
+  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+      heightCmIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'heightCm',
+      ));
+    });
+  }
+
+  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+      heightCmIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'heightCm',
+      ));
+    });
+  }
+
   QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition> heightCmEqualTo(
-    double value, {
+    double? value, {
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -552,7 +609,7 @@ extension UserProfileQueryFilter
 
   QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
       heightCmGreaterThan(
-    double value, {
+    double? value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
@@ -568,7 +625,7 @@ extension UserProfileQueryFilter
 
   QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
       heightCmLessThan(
-    double value, {
+    double? value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
@@ -583,8 +640,8 @@ extension UserProfileQueryFilter
   }
 
   QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition> heightCmBetween(
-    double lower,
-    double upper, {
+    double? lower,
+    double? upper, {
     bool includeLower = true,
     bool includeUpper = true,
     double epsilon = Query.epsilon,
@@ -1088,8 +1145,24 @@ extension UserProfileQueryFilter
     });
   }
 
+  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition> sexIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'sex',
+      ));
+    });
+  }
+
+  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition> sexIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'sex',
+      ));
+    });
+  }
+
   QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition> sexEqualTo(
-    String value, {
+    String? value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -1102,7 +1175,7 @@ extension UserProfileQueryFilter
   }
 
   QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition> sexGreaterThan(
-    String value, {
+    String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -1117,7 +1190,7 @@ extension UserProfileQueryFilter
   }
 
   QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition> sexLessThan(
-    String value, {
+    String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -1132,8 +1205,8 @@ extension UserProfileQueryFilter
   }
 
   QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition> sexBetween(
-    String lower,
-    String upper, {
+    String? lower,
+    String? upper, {
     bool includeLower = true,
     bool includeUpper = true,
     bool caseSensitive = true,
@@ -1285,8 +1358,26 @@ extension UserProfileQueryFilter
     });
   }
 
+  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+      weightKgIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'weightKg',
+      ));
+    });
+  }
+
+  QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
+      weightKgIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'weightKg',
+      ));
+    });
+  }
+
   QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition> weightKgEqualTo(
-    double value, {
+    double? value, {
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -1300,7 +1391,7 @@ extension UserProfileQueryFilter
 
   QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
       weightKgGreaterThan(
-    double value, {
+    double? value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
@@ -1316,7 +1407,7 @@ extension UserProfileQueryFilter
 
   QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition>
       weightKgLessThan(
-    double value, {
+    double? value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
@@ -1331,8 +1422,8 @@ extension UserProfileQueryFilter
   }
 
   QueryBuilder<UserProfile, UserProfile, QAfterFilterCondition> weightKgBetween(
-    double lower,
-    double upper, {
+    double? lower,
+    double? upper, {
     bool includeLower = true,
     bool includeUpper = true,
     double epsilon = Query.epsilon,
@@ -1725,13 +1816,13 @@ extension UserProfileQueryProperty
     });
   }
 
-  QueryBuilder<UserProfile, int, QQueryOperations> ageProperty() {
+  QueryBuilder<UserProfile, int?, QQueryOperations> ageProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'age');
     });
   }
 
-  QueryBuilder<UserProfile, DateTime, QQueryOperations> dateOfBirthProperty() {
+  QueryBuilder<UserProfile, DateTime?, QQueryOperations> dateOfBirthProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'dateOfBirth');
     });
@@ -1743,7 +1834,7 @@ extension UserProfileQueryProperty
     });
   }
 
-  QueryBuilder<UserProfile, double, QQueryOperations> heightCmProperty() {
+  QueryBuilder<UserProfile, double?, QQueryOperations> heightCmProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'heightCm');
     });
@@ -1780,7 +1871,7 @@ extension UserProfileQueryProperty
     });
   }
 
-  QueryBuilder<UserProfile, String, QQueryOperations> sexProperty() {
+  QueryBuilder<UserProfile, String?, QQueryOperations> sexProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'sex');
     });
@@ -1792,7 +1883,7 @@ extension UserProfileQueryProperty
     });
   }
 
-  QueryBuilder<UserProfile, double, QQueryOperations> weightKgProperty() {
+  QueryBuilder<UserProfile, double?, QQueryOperations> weightKgProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'weightKg');
     });

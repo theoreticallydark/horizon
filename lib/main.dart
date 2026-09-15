@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:alter/alter.dart';
 import 'data/services/isar_service.dart';
 import 'data/services/nutrition_tracking_service.dart';
@@ -6,12 +7,21 @@ import 'horizon/debug_modal.dart';
 import 'horizon/horizon_application_header.dart';
 import 'horizon/horizon_bottom_navigation_bar_action.dart';
 import 'pages/onboarding/landing_page.dart';
+import 'pages/onboarding/onboarding_page.dart';
 import 'pages/routine_page.dart';
 import 'pages/stats_page.dart';
 import 'pages/track_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+      systemNavigationBarColor: Colors.transparent,
+      systemNavigationBarIconBrightness: Brightness.dark,
+    ),
+  );
   await IsarService.instance.init();
   await NutritionTrackingService().syncTrackRecordsWindow();
   runApp(const MyApp());
@@ -30,8 +40,17 @@ class MyApp extends StatelessWidget {
       home: Builder(
         builder: (context) => LandingPage(
           onGetStarted: () {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (_) => const HorizonAppShell()),
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => OnboardingPage(
+                  onReturnToLanding: () => Navigator.of(context).pop(),
+                  onComplete: () {
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(builder: (_) => const HorizonAppShell()),
+                    );
+                  },
+                ),
+              ),
             );
           },
         ),
@@ -66,6 +85,8 @@ class _HorizonAppShellState extends State<HorizonAppShell> {
 
   @override
   Widget build(BuildContext context) {
+    final topPadding = MediaQuery.of(context).padding.top;
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
     final isKeyboardVisible = MediaQuery.of(context).viewInsets.bottom > 0;
     final hideNutrientMap = _isSearchActive && isKeyboardVisible;
     final isModalOpen = (_currentIndex == 2 && _isAddSourceOpen) ||
@@ -97,106 +118,104 @@ class _HorizonAppShellState extends State<HorizonAppShell> {
 
     return Scaffold(
       backgroundColor: AlterSemanticTokens.baseGray,
-      body: SafeArea(
-        child: Stack(
-          children: [
-            // Main App Container with Shared Horizon Header Wrapper
-            Column(
-              children: [
-                HorizonApplicationHeader(
-                  currentIndex: _currentIndex,
-                  selectedNutrientKey: _selectedNutrientKey,
-                  onNutrientTap: _handleNutrientTap,
-                  hideNutrientMap: hideNutrientMap,
-                  onProfileTap: () {
-                    debugPrint('Profile Tapped');
-                  },
-                  onStreakTap: () {
-                    debugPrint('Streak Tapped');
-                  },
-                ),
-                Expanded(
-                  child: IndexedStack(
-                    index: _currentIndex,
-                    children: pages,
-                  ),
-                ),
-              ],
-            ),
-
-            // Floating Bottom Navigation Action Bar (Floating 28px from bottom)
-            if (!isModalOpen)
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: 28,
-                child: Center(
-                  child: HorizonBottomNavigationBarAction(
-                    selectedIndex: _currentIndex,
-                    onItemTapped: (index) {
-                      setState(() {
-                        if (_currentIndex != index) {
-                          _selectedNutrientKey = null;
-                          _isAddSourceOpen = false;
-                          _isAddSourceTrackOpen = false;
-                          _isSearchActive = false;
-                        }
-                        _currentIndex = index;
-                      });
-                    },
-                    onPrimaryActionTap: () {
-                      if (_currentIndex == 2) {
-                        setState(() {
-                          _isAddSourceOpen = !_isAddSourceOpen;
-                        });
-                      } else if (_currentIndex == 0) {
-                        setState(() {
-                          _isAddSourceTrackOpen = !_isAddSourceTrackOpen;
-                        });
-                      } else {
-                        debugPrint('Primary Action Button Tapped!');
-                      }
-                    },
-                  ),
+      body: Stack(
+        children: [
+          // Main App Container with Shared Horizon Header Wrapper
+          Column(
+            children: [
+              HorizonApplicationHeader(
+                currentIndex: _currentIndex,
+                selectedNutrientKey: _selectedNutrientKey,
+                onNutrientTap: _handleNutrientTap,
+                hideNutrientMap: hideNutrientMap,
+                onProfileTap: () {
+                  debugPrint('Profile Tapped');
+                },
+                onStreakTap: () {
+                  debugPrint('Streak Tapped');
+                },
+              ),
+              Expanded(
+                child: IndexedStack(
+                  index: _currentIndex,
+                  children: pages,
                 ),
               ),
+            ],
+          ),
 
-            // Floating Debug & Time Travel Button (Top-Right of Viewport)
+          // Floating Bottom Navigation Action Bar
+          if (!isModalOpen)
             Positioned(
-              top: 14,
-              right: 14,
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: () {
-                    HorizonDebugModal.show(context, initialTabIndex: _currentIndex);
+              left: 0,
+              right: 0,
+              bottom: 28 + bottomPadding,
+              child: Center(
+                child: HorizonBottomNavigationBarAction(
+                  selectedIndex: _currentIndex,
+                  onItemTapped: (index) {
+                    setState(() {
+                      if (_currentIndex != index) {
+                        _selectedNutrientKey = null;
+                        _isAddSourceOpen = false;
+                        _isAddSourceTrackOpen = false;
+                        _isSearchActive = false;
+                      }
+                      _currentIndex = index;
+                    });
                   },
-                  borderRadius: BorderRadius.circular(16),
-                  child: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: AlterSemanticTokens.baseWhite.withAlpha(220),
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: AlterSemanticTokens.stroke100),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withAlpha(15),
-                          blurRadius: 6,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: const Icon(
-                      Icons.bug_report,
-                      size: 20,
-                      color: AlterSemanticTokens.textPrimary,
-                    ),
+                  onPrimaryActionTap: () {
+                    if (_currentIndex == 2) {
+                      setState(() {
+                        _isAddSourceOpen = !_isAddSourceOpen;
+                      });
+                    } else if (_currentIndex == 0) {
+                      setState(() {
+                        _isAddSourceTrackOpen = !_isAddSourceTrackOpen;
+                      });
+                    } else {
+                      debugPrint('Primary Action Button Tapped!');
+                    }
+                  },
+                ),
+              ),
+            ),
+
+          // Floating Debug & Time Travel Button (Top-Right of Viewport)
+          Positioned(
+            top: 14 + topPadding,
+            right: 14,
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () {
+                  HorizonDebugModal.show(context, initialTabIndex: _currentIndex);
+                },
+                borderRadius: BorderRadius.circular(16),
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AlterSemanticTokens.baseWhite.withAlpha(220),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: AlterSemanticTokens.stroke100),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withAlpha(15),
+                        blurRadius: 6,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: const Icon(
+                    Icons.bug_report,
+                    size: 20,
+                    color: AlterSemanticTokens.textPrimary,
                   ),
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

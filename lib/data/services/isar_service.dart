@@ -50,6 +50,7 @@ class IsarService {
     if (profile == null) {
       profile = UserProfile()
         ..id = 1
+        ..name = 'User'
         ..dateOfBirth = DateTime(2001, 1, 1)
         ..sex = 'male'
         ..isPregnant = false
@@ -453,6 +454,85 @@ class IsarService {
         .map((list) => list
             .where((n) => n.nutrientKey != 'energy' && n.nutrientKey != 'total_protein')
             .toList());
+  }
+
+  /// Retrieves the singleton UserProfile (id = 1)
+  Future<UserProfile> getUserProfile() async {
+    final profile = await isar.userProfiles.get(1);
+    return profile ?? UserProfile();
+  }
+
+  /// Returns all visible nutrients on app
+  Future<List<NutrientInfo>> getVisibleNutrients() async {
+    return isar.nutrientInfos
+        .filter()
+        .isVisibleOnAppEqualTo(true)
+        .findAll();
+  }
+
+  /// Updates UserProfile fields in Isar and synchronizes NutrientInfo.isTracked
+  Future<void> updateUserProfile({
+    String? name,
+    DateTime? dateOfBirth,
+    String? sex,
+    double? weightKg,
+    double? heightCm,
+    UserGoal? goal,
+    List<String>? nutrientTargets,
+    bool? isPregnant,
+    bool? isLactating,
+  }) async {
+    var profile = await isar.userProfiles.get(1);
+    profile ??= UserProfile()..id = 1;
+
+    if (name != null && name.trim().isNotEmpty) {
+      profile.name = name.trim();
+    }
+    if (dateOfBirth != null) {
+      profile.dateOfBirth = dateOfBirth;
+    }
+    if (sex != null && sex.isNotEmpty) {
+      profile.sex = sex;
+    }
+    if (weightKg != null) {
+      profile.weightKg = weightKg;
+    }
+    if (heightCm != null) {
+      profile.heightCm = heightCm;
+    }
+    if (goal != null) {
+      profile.goal = goal;
+    }
+    if (nutrientTargets != null) {
+      profile.nutrientTargets = List<String>.from(nutrientTargets);
+    }
+    if (isPregnant != null) {
+      profile.isPregnant = isPregnant;
+    }
+    if (isLactating != null) {
+      profile.isLactating = isLactating;
+    }
+
+    // Synchronize NutrientInfo.isTracked flags with selected nutrientTargets
+    List<NutrientInfo> nutrientsToUpdate = [];
+    if (nutrientTargets != null) {
+      final targetSet = nutrientTargets.toSet();
+      final allNutrients = await isar.nutrientInfos.where().findAll();
+      for (final nutrient in allNutrients) {
+        final shouldBeTracked = targetSet.contains(nutrient.nutrientKey);
+        if (nutrient.isTracked != shouldBeTracked) {
+          nutrient.isTracked = shouldBeTracked;
+          nutrientsToUpdate.add(nutrient);
+        }
+      }
+    }
+
+    await isar.writeTxn(() async {
+      await isar.userProfiles.put(profile!);
+      if (nutrientsToUpdate.isNotEmpty) {
+        await isar.nutrientInfos.putAll(nutrientsToUpdate);
+      }
+    });
   }
 
   static String _formatDisplayName(String key) {

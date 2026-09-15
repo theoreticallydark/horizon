@@ -2,11 +2,14 @@ class DemographicLookup {
   /// Matches the closest demographic profile from DRI data list.
   static Map<String, dynamic>? findDemographicMatch({
     required List<dynamic> driDataList,
-    required int ageInYears,
-    required String sex, // 'male' | 'female'
+    int? ageInYears,
+    String? sex, // 'male' | 'female'
     required bool isPregnant,
     required bool isLactating,
   }) {
+    final effectiveAge = ageInYears ?? 25;
+    final effectiveSex = (sex != null && sex.isNotEmpty) ? sex : 'both';
+
     for (final entry in driDataList) {
       final demo = entry['demographics'] as Map<String, dynamic>;
       final demoSex = demo['sex'] as String;
@@ -19,12 +22,12 @@ class DemographicLookup {
       if (isLactating != isLact) continue;
 
       // Check sex
-      if (demoSex != 'both' && demoSex.toLowerCase() != sex.toLowerCase()) {
+      if (demoSex != 'both' && effectiveSex != 'both' && demoSex.toLowerCase() != effectiveSex.toLowerCase()) {
         continue;
       }
 
       // Check age range
-      if (_matchesAgeRange(ageInYears, ageRange)) {
+      if (_matchesAgeRange(effectiveAge, ageRange)) {
         return entry as Map<String, dynamic>;
       }
     }
@@ -34,7 +37,7 @@ class DemographicLookup {
       final demo = entry['demographics'] as Map<String, dynamic>;
       final demoSex = demo['sex'] as String;
       final ageRange = demo['age_range'] as String;
-      if ((demoSex == 'both' || demoSex.toLowerCase() == sex.toLowerCase()) &&
+      if ((demoSex == 'both' || demoSex.toLowerCase() == effectiveSex.toLowerCase()) &&
           ageRange.contains('19-30')) {
         return entry as Map<String, dynamic>;
       }
