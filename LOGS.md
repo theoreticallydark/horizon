@@ -154,6 +154,18 @@
 - **2026-09-15 03:05 PM** - Upgraded `alter` package to `^2.0.0` in `pubspec.yaml`, migrated search components in `HorizonAddSource` and `HorizonAddSourceTrack` to use `SearchInput`, and verified with `flutter analyze` and unit tests.
 - **2026-09-15 03:14 PM** - Upgraded `HorizonTitleBar` to `v1.3.0`: updated title typography to `AlterTypography.hStyle` (`AlterTypography.h1Serif`).
 - **2026-09-15 03:39 PM** - Replaced `age` with `DateTime dateOfBirth` in `UserProfile` model (`lib/data/models/user_profile.dart`), added dynamically calculated `age` getter, regenerated Isar schema with `build_runner`, and verified tests.
+- **2026-09-15 03:48 PM** - Built `LandingPage` (v1.0.0) in `lib/pages/onboarding/landing_page.dart` from Figma node `387:8662`: full-screen background video (`lib/assets/horizon_cover_video.mp4` via `video_player`), bottom `mainContainer` card with `AlterTypography.hStyle` ("Horizon 🍎"), Geist 24px/600 headline, Large Primary `ButtonText` ("Get started"), and `AlterColors.colorsGray400` subtext.
+- **2026-09-15 03:52 PM** - Configured `LandingPage` as the app entry point in `lib/main.dart`, routing "Get started" to `HorizonAppShell`.
+- **2026-09-15 03:57 PM** - Upgraded `LandingPage` to `v1.1.0`: aligned `mainContainer` layout strictly to Figma node `387:8662` and `HorizonFoodModal` specifications (flush bottom container, `all(24)` radius, zero arbitrary margins/shadows), and registered `assets/` directory with `assets/horizon_cover_video.mp4` asset resolution.
+- **2026-09-15 04:01 PM** - Upgraded `LandingPage` to `v1.2.0`: removed outer `SafeArea` and added internal `EdgeInsets.fromLTRB(24, 24, 24, 24 + bottomPadding)` with top-only `24px` corner radii to extend the card flush to the device bottom edge.
+- **2026-09-15 04:36 PM** - Upgraded `LandingPage` to `v1.3.0`: set Title, Headline, and Subtext widths to fill (`width: double.infinity`), rendered apple emoji unskewed (`fontStyle: FontStyle.normal`) while retaining `AlterTypography.hStyle` on "Horizon ", and ensured `AlterTypography.caption` styling on subtext.
+- **2026-09-15 04:40 PM** - Upgraded `LandingPage` to `v1.4.0`: added `BackdropFilter` with `24px` Gaussian blur (`sigmaX: 24, sigmaY: 24`) and `64%` opacity background fill (`AlterSemanticTokens.baseWhite.withValues(alpha: 0.64)`) on `mainContainer`.
+
+
+
+
+
+
 
 
 

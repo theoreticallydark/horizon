@@ -5,6 +5,7 @@ import 'data/services/nutrition_tracking_service.dart';
 import 'horizon/debug_modal.dart';
 import 'horizon/horizon_application_header.dart';
 import 'horizon/horizon_bottom_navigation_bar_action.dart';
+import 'pages/onboarding/landing_page.dart';
 import 'pages/routine_page.dart';
 import 'pages/stats_page.dart';
 import 'pages/track_page.dart';
@@ -26,7 +27,15 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         fontFamily: 'Geist',
       ),
-      home: const HorizonAppShell(),
+      home: Builder(
+        builder: (context) => LandingPage(
+          onGetStarted: () {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (_) => const HorizonAppShell()),
+            );
+          },
+        ),
+      ),
     );
   }
 }
